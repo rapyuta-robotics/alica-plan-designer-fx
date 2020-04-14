@@ -232,6 +232,7 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
             case Types.BEHAVIOUR:
             case Types.ROLESET:
             case Types.TASKREPOSITORY:
+            case Types.CONFIGURATION:
                 updateRepos(event.getEventType(), viewModelElement);
                 updateFileTreeView(event, viewModelElement);
                 break;
@@ -289,6 +290,7 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
                 }
                 break;
             case ELEMENT_FOLDER_DELETED:
+                // This should be unnecessary see: https://github.com/dasys-lab/alica-plan-designer-fx/issues/112
                 mainWindowController.getFileTreeView().removeFolder(event.getChangedAttribute());
                 break;
         }

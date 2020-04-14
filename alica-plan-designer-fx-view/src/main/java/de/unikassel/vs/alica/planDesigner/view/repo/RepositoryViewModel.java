@@ -174,6 +174,9 @@ public final class RepositoryViewModel {
                     this.roles.add(role);
                 }
                 break;
+            case Types.CONFIGURATION:
+                System.out.println("RepositoryViewModel: Adding Configurations needs to be implemented.");
+                break;
         }
     }
 
@@ -197,6 +200,9 @@ public final class RepositoryViewModel {
                 break;
             case Types.ROLESET:
                 this.roles.clear();
+                break;
+            case Types.CONFIGURATION:
+                System.out.println("RepositoryViewModel: Removing Configurations needs to be implemented.");
                 break;
         }
     }
