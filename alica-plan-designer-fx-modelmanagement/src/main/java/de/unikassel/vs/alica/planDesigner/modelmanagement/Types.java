@@ -34,4 +34,5 @@ public class Types {
     public static final String UIEXTENSION = "uiextension";
     public static final String UNSUPPORTED = "unsupported";
     public static final String VARIABLEBINDING = "variablebinding";
+    public static final String CONFIGURATION = "configuration";
 }

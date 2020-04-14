@@ -4,7 +4,7 @@ import de.unikassel.vs.alica.planDesigner.controller.MainWindowController;
 import de.unikassel.vs.alica.planDesigner.events.GuiChangeAttributeEvent;
 import de.unikassel.vs.alica.planDesigner.events.GuiEventType;
 import de.unikassel.vs.alica.planDesigner.view.Types;
-import de.unikassel.vs.alica.planDesigner.view.model.BehaviourViewModel;
+import de.unikassel.vs.alica.planDesigner.view.model.ConfigurationViewModel;
 import de.unikassel.vs.alica.planDesigner.view.model.ViewModelElement;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -17,8 +17,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
@@ -26,21 +24,21 @@ import javafx.util.Callback;
 import java.util.AbstractMap;
 import java.util.Map;
 
-public class BehaviourParametersTab extends Tab {
+public class ConfigurationsTab extends Tab {
 
-    private final ObjectProperty<BehaviourViewModel> selectedBehaviour = new SimpleObjectProperty<>();
+    private final ObjectProperty<ConfigurationViewModel> selectedConfiguration = new SimpleObjectProperty<>();
 
 
     private TableView<Map.Entry<String, String>> parameterTableView;
-    private ParameterListener parameterListener;
+    private ConfigurationListener configurationListener;
 
-    public BehaviourParametersTab(String title) {
+    public ConfigurationsTab(String title) {
         super(title);
 
         // Table
         ObservableList<Map.Entry<String, String>> items = FXCollections.observableArrayList();
         parameterTableView = new TableView<>(items);
-        parameterTableView.setFixedCellSize(ParameterListener.CELL_SIZE);
+        parameterTableView.setFixedCellSize(ConfigurationListener.CELL_SIZE);
         parameterTableView.setPlaceholder(new Text());
         parameterTableView.setEditable(true);
 
@@ -107,23 +105,23 @@ public class BehaviourParametersTab extends Tab {
         this.setContent(vbox);
 
         // listener object for updating tableview
-        this.parameterListener = new ParameterListener(this.parameterTableView);
+        this.configurationListener = new ConfigurationListener(this.parameterTableView);
 
-        // Update if new Behaviour is selected
-        this.selectedBehaviour.addListener(parameterListener);
+        // Update if new Configuration is selected
+        this.selectedConfiguration.addListener(configurationListener);
     }
 
     public void setParentViewModel(ViewModelElement parentViewModel) {
-        if (this.selectedBehaviour.get() != null) {
-            this.selectedBehaviour.get().getParameters().removeListener(this.parameterListener);
+        if (this.selectedConfiguration.get() != null) {
+            this.selectedConfiguration.get().getParameters().removeListener(this.configurationListener);
         }
-        this.selectedBehaviour.set((BehaviourViewModel) parentViewModel);
-        this.selectedBehaviour.get().getParameters().addListener(this.parameterListener);
+        this.selectedConfiguration.set((ConfigurationViewModel) parentViewModel);
+        this.selectedConfiguration.get().getParameters().addListener(this.configurationListener);
     }
 
     private boolean fireEvent(Map.Entry<String, String> newValue, Map.Entry<String, String> oldValue) {
-        GuiChangeAttributeEvent addKeyValueEvent = new GuiChangeAttributeEvent(GuiEventType.CHANGE_ELEMENT, Types.BEHAVIOUR, selectedBehaviour.get().getName());
-        addKeyValueEvent.setElementId(selectedBehaviour.get().getId());
+        GuiChangeAttributeEvent addKeyValueEvent = new GuiChangeAttributeEvent(GuiEventType.CHANGE_ELEMENT, Types.CONFIGURATION, selectedConfiguration.get().getName());
+        addKeyValueEvent.setElementId(selectedConfiguration.get().getId());
         addKeyValueEvent.setAttributeType(Map.Entry.class.getSimpleName());
         addKeyValueEvent.setAttributeName("parameters");
         if (!newValue.getKey().equals("")) {

@@ -1,6 +1,6 @@
 package de.unikassel.vs.alica.planDesigner.view.properties.configuration;
 
-import de.unikassel.vs.alica.planDesigner.view.model.BehaviourViewModel;
+import de.unikassel.vs.alica.planDesigner.view.model.ConfigurationViewModel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
@@ -8,13 +8,13 @@ import javafx.scene.control.TableView;
 
 import java.util.Map;
 
-public class ParameterListener<T> implements ChangeListener<T>, MapChangeListener {
+public class ConfigurationListener<T> implements ChangeListener<T>, MapChangeListener {
 
     // height of a row in px
     public static final int CELL_SIZE = 28;
     private TableView<Map.Entry<String, String>> parametersTableView;
 
-    ParameterListener(TableView<Map.Entry<String, String>> parametersTableView) {
+    ConfigurationListener(TableView<Map.Entry<String, String>> parametersTableView) {
         this.parametersTableView = parametersTableView;
     }
 
@@ -25,7 +25,7 @@ public class ParameterListener<T> implements ChangeListener<T>, MapChangeListene
 
     @Override
     public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
-        this.updateTable(((BehaviourViewModel) newValue).getParameters());
+        this.updateTable(((ConfigurationViewModel) newValue).getParameters());
     }
 
     private void updateTable(Map<String, String> newParameterMap) {

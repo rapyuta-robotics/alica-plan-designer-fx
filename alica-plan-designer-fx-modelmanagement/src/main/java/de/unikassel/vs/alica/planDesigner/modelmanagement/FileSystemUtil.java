@@ -21,6 +21,8 @@ public class FileSystemUtil {
                 return Paths.get(mmq.getAbsoluteDirectory(), mmq.getName() + "." + Extensions.TASKREPOSITORY).toFile();
             case Types.ROLESET:
                 return Paths.get(mmq.getAbsoluteDirectory(), mmq.getName() + "." + Extensions.ROLESET).toFile();
+            case Types.CONFIGURATION:
+                return Paths.get(mmq.getAbsoluteDirectory(), mmq.getName() + "." + Extensions.CONFIGURATION).toFile();
             default:
                 System.err.println("FileSystemUtil: Unknown eventType gets ignored!");
                 return null;
@@ -77,6 +79,8 @@ public class FileSystemUtil {
             return Extensions.PLANTYPE;
         } else if (planElement instanceof TaskRepository) {
             return Extensions.TASKREPOSITORY;
+        } else if (planElement instanceof Configuration) {
+            return Extensions.CONFIGURATION;
         } else if (planElement instanceof RoleSet) {
             return Extensions.ROLESET;
         } else {

@@ -44,46 +44,37 @@ public class ModelManager implements Observer {
     private String tasksPath;
     private String rolesPath;
 
-    private HashMap<Long, PlanElement> planElementMap;
-    private HashMap<Long, Plan> planMap;
-    private HashMap<Long, Behaviour> behaviourMap;
-    private HashMap<Long, PlanType> planTypeMap;
+    private HashMap<Long, PlanElement> planElementMap = new HashMap<>();
+    private HashMap<Long, Plan> planMap = new HashMap<>();
+    private HashMap<Long, Behaviour> behaviourMap = new HashMap<>();
+    private HashMap<Long, PlanType> planTypeMap = new HashMap<>();
+    private HashMap<Long, Configuration> configurationMap = new HashMap<>();
     private TaskRepository taskRepository;
     private RoleSet roleSet;
 
-    private List<IModelEventHandler> eventHandlerList;
-    private CommandStack commandStack;
+    private List<IModelEventHandler> eventHandlerList = new ArrayList<>();
+    private CommandStack commandStack = new CommandStack();
 
     /**
      * This list remembers elements that should be saved, in order
      * to ignore filesystem-modification-events created by the
      * save command. Entries gets deleted through the events.
      */
-    private HashMap<Long, Integer> elementsSavedMap;
+    private HashMap<Long, Integer> elementsSavedMap = new HashMap<>();
 
-    private HashMap<Long, Integer> elementDeletedMap;
+    private HashMap<Long, Integer> elementDeletedMap = new HashMap<>();
 
     /**
      * In this map all necessary information about the visualisation
      * of a {@link Plan} is saved and can be accessed by the id of the
      * corresponding Plan
      */
-    private HashMap<Long, UiExtension> uiExtensionMap;
+    private HashMap<Long, UiExtension> uiExtensionMap = new HashMap<>();
 
     private ObjectMapper objectMapper;
 
     public ModelManager() {
-        planElementMap = new HashMap<>();
-        planMap = new HashMap<>();
-        behaviourMap = new HashMap<>();
-        planTypeMap = new HashMap<>();
-        eventHandlerList = new ArrayList<>();
-        commandStack = new CommandStack();
         commandStack.addObserver(this);
-        elementsSavedMap = new HashMap<>();
-        elementDeletedMap = new HashMap<>();
-        uiExtensionMap = new HashMap<>();
-
         setupObjectMapper();
     }
 
@@ -148,40 +139,45 @@ public class ModelManager implements Observer {
     }
 
     public PlanElement getPlanElement(String absolutePath) {
-        String name = absolutePath.substring(absolutePath.lastIndexOf(File.separator) + 1);
-        String[] split = name.split("\\.");
-        if (split[split.length - 1].equals(Extensions.BEHAVIOUR)) {
+        String filename = absolutePath.substring(absolutePath.lastIndexOf(File.separator) + 1);
+        String[] split = filename.split("\\.");
+        String extension = split[split.length - 1];
+        String name = split[0];
+        if (extension.equals(Extensions.BEHAVIOUR)) {
             for (Behaviour beh : behaviourMap.values()) {
-                if (beh.getName().equals(split[0])) {
+                if (beh.getName().equals(name)) {
                     return beh;
                 }
             }
-        } else if (split[split.length - 1].equals(Extensions.PLAN)
-                || split[split.length - 1].equals(Extensions.PLAN_EXTENSION)) {
+        } else if (extension.equals(Extensions.PLAN)
+                || extension.equals(Extensions.PLAN_EXTENSION)) {
             for (Plan plan : planMap.values()) {
-                if (plan.getName().equals(split[0])) {
+                if (plan.getName().equals(name)) {
                     return plan;
                 }
             }
-        } else if (split[split.length - 1].equals(Extensions.PLANTYPE)) {
+        } else if (extension.equals(Extensions.PLANTYPE)) {
             for (PlanType pt : planTypeMap.values()) {
-                if (pt.getName().equals(split[0])) {
+                if (pt.getName().equals(name)) {
                     return pt;
                 }
             }
-        } else if (split[split.length - 1].equals(Extensions.TASKREPOSITORY)) {
-            if (taskRepository == null) {
-                return null;
+        } else if (extension.equals(Extensions.CONFIGURATION)) {
+            for (PlanElement pe : configurationMap.values()) {
+                if (pe.getName().equals(name)) {
+                    return pe;
+                }
             }
-            if (taskRepository.getName().equals(split[0])) {
+        } else if (extension.equals(Extensions.TASKREPOSITORY)) {
+            if (taskRepository != null && taskRepository.getName().equals(name)) {
                 return taskRepository;
             }
-        } else if (split[split.length - 1].equals(Extensions.ROLESET)) {
-            if (roleSet != null && roleSet.getName().equals(split[0])) {
+        } else if (extension.equals(Extensions.ROLESET)) {
+            if (roleSet != null && roleSet.getName().equals(name)) {
                 return roleSet;
             }
-        } else {
-            System.out.println("ModelManager: trying to get PlanElement for unsupported ending: " + split[split.length - 1]);
+        }  else {
+            System.err.println("ModelManager: Trying to get PlanElement for unsupported ending: " + extension);
         }
         return null;
     }
@@ -411,8 +407,7 @@ public class ModelManager implements Observer {
             if (path.contains(plansPath) || path.contains(rolesPath)) {
                 throw new RuntimeException("ModelManager: The file " + file + " is located in the wrong directory!");
             }
-        } else if (path.endsWith(Extensions.CAPABILITY_DEFINITION) || path.endsWith(Extensions.ROLES_DEFINITION)
-                || path.endsWith(Extensions.ROLESET) || path.endsWith(Extensions.ROLESET_GRAPH)) {
+        } else if (path.endsWith(Extensions.ROLESET)) {
             if (path.contains(plansPath) || path.contains(tasksPath)) {
                 throw new RuntimeException("ModelManager: The file " + file + " is located in the wrong directory!");
             }
@@ -643,6 +638,10 @@ public class ModelManager implements Observer {
                         planElementMap.put(characteristic.getId(), characteristic);
                     }
                 }
+                break;
+            case Types.CONFIGURATION:
+                Configuration configuration = (Configuration) planElement;
+                configurationMap.put(planElement.getId(), configuration);
                 break;
             default:
                 throw new RuntimeException("ModelManager: Storing " + type + " not implemented, yet!");
@@ -1019,6 +1018,9 @@ public class ModelManager implements Observer {
                     case Types.BEHAVIOUR:
                         cmd = new CreateBehaviour(this, mmq);
                         break;
+                    case Types.CONFIGURATION:
+                        cmd = new CreateConfiguration(this, mmq);
+                        break;
                     case Types.TASK:
                         cmd = new CreateTask(this, mmq);
                         break;
@@ -1060,7 +1062,7 @@ public class ModelManager implements Observer {
                 if ( element == null || ignoreModifiedEvent(element)) {
                     return;
                 }
-                cmd = new ParsePlan(this, mmq);
+                cmd = new ParsePlanElement(this, mmq);
                 break;
             case DELETE_ELEMENT:
                 //Folder has no ID
@@ -1228,7 +1230,7 @@ public class ModelManager implements Observer {
                 SerializablePlanElement serializablePlanElement = (SerializablePlanElement) getPlanElement(mmq.getElementId());
                 mmq.absoluteDirectory = Paths.get(plansPath, serializablePlanElement.getRelativeDirectory()).toString();
                 mmq.name = serializablePlanElement.getName();
-                cmd = new ParsePlan(this, mmq);
+                cmd = new ParsePlanElement(this, mmq);
                 break;
             case CHANGE_ELEMENT:
                 switch (mmq.getElementType()) {
@@ -1383,6 +1385,14 @@ public class ModelManager implements Observer {
                 File outfile = Paths.get(outdir.toString(), planElement.getName() + "." + fileExtension).toFile();
                 objectMapper.writeValue(outfile, (Behaviour) planElement);
                 fireEvent(new ModelEvent(ModelEventType.ELEMENT_SERIALIZED, planElement, Types.BEHAVIOUR));
+            } else if (Extensions.CONFIGURATION.equals(fileExtension)) {
+                File outdir = Paths.get(plansPath, planElement.getRelativeDirectory()).toFile();
+                if (!outdir.exists()) {
+                    outdir.mkdirs();
+                }
+                File outfile = Paths.get(outdir.toString(), planElement.getName() + "." + fileExtension).toFile();
+                objectMapper.writeValue(outfile, (Configuration) planElement);
+                fireEvent(new ModelEvent(ModelEventType.ELEMENT_SERIALIZED, planElement, Types.CONFIGURATION));
             } else if (Extensions.TASKREPOSITORY.equals(fileExtension)) {
                 File outdir = Paths.get(tasksPath, planElement.getRelativeDirectory()).toFile();
                 if (!outdir.exists()) {

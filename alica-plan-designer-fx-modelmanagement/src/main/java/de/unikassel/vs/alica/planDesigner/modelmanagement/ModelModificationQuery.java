@@ -59,6 +59,9 @@ public class ModelModificationQuery {
             case Extensions.PLAN_EXTENSION:
                 elementType = Types.PLAN; //TODO: Handle plan-stateUiElement-ending - Files
                 break;
+            case Extensions.CONFIGURATION:
+                elementType = Types.CONFIGURATION;
+                break;
             default:
                 elementType = Types.UNSUPPORTED;
                 System.err.println("ModelModificationQuery: Unknown ending of file " + absolutePath);

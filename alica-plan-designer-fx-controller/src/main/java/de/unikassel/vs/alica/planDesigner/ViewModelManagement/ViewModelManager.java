@@ -91,6 +91,8 @@ public class ViewModelManager {
             element = createConditionViewModel((Condition) planElement);
         } else if (planElement instanceof BendPoint) {
             element = createBendPointViewModel((BendPoint) planElement);
+        }  else if (planElement instanceof Configuration) {
+            element = createConfigurationViewModel((Configuration) planElement);
         } else {
             System.err.println("ViewModelManager: getSerializableViewModel for type " + planElement.getClass().toString() + " not implemented!");
         }
@@ -98,6 +100,16 @@ public class ViewModelManager {
         viewModelElements.put(planElement.getId(), element);
         element.registerListener(guiModificationHandler);
         return element;
+    }
+
+    private ConfigurationViewModel createConfigurationViewModel(Configuration configuration) {
+        ConfigurationViewModel configurationViewModel = new ConfigurationViewModel(configuration.getId(), configuration.getName());
+        configurationViewModel.setComment(configuration.getComment());
+        configurationViewModel.setRelativeDirectory(configuration.getRelativeDirectory());
+        for (Map.Entry<String, String> keyValuePair : configuration.getParameters().entrySet()) {
+            configurationViewModel.modifyParameter(keyValuePair, null);
+        }
+        return configurationViewModel;
     }
 
     private BendPointViewModel createBendPointViewModel(BendPoint bendPoint) {
@@ -110,7 +122,7 @@ public class ViewModelManager {
     }
 
     private TaskRepositoryViewModel createTaskRepositoryViewModel(TaskRepository taskRepository) {
-        TaskRepositoryViewModel taskRepositoryViewModel = new TaskRepositoryViewModel(taskRepository.getId(), taskRepository.getName(), Types.TASKREPOSITORY);
+        TaskRepositoryViewModel taskRepositoryViewModel = new TaskRepositoryViewModel(taskRepository.getId(), taskRepository.getName());
         taskRepositoryViewModel.setComment(taskRepository.getComment());
         taskRepositoryViewModel.setRelativeDirectory(taskRepository.getRelativeDirectory());
         // we need to put the repo before creating tasks, in order to avoid circles (Task <-> Repo)
@@ -209,10 +221,6 @@ public class ViewModelManager {
         for (Variable variable : behaviour.getVariables()) {
             behaviourViewModel.getVariables().add((VariableViewModel) getViewModelElement(variable));
         }
-
-//        for (Map.Entry<String, String> keyValuePair : behaviour.getParameters().entrySet()) {
-//            behaviourViewModel.modifyParameter(keyValuePair, null);
-//        }
 
         if (behaviour.getPreCondition() != null) {
             ConditionViewModel preConditionViewModel = (ConditionViewModel) getViewModelElement(behaviour.getPreCondition());
@@ -802,10 +810,6 @@ public class ViewModelManager {
                 conditionViewModel = (ConditionViewModel) parentViewModel;
                 conditionViewModel.getQuantifiers().add((QuantifierViewModel) viewModelElement);
                 break;
-            case Types.TASKREPOSITORY:
-            case Types.ROLESET:
-                //No-OP
-                break;
             case Types.ROLE_CHARCTERISTIC:
                 CharacteristicViewModel characteristicViewModel = (CharacteristicViewModel) viewModelElement;
                 if (event.getEventType() == ModelEventType.ELEMENT_CREATED) {
@@ -820,7 +824,11 @@ public class ViewModelManager {
                     roleSetViewModel.addRole(roleViewModel);
                 }
                 break;
+            case Types.TASKREPOSITORY:
+            case Types.ROLESET:
             case Types.BENDPOINT:
+            case Types.CONFIGURATION:
+                //No-OP
                 break;
             default:
                 System.err.println("ViewModelManager: Add Element not supported for type: " + viewModelElement.getType());
@@ -1042,12 +1050,12 @@ public class ViewModelManager {
 
     public void changeElementAttribute(ViewModelElement viewModelElement, String changedAttribute, Object newValue, Object oldValue) {
         try {
-            if (newValue instanceof Map.Entry || (viewModelElement instanceof  BehaviourViewModel && changedAttribute.equals("parameters"))) {
-                BehaviourViewModel behaviour = (BehaviourViewModel) viewModelElement;
-                behaviour.modifyParameter((Map.Entry<String, String>)newValue, (Map.Entry<String, String>)oldValue);
-            } else {
+//            if (newValue instanceof Map.Entry || (viewModelElement instanceof  BehaviourViewModel && changedAttribute.equals("parameters"))) {
+//                BehaviourViewModel behaviour = (BehaviourViewModel) viewModelElement;
+//                behaviour.modifyParameter((Map.Entry<String, String>)newValue, (Map.Entry<String, String>)oldValue);
+//            } else {
                 BeanUtils.setProperty(viewModelElement, changedAttribute, newValue);
-            }
+//            }
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

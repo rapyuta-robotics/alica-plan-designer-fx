@@ -11,11 +11,11 @@ import java.io.File;
 /**
  * Parses a given file and adds the resulting object to the corresponding maps of the model manager.
  */
-public class ParsePlan extends Command {
-    PlanElement oldElement;
-    PlanElement newElement;
+public class ParsePlanElement extends Command {
+    SerializablePlanElement oldElement;
+    SerializablePlanElement newElement;
 
-    public ParsePlan(ModelManager modelManager, ModelModificationQuery mmq) {
+    public ParsePlanElement(ModelManager modelManager, ModelModificationQuery mmq) {
         super(modelManager, mmq);
         oldElement = null;
         newElement = null;
@@ -42,14 +42,16 @@ public class ParsePlan extends Command {
             case Types.ROLESET:
                 newElement = modelManager.parseFile(FileSystemUtil.getFile(mmq), RoleSet.class);
                 break;
+            case Types.CONFIGURATION:
+                newElement = modelManager.parseFile(FileSystemUtil.getFile(mmq), Configuration.class);
+                break;
             default:
-                System.err.println("ParseAbstractPlan: Parsing model eventType " + mmq.getElementType() + " not implemented, yet!");
-                return;
+                throw new RuntimeException("ParseSerializableElement: Parsing model eventType " + mmq.getElementType() + " not implemented, yet!");
         }
 
         //Add listeners to newElements isDirty-flag
-        ((SerializablePlanElement) newElement).registerDirtyFlag();
-        ((SerializablePlanElement)newElement).dirtyProperty().addListener((observable, oldValue, newValue) -> {
+        newElement.registerDirtyFlag();
+        newElement.dirtyProperty().addListener((observable, oldValue, newValue) -> {
             ModelEvent event = new ModelEvent(ModelEventType.ELEMENT_ATTRIBUTE_CHANGED, newElement
                     , mmq.getElementType());
             event.setChangedAttribute("dirty");
@@ -58,7 +60,7 @@ public class ParsePlan extends Command {
         });
 
         //Searching for an existing element with the same id, because that will be replaced and needs to be stored for undo
-        oldElement = modelManager.getPlanElement(newElement.getId());
+        oldElement = (SerializablePlanElement) modelManager.getPlanElement(newElement.getId());
 
         if (newElement instanceof Plan ) {
 
