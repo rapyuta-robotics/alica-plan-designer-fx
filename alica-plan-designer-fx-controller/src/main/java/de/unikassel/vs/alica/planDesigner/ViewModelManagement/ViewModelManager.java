@@ -210,9 +210,9 @@ public class ViewModelManager {
             behaviourViewModel.getVariables().add((VariableViewModel) getViewModelElement(variable));
         }
 
-        for (Map.Entry<String, String> keyValuePair : behaviour.getParameters().entrySet()) {
-            behaviourViewModel.modifyParameter(keyValuePair, null);
-        }
+//        for (Map.Entry<String, String> keyValuePair : behaviour.getParameters().entrySet()) {
+//            behaviourViewModel.modifyParameter(keyValuePair, null);
+//        }
 
         if (behaviour.getPreCondition() != null) {
             ConditionViewModel preConditionViewModel = (ConditionViewModel) getViewModelElement(behaviour.getPreCondition());

@@ -1070,6 +1070,5 @@ public class SavePlanTest extends ApplicationTest {
         Assert.assertNull(behaviour.getPreCondition());
         Assert.assertNull(behaviour.getRuntimeCondition());
         Assert.assertNull(behaviour.getPostCondition());
-        Assert.assertEquals(Collections.<String, String>emptyMap(), behaviour.getParameters());
     }
 }

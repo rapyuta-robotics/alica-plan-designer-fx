@@ -131,7 +131,6 @@ public class PlanTab extends AbstractPlanTab {
             case Types.BEHAVIOUR:
             case Types.PLAN:
             case Types.PLANTYPE:
-            case Types.CONFIGURATION:
                 GuiModificationEvent event = new GuiModificationEvent(GuiEventType.REMOVE_ELEMENT, planElementViewModel.getType(), planElementViewModel.getName());
                 event.setParentId(((AbstractPlanContainer)selectedContainer).getParentStateContainer().getState().getId());
                 event.setElementId(planElementViewModel.getId());

@@ -21,6 +21,7 @@ public class NewResourceMenu extends Menu {
     private I18NRepo i18NRepo;
     private File initialDirectoryHint;
     private MenuItem newTaskRepositoryMenuItem;
+    private MenuItem newConfigurationMenuItem;
     private MenuItem newRoleSetMenuItem;
 
     public NewResourceMenu(File initialDirectoryHint) {
@@ -42,6 +43,9 @@ public class NewResourceMenu extends Menu {
         newTaskRepositoryMenuItem = new MenuItem(i18NRepo.getString("label.menu.new.taskrepository"));
         newTaskRepositoryMenuItem.setOnAction(e -> createFileDialog(this.initialDirectoryHint, Types.TASKREPOSITORY).showAndWait());
         getItems().add(newTaskRepositoryMenuItem);
+        newConfigurationMenuItem = new MenuItem(i18NRepo.getString("label.menu.new.configuration"));
+        newConfigurationMenuItem.setOnAction(e -> createFileDialog(this.initialDirectoryHint, Types.CONFIGURATION).showAndWait());
+        getItems().add(newConfigurationMenuItem);
         MenuItem newFolderMenuItem = new MenuItem(i18NRepo.getString("label.menu.new.folder"));
         newFolderMenuItem.setOnAction(e -> createFileDialog(this.initialDirectoryHint, Types.FOLDER).showAndWait());
         getItems().add(newFolderMenuItem);
