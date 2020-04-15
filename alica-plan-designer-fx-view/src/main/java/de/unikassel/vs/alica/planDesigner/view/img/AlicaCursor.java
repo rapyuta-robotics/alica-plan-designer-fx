@@ -53,10 +53,10 @@ public class AlicaCursor extends ImageCursor {
         add_synctransition,
         bendpoint_synctransition,
 
-        //postcondition
-        postcondition,
-        forbidden_postcondition,
-        add_postcondition,
+        //configuration
+        configuration,
+        forbidden_configuration,
+        add_configuration,
 
         //plantypes
         tasks,

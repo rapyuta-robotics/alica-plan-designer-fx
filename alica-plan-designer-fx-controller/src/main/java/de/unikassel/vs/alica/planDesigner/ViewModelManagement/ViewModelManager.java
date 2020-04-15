@@ -647,7 +647,7 @@ public class ViewModelManager {
                 }
                 break;
             default:
-                System.err.println("ViewModelManager: Remove Element not supported for type: " + viewModelElement.getType());
+                System.err.println("ViewModelManager: Removing elements of type: " + viewModelElement.getType() + " not supported!");
         }
 
         if(viewModelElement.getType() != Types.TRANSITION && (relatedObjects == null || relatedObjects.isEmpty())) {

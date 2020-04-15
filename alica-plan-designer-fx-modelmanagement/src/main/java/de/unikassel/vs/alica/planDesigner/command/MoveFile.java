@@ -30,7 +30,9 @@ public class MoveFile extends ChangeAttributeCommand {
 
     @Override
     public void undoCommand() {
-        this.modelManager.moveFile(elementToMove, type, originalRelativeDirectory, ending);
-        fireEvent(elementToMove, type, "relativeDirectory");
+        throw new RuntimeException("MoveFile: Undo is not completely supported, yet!");
+        // make the originalRelativeDirectory an absolute one, because moveFile(..) expect an absolut path
+//        this.modelManager.moveFile(elementToMove, type, originalRelativeDirectory, ending);
+//        fireEvent(elementToMove, type, "relativeDirectory");
     }
 }

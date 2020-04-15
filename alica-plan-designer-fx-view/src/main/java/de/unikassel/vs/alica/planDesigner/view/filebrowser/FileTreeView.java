@@ -360,6 +360,9 @@ public final class FileTreeView extends TreeView<File> {
                     case Types.TASKREPOSITORY:
                         FileTreeView.this.getScene().setCursor(new AlicaCursor(AlicaCursor.Type.tasks));
                         break;
+                    case Types.CONFIGURATION:
+                        FileTreeView.this.getScene().setCursor(new AlicaCursor(AlicaCursor.Type.configuration));
+                        break;
                     default:
                         System.err.println("FileTreeView: " + draggedItem.getViewModelElement().getType() + " not handled!");
                 }
