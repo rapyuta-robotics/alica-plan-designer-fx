@@ -121,9 +121,8 @@ public final class FileTreeView extends TreeView<File> {
                     AlicaIcon.Size.BIG)), viewModelElement);
             folder.getChildren().add(newItem);
             folder.getChildren().sort(Comparator.comparing(TreeItem::getValue));
-
         } else {
-            throw new RuntimeException("Destination folder for PlanElement " + viewModelElement.getName() + " does not exist!");
+            throw new RuntimeException("FileTreeView: Destination folder for PlanElement " + viewModelElement.getName() + " does not exist!");
         }
     }
 
@@ -186,6 +185,8 @@ public final class FileTreeView extends TreeView<File> {
                 return Paths.get(plansPath, viewModelElement.getRelativeDirectory(), viewModelElement.getName() + ".rst").toFile();
             case Types.TASKREPOSITORY:
                 return Paths.get(taskPath, viewModelElement.getRelativeDirectory(), viewModelElement.getName() + ".tsk").toFile();
+            case Types.CONFIGURATION:
+                return Paths.get(plansPath, viewModelElement.getRelativeDirectory(), viewModelElement.getName() + ".cfg").toFile();
             default:
                 System.err.println("FileTreeView: " + viewModelElement.getType() + " not handled!");
                 return null;
@@ -204,6 +205,7 @@ public final class FileTreeView extends TreeView<File> {
             case Types.MASTERPLAN:
             case Types.PLAN:
             case Types.PLANTYPE:
+            case Types.CONFIGURATION:
                 return plansFileTreeItem;
             case Types.TASKREPOSITORY:
                 return tasksFileTreeItem;
@@ -225,10 +227,9 @@ public final class FileTreeView extends TreeView<File> {
      * @return
      */
     private FileTreeItem findFolder(ViewModelElement modelElement, FileTreeItem treeItem, int index) {
-        String relativePath = modelElement.getRelativeDirectory();
         // The value of File.separator under Windows is "\", which doesn't work here, because split requires a regex and
         // "\" is not a valid regex. Patten.quote() allows to fit the input exactly (ignoring regex-like syntax)
-        String[] folders = relativePath.split(Pattern.quote(File.separator));
+        String[] folders = modelElement.getRelativeDirectory().split(Pattern.quote(File.separator));
         if (folders.length == 1 && folders[0].isEmpty()) {
             return treeItem;
         }

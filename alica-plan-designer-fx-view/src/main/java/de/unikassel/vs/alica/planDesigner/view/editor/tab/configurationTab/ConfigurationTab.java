@@ -1,22 +1,24 @@
-package de.unikassel.vs.alica.planDesigner.view.properties.configuration;
+package de.unikassel.vs.alica.planDesigner.view.editor.tab.configurationTab;
 
 import de.unikassel.vs.alica.planDesigner.controller.MainWindowController;
 import de.unikassel.vs.alica.planDesigner.events.GuiChangeAttributeEvent;
 import de.unikassel.vs.alica.planDesigner.events.GuiEventType;
+import de.unikassel.vs.alica.planDesigner.events.GuiModificationEvent;
 import de.unikassel.vs.alica.planDesigner.view.Types;
-import de.unikassel.vs.alica.planDesigner.view.model.ConfigurationViewModel;
-import de.unikassel.vs.alica.planDesigner.view.model.ViewModelElement;
+import de.unikassel.vs.alica.planDesigner.view.editor.tab.EditorTab;
+import de.unikassel.vs.alica.planDesigner.view.editor.tab.EditorTabPane;
+import de.unikassel.vs.alica.planDesigner.view.model.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
@@ -24,17 +26,32 @@ import javafx.util.Callback;
 import java.util.AbstractMap;
 import java.util.Map;
 
-public class ConfigurationsTab extends Tab {
+public class ConfigurationTab extends EditorTab {
 
-    private final ObjectProperty<ConfigurationViewModel> selectedConfiguration = new SimpleObjectProperty<>();
-
-
+    protected ConfigurationViewModel configurationViewModel;
     private TableView<Map.Entry<String, String>> parameterTableView;
     private ConfigurationListener configurationListener;
 
-    public ConfigurationsTab(String title) {
-        super(title);
+    public ConfigurationTab(SerializableViewModel serializableViewModel, EditorTabPane editorTabPane) {
+        super(serializableViewModel, editorTabPane.getGuiModificationHandler());
 
+        editorTabPane.getSelectionModel().selectedItemProperty().addListener((observable, selectedTabBefore, selectedTab) -> {
+            if (this == selectedTab) {
+                this.elementInformationPane.setViewModelElement(configurationViewModel);
+            }
+        });
+        editorTabPane.focusedProperty().addListener((observable, focusedBefore, focused) -> {
+            if (focused && editorTabPane.getSelectionModel().getSelectedItem() == this) {
+                this.elementInformationPane.setViewModelElement(configurationViewModel);
+            }
+        });
+
+        configurationViewModel = (ConfigurationViewModel) serializableViewModel;
+
+        draw();
+    }
+
+    private void draw() {
         // Table
         ObservableList<Map.Entry<String, String>> items = FXCollections.observableArrayList();
         parameterTableView = new TableView<>(items);
@@ -48,7 +65,7 @@ public class ConfigurationsTab extends Tab {
         keyColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         keyColumn.setEditable(true);
         keyColumn.setOnEditCommit(event -> {
-//            System.out.println("BehaviourParametersTab: Key RowValue: " + event.getRowValue() + " OldValue: " + event.getOldValue() + " NewValue: " + event.getNewValue());
+            System.out.println("ConfigurationTab: Key RowValue: " + event.getRowValue() + " OldValue: " + event.getOldValue() + " NewValue: " + event.getNewValue());
             if (!fireEvent(new AbstractMap.SimpleEntry<String,String>(event.getNewValue(), event.getRowValue().getValue()), event.getRowValue())) {
                 parameterTableView.refresh();
             }
@@ -62,7 +79,7 @@ public class ConfigurationsTab extends Tab {
         valueColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         valueColumn.setEditable(true);
         valueColumn.setOnEditCommit(event -> {
-//            System.out.println("BehaviourParametersTab: Value RowValue: " + event.getRowValue() + " OldValue: " + event.getOldValue() + " NewValue: " + event.getNewValue());
+            System.out.println("ConfigurationTab: Value RowValue: " + event.getRowValue() + " OldValue: " + event.getOldValue() + " NewValue: " + event.getNewValue());
             if (!fireEvent(new AbstractMap.SimpleEntry<String,String>(event.getRowValue().getKey(), event.getNewValue()), event.getRowValue())) {
                 parameterTableView.refresh();
             }
@@ -80,7 +97,7 @@ public class ConfigurationsTab extends Tab {
                 removeItem.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        System.out.println("BehaviourParametersTab: Delete Key: " + row.getItem().getKey() + " Value: " + row.getItem().getValue());
+                        System.out.println("ConfigurationTab: Delete Key: " + row.getItem().getKey() + " Value: " + row.getItem().getValue());
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -102,26 +119,34 @@ public class ConfigurationsTab extends Tab {
         VBox vbox = new VBox();
         vbox.setFillWidth(true);
         vbox.getChildren().add(this.parameterTableView);
-        this.setContent(vbox);
+
+        splitPane.getItems().add(0, vbox);
+
 
         // listener object for updating tableview
         this.configurationListener = new ConfigurationListener(this.parameterTableView);
+    }
 
-        // Update if new Configuration is selected
-        this.selectedConfiguration.addListener(configurationListener);
+    public void save() {
+        save(Types.CONFIGURATION);
+    }
+
+    public GuiModificationEvent handleDelete() {
+        System.err.println("ConfigurationTab: handleDelete() called, but not implemented!");
+        return null;
     }
 
     public void setParentViewModel(ViewModelElement parentViewModel) {
-        if (this.selectedConfiguration.get() != null) {
-            this.selectedConfiguration.get().getParameters().removeListener(this.configurationListener);
+        if (this.configurationViewModel != null) {
+            this.configurationViewModel.getParameters().removeListener(this.configurationListener);
         }
-        this.selectedConfiguration.set((ConfigurationViewModel) parentViewModel);
-        this.selectedConfiguration.get().getParameters().addListener(this.configurationListener);
+        this.configurationViewModel = (ConfigurationViewModel) parentViewModel;
+        this.configurationViewModel.getParameters().addListener(this.configurationListener);
     }
 
     private boolean fireEvent(Map.Entry<String, String> newValue, Map.Entry<String, String> oldValue) {
-        GuiChangeAttributeEvent addKeyValueEvent = new GuiChangeAttributeEvent(GuiEventType.CHANGE_ELEMENT, Types.CONFIGURATION, selectedConfiguration.get().getName());
-        addKeyValueEvent.setElementId(selectedConfiguration.get().getId());
+        GuiChangeAttributeEvent addKeyValueEvent = new GuiChangeAttributeEvent(GuiEventType.CHANGE_ELEMENT, Types.CONFIGURATION, configurationViewModel.getName());
+        addKeyValueEvent.setElementId(configurationViewModel.getId());
         addKeyValueEvent.setAttributeType(Map.Entry.class.getSimpleName());
         addKeyValueEvent.setAttributeName("parameters");
         if (!newValue.getKey().equals("")) {
@@ -139,3 +164,4 @@ public class ConfigurationsTab extends Tab {
         return true;
     }
 }
+

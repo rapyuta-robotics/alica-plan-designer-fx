@@ -1,4 +1,4 @@
-package de.unikassel.vs.alica.planDesigner.view.properties.configuration;
+package de.unikassel.vs.alica.planDesigner.view.editor.tab.configurationTab;
 
 import de.unikassel.vs.alica.planDesigner.view.model.ConfigurationViewModel;
 import javafx.beans.value.ChangeListener;
