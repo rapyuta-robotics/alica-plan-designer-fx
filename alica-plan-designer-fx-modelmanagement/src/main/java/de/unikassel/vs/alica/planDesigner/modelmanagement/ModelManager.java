@@ -13,6 +13,7 @@ import de.unikassel.vs.alica.planDesigner.command.add.AddTaskToEntryPoint;
 import de.unikassel.vs.alica.planDesigner.command.add.AddVariableToCondition;
 import de.unikassel.vs.alica.planDesigner.command.change.*;
 import de.unikassel.vs.alica.planDesigner.command.copy.CopyBehaviour;
+import de.unikassel.vs.alica.planDesigner.command.copy.CopyConfiguration;
 import de.unikassel.vs.alica.planDesigner.command.copy.CopyPlan;
 import de.unikassel.vs.alica.planDesigner.command.copy.CopyPlanType;
 import de.unikassel.vs.alica.planDesigner.command.create.*;
@@ -1202,7 +1203,7 @@ public class ModelManager implements Observer {
                         cmd = new CreateVariableBinding(this, mmq);
                         break;
                     default:
-                        System.err.println("ModelManager: Unknown model modification query gets ignored!");
+                        System.err.println("ModelManager: Unknown model modification query element of type " + mmq.getElementType() + " gets ignored!");
                         return;
                 }
                 break;
@@ -1218,8 +1219,11 @@ public class ModelManager implements Observer {
                     case Types.PLANTYPE:
                         cmd = new CopyPlanType(this, mmq);
                         break;
+                    case Types.CONFIGURATION:
+                        cmd = new CopyConfiguration(this, mmq);
+                        break;
                     default:
-                        System.err.println("ModelManager: Unknown model modification query element gets ignored!");
+                        System.err.println("ModelManager: Unknown model modification query element of type " + mmq.getElementType() + " gets ignored!");
                         return;
                 }
                 break;
@@ -1243,7 +1247,7 @@ public class ModelManager implements Observer {
                         cmd = new RemoveAbstractPlanFromState(this, mmq);
                         break;
                     default:
-                        System.err.println("ModelManager: Unknown model modification query element gets ignored!");
+                        System.err.println("ModelManager: Unknown model modification query element of type " + mmq.getElementType() + " gets ignored!");
                         return;
                 }
                 break;
