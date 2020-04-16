@@ -4,45 +4,45 @@ import de.unikassel.vs.alica.planDesigner.view.model.ConfigurationViewModel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import javafx.scene.control.TableView;
+import javafx.scene.text.Font;
 
+import java.util.AbstractMap;
 import java.util.Map;
 
-public class ConfigurationListener<T> implements ChangeListener<T>, MapChangeListener {
-
-    // height of a row in px
-    public static final int CELL_SIZE = 28;
-    private TableView<Map.Entry<String, String>> parametersTableView;
+public class ConfigurationListener implements ChangeListener<ConfigurationViewModel>, MapChangeListener<String, String> {
+    private final TableView<Map.Entry<String, String>> parametersTableView;
 
     ConfigurationListener(TableView<Map.Entry<String, String>> parametersTableView) {
         this.parametersTableView = parametersTableView;
     }
 
     @Override
-    public void onChanged(Change change) {
-        this.updateTable(change.getMap());
+    public void onChanged(Change<? extends String, ? extends String> change) {
+        this.updateTable((ObservableMap<String, String>) change.getMap());
     }
 
     @Override
-    public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
-        this.updateTable(((ConfigurationViewModel) newValue).getParameters());
+    public void changed(ObservableValue<? extends ConfigurationViewModel> observable, ConfigurationViewModel oldValue, ConfigurationViewModel newValue) {
+        this.updateTable(newValue.getParameters());
     }
 
-    private void updateTable(Map<String, String> newParameterMap) {
-        this.parametersTableView.getItems().clear();
-        this.parametersTableView.getItems().addAll(newParameterMap.entrySet());
-        this.resizeTableView(newParameterMap);
+    public void updateTable(ObservableMap<String, String> newParameterMap) {
+        parametersTableView.getItems().clear();
+        parametersTableView.getItems().addAll(newParameterMap.entrySet());
+        parametersTableView.getItems().add(new AbstractMap.SimpleEntry<String, String>("", ""));
+        resizeTableView(newParameterMap);
     }
 
     private void resizeTableView(Map<String, String> newParameterMap) {
-        int itemsAndHeaderSize = 2;
-        if (newParameterMap != null) {
-            itemsAndHeaderSize = newParameterMap.size() + 1;
-        }
+        double fontSize = Font.getDefault().getSize() * 2;
 
-        parametersTableView.setPrefHeight(itemsAndHeaderSize * CELL_SIZE);
-        parametersTableView.setMinHeight(itemsAndHeaderSize * CELL_SIZE);
-        parametersTableView.setMaxHeight(itemsAndHeaderSize * CELL_SIZE);
+        // FontSize * (#items + 1 empty row + 1 heading) + 2 for borders
+        double size = fontSize * (newParameterMap.size() + 2 ) + 2;
+        parametersTableView.setPrefHeight(size);
+        parametersTableView.setMinHeight(size);
+        parametersTableView.setMaxHeight(size);
         parametersTableView.refresh();
     }
 }

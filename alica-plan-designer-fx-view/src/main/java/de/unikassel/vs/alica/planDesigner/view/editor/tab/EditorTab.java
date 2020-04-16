@@ -26,18 +26,27 @@ public abstract class EditorTab extends Tab {
 
     public EditorTab (SerializableViewModel serializableViewModel, IGuiModificationHandler handler) {
         super(serializableViewModel.getName());
-        serializableViewModel.nameProperty().addListener((observable, oldValue, newValue) -> this.setText(newValue));
-        setGraphic(new ImageView(new AlicaIcon(serializableViewModel.getType(), AlicaIcon.Size.SMALL)));
-        // The type might change later (Plan -> MasterPlan)
-        serializableViewModel.typeProperty().addListener((observable, oldValue, newValue) ->
-                setGraphic(new ImageView(new AlicaIcon(newValue, AlicaIcon.Size.SMALL))));
 
         this.serializableViewModel = serializableViewModel;
         this. guiModificationHandler = handler;
         this.i18NRepo = I18NRepo.getInstance();
 
-        // The opened SerializableViewModel may be dirty already
-        if(isDirty()) {
+        // name updates: things can be renamed
+        serializableViewModel.nameProperty().addListener((observable, oldValue, newValue) -> {
+            if (!getText().contains("*")) {
+                this.setText(newValue + "*");
+            } else {
+                this.setText(newValue);
+            }
+        });
+
+        // icon updates: The type might change later (Plan -> MasterPlan)
+        setGraphic(new ImageView(new AlicaIcon(serializableViewModel.getType(), AlicaIcon.Size.SMALL)));
+        serializableViewModel.typeProperty().addListener((observable, oldValue, newValue) ->
+                setGraphic(new ImageView(new AlicaIcon(newValue, AlicaIcon.Size.SMALL))));
+
+        // dirty updates:
+        if(isDirty()) { // The opened SerializableViewModel may be dirty already
             this.setText(getText() + "*");
         }
         serializableViewModel.dirtyProperty().addListener((observable, oldValue, newValue) -> {
@@ -66,7 +75,7 @@ public abstract class EditorTab extends Tab {
         setContent(splitPane);
     }
 
-    public ViewModelElement getSerializableViewModel() {
+    public SerializableViewModel getSerializableViewModel() {
         return serializableViewModel;
     }
 

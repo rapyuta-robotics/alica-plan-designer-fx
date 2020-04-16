@@ -1050,12 +1050,12 @@ public class ViewModelManager {
 
     public void changeElementAttribute(ViewModelElement viewModelElement, String changedAttribute, Object newValue, Object oldValue) {
         try {
-//            if (newValue instanceof Map.Entry || (viewModelElement instanceof  BehaviourViewModel && changedAttribute.equals("parameters"))) {
-//                BehaviourViewModel behaviour = (BehaviourViewModel) viewModelElement;
-//                behaviour.modifyParameter((Map.Entry<String, String>)newValue, (Map.Entry<String, String>)oldValue);
-//            } else {
+            if (newValue instanceof Map.Entry || (viewModelElement instanceof  ConfigurationViewModel && changedAttribute.equals("parameters"))) {
+                ConfigurationViewModel configurationViewModel = (ConfigurationViewModel) viewModelElement;
+                configurationViewModel.modifyParameter((Map.Entry<String, String>)newValue, (Map.Entry<String, String>)oldValue);
+            } else {
                 BeanUtils.setProperty(viewModelElement, changedAttribute, newValue);
-//            }
+            }
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

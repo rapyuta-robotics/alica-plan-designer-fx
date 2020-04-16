@@ -16,13 +16,11 @@ public class ConfigurationViewModel extends SerializableViewModel{
 
         this.uiPropertyList.clear();
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "comment", "relativeDirectory"));
-
-        this.parameters.put("","");
     }
 
     public void registerListener(IGuiModificationHandler handler) {
         super.registerListener(handler);
-        // Note: Listener for configMap is added in ConfigurationsTab
+        // Note: ConfigurationListener for configMap is added in ConfigurationsTab
     }
 
     public ObservableMap<String, String> getParameters() {
