@@ -21,7 +21,7 @@ public final class RepositoryViewModel {
     private ObservableList<ViewModelElement> planTypes;
     private ObservableList<ViewModelElement> behaviours;
     private ObservableList<ViewModelElement> tasks;
-    private ObservableList<ViewModelElement> roles;
+    private ObservableList<ViewModelElement> configurations;
 
     private RepositoryTabPane repositoryTabPane;
 
@@ -30,7 +30,7 @@ public final class RepositoryViewModel {
         planTypes = FXCollections.observableArrayList(new ArrayList<>());
         behaviours = FXCollections.observableArrayList(new ArrayList<>());
         tasks = FXCollections.observableArrayList(new ArrayList<>());
-        roles = FXCollections.observableArrayList(new ArrayList<>());
+        configurations = FXCollections.observableArrayList(new ArrayList<>());
     }
 
     public void initGuiContent() {
@@ -43,6 +43,7 @@ public final class RepositoryViewModel {
         repositoryTabPane.addPlanTypes(planTypes);
         repositoryTabPane.addTasks(tasks);
         repositoryTabPane.addBehaviours(behaviours);
+        repositoryTabPane.addConfigurations(configurations);
         initListeners();
     }
 
@@ -51,7 +52,7 @@ public final class RepositoryViewModel {
         planTypes.clear();
         behaviours.clear();
         tasks.clear();
-        roles.clear();
+        configurations.clear();
     }
 
     public void initListeners() {
@@ -83,51 +84,13 @@ public final class RepositoryViewModel {
                 repositoryTabPane.addTasks(tasks);
             }
         });
-    }
-
-    public void removePlan(long id) {
-        for(ViewModelElement plan : plans) {
-            if(plan.getId() == id) {
-                this.plans.remove(plan);
-                break;
+        configurations.addListener(new ListChangeListener<ViewModelElement>() {
+            @Override
+            public void onChanged(Change<? extends ViewModelElement> c) {
+                repositoryTabPane.clearConfigurationsTab();
+                repositoryTabPane.addConfigurations(configurations);
             }
-        }
-    }
-
-    public void removeBehaviour(long id) {
-        for(ViewModelElement behaviour : behaviours) {
-            if(behaviour.getId() == id) {
-                this.behaviours.remove(behaviour);
-                break;
-            }
-        }
-    }
-
-    public void removePlanType(long id) {
-        for(ViewModelElement planType : planTypes) {
-            if(planType.getId() == id) {
-                this.planTypes.remove(planType);
-                break;
-            }
-        }
-    }
-
-    public void removeTask(long id) {
-        for(ViewModelElement task : tasks) {
-            if(task.getId() == id) {
-                this.tasks.remove(task);
-                break;
-            }
-        }
-    }
-
-    public void removeRole(long id) {
-        for(ViewModelElement role : roles) {
-            if(role.getId() == id) {
-                this.tasks.remove(role);
-                break;
-            }
-        }
+        });
     }
 
     public void setRepositoryTabPane(RepositoryTabPane repositoryTabPane) {
@@ -140,11 +103,9 @@ public final class RepositoryViewModel {
     public ObservableList<ViewModelElement> getTasks(){
         return tasks;
     }
-    public ObservableList<ViewModelElement> getRoles(){
-        return roles;
-    }
     public ObservableList<ViewModelElement> getBehaviours() {return behaviours; }
     public ObservableList<ViewModelElement> getPlanTypes() {return planTypes; }
+    public ObservableList<ViewModelElement> getConfigurations() {return configurations; }
 
 
     public void addElement(ViewModelElement viewModelElement) {
@@ -168,14 +129,8 @@ public final class RepositoryViewModel {
                     this.tasks.add(task);
                 }
                 break;
-            case Types.ROLESET:
-                this.roles.clear();
-                for (ViewModelElement role : ((RoleSetViewModel) viewModelElement).getRoleViewModels()) {
-                    this.roles.add(role);
-                }
-                break;
             case Types.CONFIGURATION:
-                System.out.println("RepositoryViewModel: Adding Configurations needs to be implemented.");
+                this.configurations.add(viewModelElement);
                 break;
         }
     }
@@ -198,11 +153,8 @@ public final class RepositoryViewModel {
             case Types.TASKREPOSITORY:
                 this.tasks.clear();
                 break;
-            case Types.ROLESET:
-                this.roles.clear();
-                break;
             case Types.CONFIGURATION:
-                System.out.println("RepositoryViewModel: Removing Configurations needs to be implemented.");
+                this.configurations.remove(viewModelElement);
                 break;
         }
     }

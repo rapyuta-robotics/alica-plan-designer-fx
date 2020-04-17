@@ -119,6 +119,10 @@ public class RepositoryTabPane extends TabPane {
         tasksTab.clearGuiContent();
     }
 
+    public void clearConfigurationsTab() {
+        configurationTab.clearGuiContent();
+    }
+
     public GuiModificationEvent handleDelete() {
         RepositoryTab selectedTab = (RepositoryTab) this.getSelectionModel().getSelectedItem();
         boolean focused = this.isFocused()

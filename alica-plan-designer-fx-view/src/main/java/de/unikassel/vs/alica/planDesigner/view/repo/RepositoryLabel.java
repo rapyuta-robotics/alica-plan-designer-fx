@@ -72,11 +72,14 @@ public class RepositoryLabel extends Label {
 
         // set the onDragObjectImage to cursor
         setOnDragDetected(e -> {
+//            System.out.println("RepositoryLabel: Drag Started Source: " + e.getSource() + " " + " Target: " + e.getTarget());
             getScene().setCursor(new AlicaCursor(viewModelElement.getType(), AlicaIcon.Size.SMALL));
+            e.consume();
          });
 
         //Drag from RepositoryList to add a AbstractPlan to State or Task to EntryPoint
         setOnMouseReleased(e ->{
+//            System.out.println("RepositoryLabel: Drag Release Source: " + e.getSource() + " " + " Target: " + e.getTarget());
             getScene().setCursor(Cursor.DEFAULT);
             PickResult pickResult = e.getPickResult();
             Parent parent = pickResult.getIntersectedNode().getParent();
@@ -86,22 +89,19 @@ public class RepositoryLabel extends Label {
             if(pickResult.getIntersectedNode() instanceof Circle) {
                 try {
                     if (parent instanceof StateContainer) {
-                        if (viewModelElement instanceof TaskViewModel) { return; }
-
                         StateContainer stateContainer = (StateContainer) parent;
                         GuiModificationEvent guiModificationEvent = new GuiModificationEvent(GuiEventType.ADD_ELEMENT, viewModelElement.getType(), viewModelElement.getName());
                         guiModificationEvent.setElementId(viewModelElement.getId());
                         guiModificationEvent.setParentId(stateContainer.getState().getId());
                         guiModificationHandler.handle(guiModificationEvent);
-                    }
-                    if (parent instanceof EntryPointContainer && viewModelElement instanceof TaskViewModel) {
+                    } else if (parent instanceof EntryPointContainer && viewModelElement instanceof TaskViewModel) {
                         EntryPointContainer entryPointContainer = (EntryPointContainer) parent;
                         GuiModificationEvent guiModificationEvent = new GuiModificationEvent(GuiEventType.ADD_ELEMENT, viewModelElement.getType(), viewModelElement.getName());
                         guiModificationEvent.setParentId(entryPointContainer.getPlanElementViewModel().getId());
                         guiModificationEvent.setElementId(viewModelElement.getId());
                         guiModificationHandler.handle(guiModificationEvent);
                     }
-                } catch (RuntimeException excp){
+                } catch (RuntimeException excp) {
                     // Exception might get thrown, because the element can't be added, because this would cause a loop
                     // in the model
                     ErrorWindowController.createErrorWindow(excp.getMessage(), null);
