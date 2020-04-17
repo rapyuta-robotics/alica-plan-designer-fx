@@ -48,14 +48,18 @@ public class JSonSerializer {
         behaviour.setComment("Behaviour Comment String");
         behaviour.setName("TestBehaviour");
         behaviour.setRelativeDirectory("result.json");
-        state.addAbstractPlan(behaviour);
+        ConfAbstractPlanWrapper wrapper = new ConfAbstractPlanWrapper();
+        wrapper.setAbstractPlan(behaviour);
+        state.addConfAbstractPlanWrapper(wrapper);
 
         Behaviour behaviour2 = new Behaviour();
         behaviour2.setFrequency(30);
         behaviour2.setComment("Behaviour Comment String");
         behaviour2.setName("TestBehaviour2");
         behaviour2.setRelativeDirectory("result.json");
-        state.addAbstractPlan(behaviour2);
+        ConfAbstractPlanWrapper wrapper2 = new ConfAbstractPlanWrapper();
+        wrapper2.setAbstractPlan(behaviour2);
+        state.addConfAbstractPlanWrapper(wrapper2);
 
         plan.getStates().add(state);
 
@@ -63,8 +67,9 @@ public class JSonSerializer {
         state2.setName("Stop2");
         state2.setComment("Stops the robot too");
         state2.setParentPlan(plan);
-
-        state2.addAbstractPlan(plan2);
+        ConfAbstractPlanWrapper wrapper3 = new ConfAbstractPlanWrapper();
+        wrapper3.setAbstractPlan(plan);
+        state2.addConfAbstractPlanWrapper(wrapper3);
 
         plan.getStates().add(state2);
 

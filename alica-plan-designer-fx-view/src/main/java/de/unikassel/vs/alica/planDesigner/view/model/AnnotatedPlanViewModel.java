@@ -1,18 +1,19 @@
 package de.unikassel.vs.alica.planDesigner.view.model;
 
+import de.unikassel.vs.alica.planDesigner.view.Types;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleLongProperty;
 
 import java.util.Arrays;
 
-public class AnnotatedPlanView extends ViewModelElement {
+public class AnnotatedPlanViewModel extends ViewModelElement {
 
     protected final SimpleBooleanProperty activated = new SimpleBooleanProperty(this, "activated", false);
     protected final SimpleLongProperty planId = new SimpleLongProperty(this, "planId", 0L);
 
-    public AnnotatedPlanView(long id, String name, String type, boolean activated, long planId) {
-        super(id, name, type);
+    public AnnotatedPlanViewModel(long id, String name, boolean activated, long planId) {
+        super(id, name, Types.ANNOTATEDPLAN);
         this.activated.setValue(activated);
         this.planId.setValue(planId);
 
@@ -20,11 +21,11 @@ public class AnnotatedPlanView extends ViewModelElement {
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "relativeDirectory", "activated", "planId"));
     }
 
-    public AnnotatedPlanView(ViewModelElement element, boolean activated) {
-        super(element.getId(), element.getName(), element.getType());
-        this.activated.setValue(activated);
-
-    }
+    // TODO: delete if not used
+//    public AnnotatedPlanViewModel(ViewModelElement element, boolean activated) {
+//        super(element.getId(), element.getName(), element.getType());
+//        this.activated.setValue(activated);
+//    }
 
     public final BooleanProperty activatedProperty() {
         return this.activated;

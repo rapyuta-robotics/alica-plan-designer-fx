@@ -1,6 +1,7 @@
 package de.unikassel.vs.alica.planDesigner.view.model;
 
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
+import de.unikassel.vs.alica.planDesigner.view.Types;
 import javafx.beans.property.*;
 
 import java.util.Arrays;
@@ -15,9 +16,8 @@ public class EntryPointViewModel extends PlanElementViewModel {
     protected final SimpleObjectProperty<StateViewModel> state = new SimpleObjectProperty<>(this, "state", null);
     protected final SimpleObjectProperty<PlanViewModel> plan = new SimpleObjectProperty<>(this, "plan", null);
 
-    public EntryPointViewModel(long id, String name, String type) {
-
-        super(id, name, type);
+    public EntryPointViewModel(long id, String name) {
+        super(id, name, Types.ENTRYPOINT);
 
         this.uiPropertyList.clear();
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "comment", "successRequired", "minCardinality", "maxCardinality"));

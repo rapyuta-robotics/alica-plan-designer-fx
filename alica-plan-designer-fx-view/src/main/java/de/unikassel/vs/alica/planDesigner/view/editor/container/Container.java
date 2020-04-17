@@ -192,7 +192,7 @@ public abstract class Container extends Pane implements DraggableEditorElement {
     }
 
     public void createAbstractPlanToStateListeners(StateViewModel state) {
-        state.getAbstractPlans().addListener(new ListChangeListener<PlanElementViewModel>() {
+        state.getConfAbstractPlanWrappers().addListener(new ListChangeListener<PlanElementViewModel>() {
             @Override
             public void onChanged(Change<? extends PlanElementViewModel> c) {
                 Platform.runLater(Container.this::redrawElement);

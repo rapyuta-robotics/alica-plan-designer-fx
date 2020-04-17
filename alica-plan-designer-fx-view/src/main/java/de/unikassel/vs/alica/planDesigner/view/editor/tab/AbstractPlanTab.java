@@ -1,12 +1,9 @@
 package de.unikassel.vs.alica.planDesigner.view.editor.tab;
 
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
-import de.unikassel.vs.alica.planDesigner.view.Types;
-import de.unikassel.vs.alica.planDesigner.view.editor.container.AbstractPlanContainer;
 import de.unikassel.vs.alica.planDesigner.view.editor.container.Container;
 import de.unikassel.vs.alica.planDesigner.view.model.PlanViewModel;
 import de.unikassel.vs.alica.planDesigner.view.model.SerializableViewModel;
-import de.unikassel.vs.alica.planDesigner.view.model.StateViewModel;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;

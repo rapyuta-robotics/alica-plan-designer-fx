@@ -10,7 +10,7 @@ public class TerminalState extends State {
 
     private ChangeListenerForDirtyFlag changeListener;
 
-    public TerminalState(){}
+    public TerminalState(){ this.success = false; }
 
     public TerminalState(boolean success) {
         this.success = success;

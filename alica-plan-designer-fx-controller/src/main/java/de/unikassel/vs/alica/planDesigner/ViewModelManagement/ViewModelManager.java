@@ -93,13 +93,22 @@ public class ViewModelManager {
             element = createBendPointViewModel((BendPoint) planElement);
         }  else if (planElement instanceof Configuration) {
             element = createConfigurationViewModel((Configuration) planElement);
+        }  else if (planElement instanceof ConfAbstractPlanWrapper) {
+            element = createConfAbstractPlanWrapperViewModel((ConfAbstractPlanWrapper) planElement);
         } else {
-            System.err.println("ViewModelManager: getSerializableViewModel for type " + planElement.getClass().toString() + " not implemented!");
+            System.err.println("ViewModelManager: getViewModelElement for type " + planElement.getClass().toString() + " not implemented!");
         }
 
         viewModelElements.put(planElement.getId(), element);
         element.registerListener(guiModificationHandler);
         return element;
+    }
+
+    private ConfAbstractPlanWrapperViewModel createConfAbstractPlanWrapperViewModel (ConfAbstractPlanWrapper confAbstractPlanWrapper) {
+        ConfAbstractPlanWrapperViewModel confAbstractPlanWrapperViewModel = new ConfAbstractPlanWrapperViewModel(confAbstractPlanWrapper.getId(), confAbstractPlanWrapper.getName());
+        confAbstractPlanWrapperViewModel.setAbstractPlan((AbstractPlanViewModel) getViewModelElement(confAbstractPlanWrapper.getAbstractPlan()));
+        confAbstractPlanWrapperViewModel.setConfiguration((ConfigurationViewModel) getViewModelElement(confAbstractPlanWrapper.getConfiguration()));
+        return confAbstractPlanWrapperViewModel;
     }
 
     private ConfigurationViewModel createConfigurationViewModel(Configuration configuration) {
@@ -113,7 +122,7 @@ public class ViewModelManager {
     }
 
     private BendPointViewModel createBendPointViewModel(BendPoint bendPoint) {
-        BendPointViewModel bendPointViewModel = new BendPointViewModel(bendPoint.getId(), bendPoint.getName(), Types.BENDPOINT);
+        BendPointViewModel bendPointViewModel = new BendPointViewModel(bendPoint.getId(), bendPoint.getName());
         bendPointViewModel.setComment(bendPoint.getComment());
         bendPointViewModel.setX(bendPoint.getX());
         bendPointViewModel.setY(bendPoint.getY());
@@ -134,7 +143,7 @@ public class ViewModelManager {
     }
 
     private RoleSetViewModel createRoleSetViewModel(RoleSet roleSet) {
-        RoleSetViewModel roleSetViewModel = new RoleSetViewModel(roleSet.getId(), roleSet.getName(), Types.ROLESET, roleSet.getDefaultPriority(), roleSet.getDefaultRoleSet());
+        RoleSetViewModel roleSetViewModel = new RoleSetViewModel(roleSet.getId(), roleSet.getName(), roleSet.getDefaultPriority(), roleSet.getDefaultRoleSet());
         roleSetViewModel.setComment(roleSet.getComment());
         roleSetViewModel.setRelativeDirectory(roleSetViewModel.getRelativeDirectory());
         this.viewModelElements.put(roleSetViewModel.getId(), roleSetViewModel);
@@ -160,7 +169,7 @@ public class ViewModelManager {
     }
 
     private TaskViewModel createTaskViewModel(Task task) {
-        TaskViewModel taskViewModel = new TaskViewModel(task.getId(), task.getName(), Types.TASK);
+        TaskViewModel taskViewModel = new TaskViewModel(task.getId(), task.getName());
         taskViewModel.setTaskRepositoryViewModel((TaskRepositoryViewModel) getViewModelElement(task.getTaskRepository()));
         taskViewModel.getTaskRepositoryViewModel().addTask(taskViewModel);
         taskViewModel.setParentId(task.getTaskRepository().getId());
@@ -168,7 +177,7 @@ public class ViewModelManager {
     }
 
     private RoleViewModel createRoleViewModel(Role role) {
-        RoleViewModel roleViewModel = new RoleViewModel(role.getId(), role.getName(), Types.ROLE);
+        RoleViewModel roleViewModel = new RoleViewModel(role.getId(), role.getName());
         ObservableMap<TaskViewModel, Float> taskPriorities = FXCollections.observableHashMap();
 //        ObservableList<CharacteristicViewModel> characteristics = FXCollections.observableArrayList();
 
@@ -192,8 +201,7 @@ public class ViewModelManager {
     }
 
     private CharacteristicViewModel createCharacteristicViewModel(Characteristic characteristic) {
-        CharacteristicViewModel characteristicViewModel = new CharacteristicViewModel(characteristic.getId(), characteristic.getName(),
-                Types.ROLE_CHARCTERISTIC, null);
+        CharacteristicViewModel characteristicViewModel = new CharacteristicViewModel(characteristic.getId(), characteristic.getName(), null);
 
         characteristicViewModel.setParentId(characteristic.getRole().getId());
         characteristicViewModel.setValue(characteristic.getValue());
@@ -211,7 +219,7 @@ public class ViewModelManager {
 
 
     private BehaviourViewModel createBehaviourViewModel(Behaviour behaviour) {
-        BehaviourViewModel behaviourViewModel = new BehaviourViewModel(behaviour.getId(), behaviour.getName(), Types.BEHAVIOUR);
+        BehaviourViewModel behaviourViewModel = new BehaviourViewModel(behaviour.getId(), behaviour.getName());
         behaviourViewModel.setComment(behaviour.getComment());
         behaviourViewModel.setRelativeDirectory(behaviour.getRelativeDirectory());
         behaviourViewModel.setFrequency(behaviour.getFrequency());
@@ -244,14 +252,14 @@ public class ViewModelManager {
     }
 
     private VariableViewModel createVariableViewModel(Variable var) {
-        VariableViewModel variableViewModel = new VariableViewModel(var.getId(), var.getName(), Types.VARIABLE);
+        VariableViewModel variableViewModel = new VariableViewModel(var.getId(), var.getName());
         variableViewModel.setVariableType(var.getVariableType());
         variableViewModel.setComment(var.getComment());
         return variableViewModel;
     }
 
     private VariableBindingViewModel createParametrisationViewModel(VariableBinding param) {
-        VariableBindingViewModel variableBindingViewModel = new VariableBindingViewModel(param.getId(), param.getName(), Types.VARIABLEBINDING);
+        VariableBindingViewModel variableBindingViewModel = new VariableBindingViewModel(param.getId(), param.getName());
         variableBindingViewModel.setSubPlan((AbstractPlanViewModel) getViewModelElement(param.getSubPlan()));
         variableBindingViewModel.setSubVariable((VariableViewModel) getViewModelElement(param.getSubVariable()));
         variableBindingViewModel.setVariable((VariableViewModel) getViewModelElement(param.getVariable()));
@@ -282,7 +290,7 @@ public class ViewModelManager {
     }
 
     private QuantifierViewModel createQuantifierViewModel(Quantifier quantifier) {
-        QuantifierViewModel viewModel = new QuantifierViewModel(quantifier.getId(), quantifier.getName(), Types.QUANTIFIER);
+        QuantifierViewModel viewModel = new QuantifierViewModel(quantifier.getId(), quantifier.getName());
         if(quantifier.getScope() != null){
             viewModel.setScope(quantifier.getScope().getId());
         }
@@ -295,8 +303,7 @@ public class ViewModelManager {
     }
 
     private PlanTypeViewModel createPlanTypeViewModel(PlanType planType) {
-        PlanTypeViewModel planTypeViewModel = new PlanTypeViewModel(planType.getId(), planType.getName(),
-                Types.PLANTYPE);
+        PlanTypeViewModel planTypeViewModel = new PlanTypeViewModel(planType.getId(), planType.getName());
         planTypeViewModel.setRelativeDirectory(planType.getRelativeDirectory());
         planTypeViewModel.setComment(planType.getComment());
 
@@ -311,7 +318,7 @@ public class ViewModelManager {
 
         for (AnnotatedPlan annotatedPlan : planType.getAnnotatedPlans()) {
             planTypeViewModel.removePlanFromAllPlans(annotatedPlan.getPlan().getId());
-            planTypeViewModel.getPlansInPlanType().add((AnnotatedPlanView) getViewModelElement(annotatedPlan));
+            planTypeViewModel.getPlansInPlanType().add((AnnotatedPlanViewModel) getViewModelElement(annotatedPlan));
         }
 
         for (VariableBinding param: planType.getVariableBindings()) {
@@ -325,11 +332,11 @@ public class ViewModelManager {
         return planTypeViewModel;
     }
 
-    private AnnotatedPlanView createAnnotatedPlanViewModel(AnnotatedPlan annotatedPlan) {
+    private AnnotatedPlanViewModel createAnnotatedPlanViewModel(AnnotatedPlan annotatedPlan) {
         // The AnnotatedPlan may still be holding a place-holder-plan, that was created during deserialization, to get
         // the actual plan the place-holders id can be used
         Plan plan = (Plan) modelManager.getPlanElement(annotatedPlan.getPlan().getId());
-        return new AnnotatedPlanView(annotatedPlan.getId(), plan.getName(), Types.ANNOTATEDPLAN, annotatedPlan
+        return new AnnotatedPlanViewModel(annotatedPlan.getId(), plan.getName(), annotatedPlan
                 .isActivated(), plan.getId());
     }
 
@@ -347,8 +354,8 @@ public class ViewModelManager {
         stateViewModel.setXPosition(uiElement.getX());
         stateViewModel.setYPosition(uiElement.getY());
 
-        for (AbstractPlan abstractPlan : state.getAbstractPlans()) {
-            stateViewModel.addAbstractPlan((PlanElementViewModel) getViewModelElement(modelManager.getPlanElement(abstractPlan.getId())));
+        for (ConfAbstractPlanWrapper confAbstractPlanWrapper : state.getConfAbstractPlanWrappers()) {
+            stateViewModel.addConfAbstractPlanWrapper((ConfAbstractPlanWrapperViewModel) getViewModelElement(modelManager.getPlanElement(confAbstractPlanWrapper.getId())));
         }
         if (state.getEntryPoint() != null) {
             stateViewModel.setEntryPoint((EntryPointViewModel) getViewModelElement(modelManager.getPlanElement(state.getEntryPoint().getId())));
@@ -365,7 +372,7 @@ public class ViewModelManager {
     }
 
     private EntryPointViewModel createEntryPointViewModel(EntryPoint ep) {
-        EntryPointViewModel entryPointViewModel = new EntryPointViewModel(ep.getId(), ep.getName(), Types.ENTRYPOINT);
+        EntryPointViewModel entryPointViewModel = new EntryPointViewModel(ep.getId(), ep.getName());
         // we need to put the ep before creating the state, in order to avoid circles (EntryPoint <-> State)
         this.viewModelElements.put(entryPointViewModel.getId(), entryPointViewModel);
         if (ep.getState() != null) {
@@ -391,7 +398,7 @@ public class ViewModelManager {
     }
 
     private TransitionViewModel createTransitionViewModel(Transition transition) {
-        TransitionViewModel transitionViewModel = new TransitionViewModel(transition.getId(), transition.getName(), Types.TRANSITION);
+        TransitionViewModel transitionViewModel = new TransitionViewModel(transition.getId(), transition.getName());
         transitionViewModel.setInState((StateViewModel) getViewModelElement(transition.getInState()));
         transitionViewModel.setOutState((StateViewModel) getViewModelElement(transition.getOutState()));
         transitionViewModel.setParentId(transition.getInState().getParentPlan().getId());
@@ -413,8 +420,7 @@ public class ViewModelManager {
     }
 
     private SynchronisationViewModel createSynchronizationViewModel(Synchronisation synchronisation) {
-        SynchronisationViewModel synchronisationViewModel = new SynchronisationViewModel(synchronisation.getId(), synchronisation.getName(),
-                Types.SYNCHRONISATION);
+        SynchronisationViewModel synchronisationViewModel = new SynchronisationViewModel(synchronisation.getId(), synchronisation.getName());
         for (Transition transition : synchronisation.getSyncedTransitions()) {
             synchronisationViewModel.getTransitions().add((TransitionViewModel) getViewModelElement(transition));
         }
@@ -471,7 +477,6 @@ public class ViewModelManager {
     }
 
     public void removeElement(long parentId, ViewModelElement viewModelElement, Map<String, Long> relatedObjects) {
-
         switch (viewModelElement.getType()) {
             case Types.TASKREPOSITORY:
                 break;
@@ -536,35 +541,30 @@ public class ViewModelManager {
                 planViewModel.getSynchronisations().remove(synchronisationViewModel);
                 break;
             case Types.ANNOTATEDPLAN:
-                AnnotatedPlanView annotatedPlanView = (AnnotatedPlanView) viewModelElement;
+                AnnotatedPlanViewModel annotatedPlanViewModel = (AnnotatedPlanViewModel) viewModelElement;
                 PlanTypeViewModel planTypeViewModel = (PlanTypeViewModel) getViewModelElement(modelManager.getPlanElement(parentId));
-                planTypeViewModel.getPlansInPlanType().remove(annotatedPlanView);
+                planTypeViewModel.getPlansInPlanType().remove(annotatedPlanViewModel);
 
                 List<VariableBindingViewModel> variableBindingViewModelList = new ArrayList<>(planTypeViewModel.getVariableBindings());
                 for (VariableBindingViewModel variableBindingViewModel: variableBindingViewModelList) {
-                    if (variableBindingViewModel.getSubPlan().getId() == annotatedPlanView.getPlanId()) {
+                    if (variableBindingViewModel.getSubPlan().getId() == annotatedPlanViewModel.getPlanId()) {
                         planTypeViewModel.removeVariableBinding(variableBindingViewModel);
                     }
                 }
                 break;
             case Types.PLAN:
             case Types.MASTERPLAN:
-            case Types.PLANTYPE:
-            case Types.BEHAVIOUR:
-                PlanElement parentPlanElement = modelManager.getPlanElement(parentId);
-                if(parentPlanElement != null) {
-                    ViewModelElement parentViewModel = getViewModelElement(parentPlanElement);
-                    stateViewModel = (StateViewModel) parentViewModel;
-                    PlanElementViewModel viewModel = (PlanElementViewModel) viewModelElement;
-                    stateViewModel.removeAbstractPlan(viewModel);
-                    planViewModel = (PlanViewModel) getViewModelElement(modelManager.getPlanElement(stateViewModel.getParentId()));
+                updatePlansInPlanViewModels((PlanViewModel) viewModelElement, ModelEventType.ELEMENT_REMOVED);
+                break;
+            case Types.CONF_ABSTRACTPLAN_WRAPPER:
+                ConfAbstractPlanWrapperViewModel confAbstractPlanWrapperViewModel = (ConfAbstractPlanWrapperViewModel) viewModelElement;
+                stateViewModel = (StateViewModel) getViewModelElement(modelManager.getPlanElement(parentId));
+                stateViewModel.removeConfAbstractPlanWrapper(confAbstractPlanWrapperViewModel);
 
-                    // you have duplicates if don't remove and add
-                    planViewModel.getStates().remove(stateViewModel);
-                    planViewModel.getStates().add(stateViewModel);
-                }else if(viewModelElement.getType().equals(Types.PLAN) || viewModelElement.getType().equals(Types.MASTERPLAN)) {
-                    updatePlansInPlanViewModels((PlanViewModel) viewModelElement, ModelEventType.ELEMENT_ADDED);
-                }
+                // HACK: you have duplicates if don't remove and add
+                planViewModel = (PlanViewModel) getViewModelElement(modelManager.getPlanElement(stateViewModel.getParentId()));
+                planViewModel.getStates().remove(stateViewModel);
+                planViewModel.getStates().add(stateViewModel);
                 break;
             case Types.VARIABLE:
                 ViewModelElement parentViewModel = getViewModelElement(modelManager.getPlanElement(parentId));
@@ -673,14 +673,14 @@ public class ViewModelManager {
 
         switch (event.getElementType()) {
             case Types.ANNOTATEDPLAN:
-                AnnotatedPlanView annotatedPlanView = (AnnotatedPlanView) viewModelElement;
+                AnnotatedPlanViewModel annotatedPlanViewModel = (AnnotatedPlanViewModel) viewModelElement;
                 PlanTypeViewModel planTypeViewModel = (PlanTypeViewModel) parentViewModel;
-                planTypeViewModel.getPlansInPlanType().add(annotatedPlanView);
+                planTypeViewModel.getPlansInPlanType().add(annotatedPlanViewModel);
 
                 PlanType planType = (PlanType) modelManager.getPlanElement(planTypeViewModel.getId());
                 for (VariableBinding variableBinding : planType.getVariableBindings()) {
-                    if (variableBinding.getSubPlan().getId() == annotatedPlanView.getPlanId()) {
-                        VariableBindingViewModel variableBindingViewModel = new VariableBindingViewModel(variableBinding.getId(), variableBinding.getName(), Types.VARIABLEBINDING);
+                    if (variableBinding.getSubPlan().getId() == annotatedPlanViewModel.getPlanId()) {
+                        VariableBindingViewModel variableBindingViewModel = new VariableBindingViewModel(variableBinding.getId(), variableBinding.getName());
                         variableBindingViewModel.setSubPlan((AbstractPlanViewModel) getViewModelElement(variableBinding.getSubPlan()));
                         variableBindingViewModel.setSubVariable((VariableViewModel) getViewModelElement(variableBinding.getSubVariable()));
                         variableBindingViewModel.setVariable((VariableViewModel) getViewModelElement(variableBinding.getVariable()));
@@ -691,59 +691,18 @@ public class ViewModelManager {
             case Types.TASK:
                 TaskViewModel taskViewModel = (TaskViewModel) viewModelElement;
                 if (event.getEventType() == ModelEventType.ELEMENT_ADDED) {
-                    EntryPointViewModel entryPointViewModel = (EntryPointViewModel) parentViewModel;
-                    entryPointViewModel.setTask(taskViewModel);
+                    ((EntryPointViewModel) parentViewModel).setTask(taskViewModel);
                 } else if (event.getEventType() == ModelEventType.ELEMENT_CREATED) {
-                    TaskRepositoryViewModel taskRepositoryViewModel = (TaskRepositoryViewModel) parentViewModel;
-                    taskRepositoryViewModel.addTask(taskViewModel);
+                    ((TaskRepositoryViewModel) parentViewModel).addTask(taskViewModel);
                 }
                 break;
             case Types.PLAN:
             case Types.MASTERPLAN:
-            case Types.BEHAVIOUR:
-            case Types.PLANTYPE:
-                if (parentPlanElement != null) {
-                    SerializableViewModel abstractPlanViewModel = (SerializableViewModel) viewModelElement;
-                    StateViewModel stateViewModel = (StateViewModel) parentViewModel;
-                    stateViewModel.addAbstractPlan(abstractPlanViewModel);
-                } else if(event.getElementType().equals(Types.PLAN) || event.getElementType().equals(Types.MASTERPLAN)) {
-                    updatePlansInPlanViewModels((PlanViewModel) viewModelElement, ModelEventType.ELEMENT_ADDED);
-
-                    Plan plan = (Plan) modelManager.getPlanElement(((PlanViewModel) viewModelElement).getId());
-                    if (plan.getPreCondition() != null){
-                        conditionViewModel = createConditionViewModel(plan.getPreCondition());
-                        conditionViewModel.setPluginName(pluginHandler.getAvailablePlugins().get(0));
-                        ((PlanViewModel) viewModelElement).setPreCondition(conditionViewModel);
-                        plan.getPreCondition().setPluginName(pluginHandler.getAvailablePlugins().get(0));
-                    }
-                    if (plan.getRuntimeCondition() != null){
-                        conditionViewModel = createConditionViewModel(plan.getRuntimeCondition());
-                        conditionViewModel.setPluginName(pluginHandler.getAvailablePlugins().get(0));
-                        ((PlanViewModel) viewModelElement).setRuntimeCondition(conditionViewModel);
-                        plan.getRuntimeCondition().setPluginName(pluginHandler.getAvailablePlugins().get(0));
-                    }
-                }
-                if (viewModelElement instanceof BehaviourViewModel){
-                    Behaviour behaviour = (Behaviour) modelManager.getPlanElement(((BehaviourViewModel) viewModelElement).getId());
-                    if(behaviour.getPreCondition() != null) {
-                        conditionViewModel = createConditionViewModel(behaviour.getPreCondition());
-                        conditionViewModel.setPluginName(pluginHandler.getAvailablePlugins().get(0));
-                        ((BehaviourViewModel) viewModelElement).setPreCondition(conditionViewModel);
-                        behaviour.getPreCondition().setPluginName(pluginHandler.getAvailablePlugins().get(0));
-                    }
-                    if(behaviour.getRuntimeCondition() != null) {
-                        conditionViewModel = createConditionViewModel(behaviour.getRuntimeCondition());
-                        conditionViewModel.setPluginName(pluginHandler.getAvailablePlugins().get(0));
-                        ((BehaviourViewModel) viewModelElement).setRuntimeCondition(conditionViewModel);
-                        behaviour.getRuntimeCondition().setPluginName(pluginHandler.getAvailablePlugins().get(0));
-                    }
-                    if(behaviour.getPostCondition() != null) {
-                        conditionViewModel = createConditionViewModel(behaviour.getPostCondition());
-                        conditionViewModel.setPluginName(pluginHandler.getAvailablePlugins().get(0));
-                        ((BehaviourViewModel) viewModelElement).setPostCondition(conditionViewModel);
-                        behaviour.getPostCondition().setPluginName(pluginHandler.getAvailablePlugins().get(0));
-                    }
-                }
+                updatePlansInPlanViewModels((PlanViewModel) viewModelElement, ModelEventType.ELEMENT_ADDED);
+                break;
+            case Types.CONF_ABSTRACTPLAN_WRAPPER:
+                ConfAbstractPlanWrapperViewModel confAbstractPlanWrapperViewModel = (ConfAbstractPlanWrapperViewModel) viewModelElement;
+                ((StateViewModel) parentViewModel).addConfAbstractPlanWrapper(confAbstractPlanWrapperViewModel);
                 break;
             case Types.VARIABLE:
                 if (parentViewModel instanceof AbstractPlanViewModel) {
@@ -754,15 +713,6 @@ public class ViewModelManager {
                 break;
             case Types.VARIABLEBINDING:
                 ((HasVariableBinding) parentViewModel).getVariableBindings().add((VariableBindingViewModel) viewModelElement);
-                break;
-            case Types.ABSTRACTPLAN:
-                PlanViewModel planViewModel = (PlanViewModel) viewModelElement;
-                State state = (State) event.getNewValue();
-                for (StateViewModel stateViewModel: planViewModel.getStates()) {
-                    if(stateViewModel.getId() == state.getId()){
-                        stateViewModel.addAbstractPlan((PlanElementViewModel) parentViewModel);
-                    }
-                }
                 break;
             case Types.PRECONDITION:
                 switch (parentViewModel.getType()){
@@ -827,8 +777,10 @@ public class ViewModelManager {
             case Types.TASKREPOSITORY:
             case Types.ROLESET:
             case Types.BENDPOINT:
-            case Types.CONFIGURATION:
                 //No-OP
+                break;
+            case Types.CONFIGURATION:
+                System.err.println("ViewModelManager: Adding configurations not implemented, yet!");
                 break;
             default:
                 System.err.println("ViewModelManager: Add Element not supported for type: " + viewModelElement.getType());

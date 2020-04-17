@@ -31,7 +31,7 @@ public class PlanTypeTab extends AbstractPlanTab {
     private Button removeAllPlansButton;
     private Button saveButton;
 
-    private TableView<AnnotatedPlanView> planTypeTableView;
+    private TableView<AnnotatedPlanViewModel> planTypeTableView;
     private ListView<RepositoryLabel> planListView;
 
     private Comparator<RepositoryLabel> repositoryHBoxComparator;
@@ -136,18 +136,18 @@ public class PlanTypeTab extends AbstractPlanTab {
         PlanTypeViewModel planTypeViewModel = (PlanTypeViewModel) serializableViewModel;
         planTypeTableView.setItems(planTypeViewModel.getPlansInPlanType());
         planTypeTableView.getItems().sort(viewModelElementComparator);
-        planTypeViewModel.getPlansInPlanType().addListener(new ListChangeListener<AnnotatedPlanView>() {
+        planTypeViewModel.getPlansInPlanType().addListener(new ListChangeListener<AnnotatedPlanViewModel>() {
             @Override
-            public void onChanged(Change<? extends AnnotatedPlanView> c) {
+            public void onChanged(Change<? extends AnnotatedPlanViewModel> c) {
                 c.next();
                 if (c.wasAdded()) {
-                    for (AnnotatedPlanView element : c.getAddedSubList()) {
+                    for (AnnotatedPlanViewModel element : c.getAddedSubList()) {
                         planTypeViewModel.removePlanFromAllPlans(element.getPlanId());
                     }
                 } else if (c.wasRemoved()) {
-                    for (AnnotatedPlanView element : c.getRemoved()) {
+                    for (AnnotatedPlanViewModel element : c.getRemoved()) {
                         planTypeViewModel.addPlanToAllPlans((PlanViewModel) guiModificationHandler.getViewModelElement(element.getPlanId()));
-                        for (AnnotatedPlanView view : planTypeTableView.getItems()) {
+                        for (AnnotatedPlanViewModel view : planTypeTableView.getItems()) {
                             if (view.getId() == element.getId()) {
                                 planTypeTableView.getItems().remove(view);
                                 break;
@@ -166,9 +166,9 @@ public class PlanTypeTab extends AbstractPlanTab {
         planTypeTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         planTypeTableView.setRowFactory(tv -> {
-            TableRow<AnnotatedPlanView> annotatedPlanTableRow = new TableRow<>();
+            TableRow<AnnotatedPlanViewModel> annotatedPlanTableRow = new TableRow<>();
             annotatedPlanTableRow.setOnMouseClicked(e -> {
-                AnnotatedPlanView item = annotatedPlanTableRow.getItem();
+                AnnotatedPlanViewModel item = annotatedPlanTableRow.getItem();
                 if (e.getClickCount() == 2 && item != null) {
                     item.setActivated(!item.isActivated());
                     planTypeTableView.refresh();
@@ -225,14 +225,14 @@ public class PlanTypeTab extends AbstractPlanTab {
         });
     }
 
-    private TableColumn<AnnotatedPlanView, String> createNameColumn() {
-        TableColumn<AnnotatedPlanView, String> planNameColumn = new TableColumn<>(i18NRepo.getString("label.column.planName"));
+    private TableColumn<AnnotatedPlanViewModel, String> createNameColumn() {
+        TableColumn<AnnotatedPlanViewModel, String> planNameColumn = new TableColumn<>(i18NRepo.getString("label.column.planName"));
         planNameColumn.setMinWidth(120);
         planNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        planNameColumn.setCellFactory(new Callback<TableColumn<AnnotatedPlanView, String>, TableCell<AnnotatedPlanView, String>>() {
+        planNameColumn.setCellFactory(new Callback<TableColumn<AnnotatedPlanViewModel, String>, TableCell<AnnotatedPlanViewModel, String>>() {
             @Override
-            public TableCell<AnnotatedPlanView, String> call(TableColumn<AnnotatedPlanView, String> param) {
-                TableCell<AnnotatedPlanView, String> planNameTableCell = new TableCell<AnnotatedPlanView, String>() {
+            public TableCell<AnnotatedPlanViewModel, String> call(TableColumn<AnnotatedPlanViewModel, String> param) {
+                TableCell<AnnotatedPlanViewModel, String> planNameTableCell = new TableCell<AnnotatedPlanViewModel, String>() {
                     @Override
                     protected void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
@@ -247,14 +247,14 @@ public class PlanTypeTab extends AbstractPlanTab {
         return planNameColumn;
     }
 
-    private TableColumn<AnnotatedPlanView, Boolean> createActiveColumn() {
-        TableColumn<AnnotatedPlanView, Boolean> activeColumn = new TableColumn<>(i18NRepo.getString("label.column.active"));
+    private TableColumn<AnnotatedPlanViewModel, Boolean> createActiveColumn() {
+        TableColumn<AnnotatedPlanViewModel, Boolean> activeColumn = new TableColumn<>(i18NRepo.getString("label.column.active"));
         activeColumn.setMaxWidth(2500);
         activeColumn.setCellValueFactory(new PropertyValueFactory<>(i18NRepo.getString("label.column.activated")));
-        activeColumn.setCellFactory(new Callback<TableColumn<AnnotatedPlanView, Boolean>, TableCell<AnnotatedPlanView, Boolean>>() {
+        activeColumn.setCellFactory(new Callback<TableColumn<AnnotatedPlanViewModel, Boolean>, TableCell<AnnotatedPlanViewModel, Boolean>>() {
             @Override
-            public TableCell<AnnotatedPlanView, Boolean> call(TableColumn<AnnotatedPlanView, Boolean> param) {
-                TableCell<AnnotatedPlanView, Boolean> annotatedPlanBooleanTableCell = new TableCell<AnnotatedPlanView, Boolean>() {
+            public TableCell<AnnotatedPlanViewModel, Boolean> call(TableColumn<AnnotatedPlanViewModel, Boolean> param) {
+                TableCell<AnnotatedPlanViewModel, Boolean> annotatedPlanBooleanTableCell = new TableCell<AnnotatedPlanViewModel, Boolean>() {
                     @Override
                     protected void updateItem(Boolean item, boolean empty) {
                         super.updateItem(item, empty);

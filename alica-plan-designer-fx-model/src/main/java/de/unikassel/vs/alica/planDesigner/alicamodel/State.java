@@ -12,7 +12,7 @@ public class State extends PlanElement {
     protected final SimpleObjectProperty<EntryPoint> entryPoint = new SimpleObjectProperty<>();
     protected final SimpleObjectProperty<Plan> parentPlan = new SimpleObjectProperty<>();
 
-    protected final ArrayList<AbstractPlan> abstractPlans = new ArrayList<>();
+    protected final ArrayList<ConfAbstractPlanWrapper> confAbstractPlanWrappers = new ArrayList<>();
     protected final ArrayList<VariableBinding> variableBindings = new ArrayList<>();
     protected final ArrayList<Transition> outTransitions = new ArrayList<>();
     protected final ArrayList<Transition> inTransitions = new ArrayList<>();
@@ -43,22 +43,22 @@ public class State extends PlanElement {
     }
     public SimpleObjectProperty<Plan> parentPlanProperty() { return parentPlan; }
 
-    public List<AbstractPlan> getAbstractPlans() {
-        return Collections.unmodifiableList(abstractPlans);
+    public List<ConfAbstractPlanWrapper> getConfAbstractPlanWrappers() {
+        return Collections.unmodifiableList(confAbstractPlanWrappers);
     }
-    public void addAbstractPlan(AbstractPlan abstractPlan) {
-        abstractPlans.add(abstractPlan);
+    public void addConfAbstractPlanWrapper(ConfAbstractPlanWrapper confAbstractPlanWrapper) {
+        confAbstractPlanWrappers.add(confAbstractPlanWrapper);
         if (this.changeListener != null) {
             this.changeListener.setDirty();
         }
     }
-    public void removeAbstractPlan(AbstractPlan abstractPlan) {
-        abstractPlans.remove(abstractPlan);
+    public void removeConfAbstractPlanWrapper(ConfAbstractPlanWrapper confAbstractPlanWrapper) {
+        confAbstractPlanWrappers.remove(confAbstractPlanWrapper);
         // iterator in order to avoid concurrent modification exception
         Iterator<VariableBinding> iterator = variableBindings.iterator();
         while ((iterator).hasNext()) {
             VariableBinding param = iterator.next();
-            if (param.getSubPlan().getId() == abstractPlan.getId()) {
+            if (param.getSubPlan().getId() == confAbstractPlanWrapper.getAbstractPlan().getId()) {
                 iterator.remove();
             }
         }

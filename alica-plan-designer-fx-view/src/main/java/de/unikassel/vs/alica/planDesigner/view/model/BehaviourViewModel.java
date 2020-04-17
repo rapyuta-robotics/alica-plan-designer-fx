@@ -19,8 +19,8 @@ public class BehaviourViewModel  extends AbstractPlanViewModel {
     protected final SimpleObjectProperty<ConditionViewModel> runtimeCondition = new SimpleObjectProperty<>(this, Types.RUNTIMECONDITION, null);
     protected final SimpleObjectProperty<ConditionViewModel> postCondition = new SimpleObjectProperty<>(this, Types.POSTCONDITION, null);
 
-    public BehaviourViewModel(long id, String name, String type) {
-        super(id, name, type);
+    public BehaviourViewModel(long id, String name) {
+        super(id, name, Types.BEHAVIOUR);
 
         this.uiPropertyList.clear();
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "comment", "relativeDirectory", "frequency", "deferring", "eventDriven"));

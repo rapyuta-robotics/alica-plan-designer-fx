@@ -19,7 +19,7 @@ public class ConfAbstractPlanWrapper extends PlanElement {
     public Configuration getConfiguration() {
         return configuration.get();
     }
-    public void setAbstractPlan(Configuration configuration) {
+    public void setConfiguration(Configuration configuration) {
         this.configuration.set(configuration);
     }
     public SimpleObjectProperty<Configuration> configurationProperty(){

@@ -9,7 +9,6 @@ import de.unikassel.vs.alica.planDesigner.view.editor.container.*;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.AbstractPlanTab;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.EditorTabPane;
 import de.unikassel.vs.alica.planDesigner.view.editor.tools.EditorToolBar;
-import de.unikassel.vs.alica.planDesigner.view.editor.tools.transition.TransitionTool;
 import de.unikassel.vs.alica.planDesigner.view.model.PlanElementViewModel;
 import de.unikassel.vs.alica.planDesigner.view.model.PlanViewModel;
 import de.unikassel.vs.alica.planDesigner.view.model.SerializableViewModel;
@@ -22,7 +21,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class PlanTab extends AbstractPlanTab {
 
@@ -132,7 +130,7 @@ public class PlanTab extends AbstractPlanTab {
             case Types.PLAN:
             case Types.PLANTYPE:
                 GuiModificationEvent event = new GuiModificationEvent(GuiEventType.REMOVE_ELEMENT, planElementViewModel.getType(), planElementViewModel.getName());
-                event.setParentId(((AbstractPlanContainer)selectedContainer).getParentStateContainer().getState().getId());
+                event.setParentId(((ConfAbstractPlanWrapperContainer)selectedContainer).getParentStateContainer().getState().getId());
                 event.setElementId(planElementViewModel.getId());
                 return event;
             case Types.STATE:

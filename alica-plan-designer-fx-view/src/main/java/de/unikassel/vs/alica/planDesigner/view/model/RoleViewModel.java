@@ -1,5 +1,6 @@
 package de.unikassel.vs.alica.planDesigner.view.model;
 
+import de.unikassel.vs.alica.planDesigner.view.Types;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -15,8 +16,8 @@ public class RoleViewModel extends PlanElementViewModel {
     private ObservableMap<TaskViewModel, Float> taskPrioritieViewModels = FXCollections.observableHashMap();
     private ObservableList<CharacteristicViewModel> characteristicViewModels = FXCollections.observableArrayList();
 
-    public RoleViewModel (long id, String name, String type) {
-        super(id, name, type);
+    public RoleViewModel (long id, String name) {
+        super(id, name, Types.ROLE);
         this.uiPropertyList.clear();
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "comment"));
         this.characteristicViewModels.addListener(new ListChangeListener<CharacteristicViewModel>() {

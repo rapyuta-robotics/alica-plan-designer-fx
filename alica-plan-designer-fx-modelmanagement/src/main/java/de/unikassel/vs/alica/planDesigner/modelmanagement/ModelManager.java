@@ -470,16 +470,8 @@ public class ModelManager implements Observer {
                 binding.setVariable((Variable) getPlanElement(binding.getVariable().getId()));
             }
 
-            // Iterating over a List while modifying it results in an IllegalAccessException. By copying the list
-            // beforehand this can be prevented
-            for (AbstractPlan abstractPlan : new ArrayList<>(state.getAbstractPlans())) {
-                // Adding the real plan before removing the dummy
-                // This will (through listeners) trigger the creation of the corresponding ViewModelElement
-                // Would the dummy be removed first, the State would not contain this AbstractPlan
-                // The fact, that the dummy is still referenced within the State at this point is irrelevant, because it
-                // has the same id as the real one
-                state.addAbstractPlan((AbstractPlan) planElementMap.get(abstractPlan.getId()));
-                state.removeAbstractPlan(abstractPlan);
+            for (ConfAbstractPlanWrapper wrapper : state.getConfAbstractPlanWrappers()) {
+                wrapper.setAbstractPlan((AbstractPlan) planElementMap.get(wrapper.getAbstractPlan()));
             }
 
             // here they are inserted again
@@ -1010,8 +1002,8 @@ public class ModelManager implements Observer {
         for (Plan parentPlan : planMap.values()) {
             stateLoop:
             for (State state : parentPlan.getStates()) {
-                for (AbstractPlan child : state.getAbstractPlans()) {
-                    if (child.getId() == planElement.getId()) {
+                for (ConfAbstractPlanWrapper child : state.getConfAbstractPlanWrappers()) {
+                    if (child.getAbstractPlan().getId() == planElement.getId()) {
                         usages.add(parentPlan);
                         break stateLoop;
                     }

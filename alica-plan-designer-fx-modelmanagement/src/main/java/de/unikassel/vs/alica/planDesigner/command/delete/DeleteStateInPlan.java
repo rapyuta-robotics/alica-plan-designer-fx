@@ -46,8 +46,8 @@ public class DeleteStateInPlan extends UiPositionCommand {
             for (DeleteTransitionInPlan d: deleteTransitionInPlansList) { d.doCommand(); }
         }
 
-        if(state.getAbstractPlans().size() != 0) {
-            deleteAbstractPlans(state.getAbstractPlans());
+        if(state.getConfAbstractPlanWrappers().size() != 0) {
+            deleteAbstractPlans(state.getConfAbstractPlanWrappers());
         }
 
         if(state.getEntryPoint() != null) {
@@ -104,11 +104,11 @@ public class DeleteStateInPlan extends UiPositionCommand {
         for (DeleteVariableBinding d: deleteVariableBindingList) { d.doCommand(); }
     }
 
-    private void deleteAbstractPlans(List<AbstractPlan> abstractPlans) {
-        for (AbstractPlan abstractPlan: abstractPlans) {
+    private void deleteAbstractPlans(List<ConfAbstractPlanWrapper> wrappers) {
+        for (ConfAbstractPlanWrapper wrapper: wrappers) {
             ModelModificationQuery abstractPlanMMQ = mmq;
             abstractPlanMMQ.setParentId(state.getId());
-            abstractPlanMMQ.setElementId(abstractPlan.getId());
+            abstractPlanMMQ.setElementId(wrapper.getId());
             RemoveAbstractPlanFromState removeAbstractPlanFromState = new RemoveAbstractPlanFromState(modelManager, abstractPlanMMQ);
             removeAbstractPlanFromStateList.add(removeAbstractPlanFromState);
         }
