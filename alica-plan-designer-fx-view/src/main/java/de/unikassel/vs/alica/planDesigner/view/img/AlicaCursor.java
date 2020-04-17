@@ -1,5 +1,8 @@
 package de.unikassel.vs.alica.planDesigner.view.img;
 
+import de.unikassel.vs.alica.planDesigner.view.Types;
+import de.unikassel.vs.alica.planDesigner.view.filebrowser.FileTreeView;
+import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 
 public class AlicaCursor extends ImageCursor {
@@ -89,5 +92,17 @@ public class AlicaCursor extends ImageCursor {
         super(new AlicaIcon(type.name(), size));
     }
 
+    /**
+     * This constructor only handles non-add/forbidden types of cursors
+     */
+    public AlicaCursor(String type, AlicaIcon.Size size) {
+        super(new AlicaIcon(type, size));
+    }
 
+    /**
+     * This constructor only handles non-add/forbidden types of cursors
+     */
+    public AlicaCursor(String type) {
+        super(new AlicaIcon(type, AlicaIcon.Size.SMALL));
+    }
 }

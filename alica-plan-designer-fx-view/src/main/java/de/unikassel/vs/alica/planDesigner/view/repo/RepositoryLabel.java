@@ -10,6 +10,7 @@ import de.unikassel.vs.alica.planDesigner.view.editor.container.EntryPointContai
 import de.unikassel.vs.alica.planDesigner.view.editor.container.FailureStateContainer;
 import de.unikassel.vs.alica.planDesigner.view.editor.container.StateContainer;
 import de.unikassel.vs.alica.planDesigner.view.editor.container.SuccessStateContainer;
+import de.unikassel.vs.alica.planDesigner.view.img.AlicaCursor;
 import de.unikassel.vs.alica.planDesigner.view.img.AlicaIcon;
 import de.unikassel.vs.alica.planDesigner.view.menu.DeleteElementMenuItem;
 import de.unikassel.vs.alica.planDesigner.view.menu.RenameElementMenuItem;
@@ -63,7 +64,7 @@ public class RepositoryLabel extends Label {
                     TaskViewModel taskViewModel = (TaskViewModel) viewModelElement;
                     MainWindowController.getInstance().openFile(taskViewModel.getTaskRepositoryViewModel());
                 } else {
-                    throw new RuntimeException("RepositoryLabel: Unkown ViewModelElement type " + viewModelElement.getType() + " for opening tab!");
+                    throw new RuntimeException("RepositoryLabel: Unknown ViewModelElement type " + viewModelElement.getType() + " for opening tab!");
                 }
                 e.consume();
             }
@@ -71,9 +72,7 @@ public class RepositoryLabel extends Label {
 
         // set the onDragObjectImage to cursor
         setOnDragDetected(e -> {
-            RepositoryLabel repositoryLabel = (RepositoryLabel) e.getSource();
-            ImageCursor cursor = new ImageCursor(new AlicaIcon(viewModelElement.getType(), AlicaIcon.Size.SMALL));
-            getScene().setCursor(cursor);
+            getScene().setCursor(new AlicaCursor(viewModelElement.getType(), AlicaIcon.Size.SMALL));
          });
 
         //Drag from RepositoryList to add a AbstractPlan to State or Task to EntryPoint

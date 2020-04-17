@@ -37,7 +37,6 @@ public final class FileTreeView extends TreeView<File> {
 
     private boolean wasDragged;
     private FileTreeItem draggedItem;
-    private Cursor originalCursor;
     private String startFolder;
 
     private VirtualDirectoryTreeItem virtualDirectoryTreeItem;
@@ -332,21 +331,25 @@ public final class FileTreeView extends TreeView<File> {
     public class MouseDraggedEventHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent event) {
-            Node node = ((Node) event.getTarget()).getParent();
+            Node node = ((Node) event.getTarget());
+            if (!(node instanceof FileTreeCell)) {
+                node = node.getParent();
+            }
+//            System.out.println("FileTreeView: Mouse Drag Source: " + event.getSource() + " Target: " + event.getTarget());
             if (!(node instanceof FileTreeCell)) {
                 event.consume();
                 return;
             }
-//            System.out.println("FileTreeView: Mouse Drag Source: " + event.getSource() + " Target: " + event.getTarget());
+
             // TODO: Fix in case of Folder
             draggedItem = (FileTreeItem) ((FileTreeCell) node).getTreeItem();
             startFolder = draggedItem.getValue().getAbsolutePath();
             startFolder = startFolder.substring(0, startFolder.lastIndexOf(File.separator));
 
             if (draggedItem.getViewModelElement() != null) {
-                setCursor(draggedItem.getViewModelElement().getType());
+                setCursor(new AlicaCursor(draggedItem.getViewModelElement().getType()));
             } else {
-                setCursor(Types.FOLDER);
+                setCursor(new AlicaCursor(Types.FOLDER));
             }
             wasDragged = true;
             event.consume();
@@ -356,7 +359,7 @@ public final class FileTreeView extends TreeView<File> {
     private class MouseReleasedEventHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent e) {
-            setCursor("original");
+            setCursor(Cursor.DEFAULT);
             if (!wasDragged) {
                 e.consume();
                 return;
@@ -409,40 +412,5 @@ public final class FileTreeView extends TreeView<File> {
 
             e.consume();
         }
-    }
-
-    private void setCursor(String type) {
-        Cursor cursor;
-        switch (type) {
-            case Types.BEHAVIOUR:
-                cursor = new AlicaCursor(AlicaCursor.Type.behaviour);
-                break;
-            case Types.PLAN:
-                cursor = new AlicaCursor(AlicaCursor.Type.plan);
-                break;
-            case Types.MASTERPLAN:
-                cursor = new AlicaCursor(AlicaCursor.Type.masterplan);
-                break;
-            case Types.PLANTYPE:
-                cursor = new AlicaCursor(AlicaCursor.Type.plantype);
-                break;
-            case Types.TASKREPOSITORY:
-                cursor = new AlicaCursor(AlicaCursor.Type.tasks);
-                break;
-            case Types.CONFIGURATION:
-                cursor = new AlicaCursor(AlicaCursor.Type.configuration);
-                break;
-            case "original":
-                cursor = originalCursor;
-                break;
-            default:
-                System.err.println("FileTreeView: " + type + " not handled!");
-                return;
-        }
-
-        if (!type.equals("original")) { // remember original cursor
-            originalCursor = FileTreeView.this.getCursor();
-        }
-        FileTreeView.this.getScene().setCursor(cursor);
     }
 }
