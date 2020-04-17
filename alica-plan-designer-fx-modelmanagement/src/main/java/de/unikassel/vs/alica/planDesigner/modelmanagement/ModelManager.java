@@ -745,6 +745,9 @@ public class ModelManager implements Observer {
                     case Types.ROLESET:
                         ending = Extensions.ROLESET;
                         break;
+                    case Types.CONFIGURATION:
+                        ending = Extensions.CONFIGURATION;
+                        break;
                 }
 
                 if (!ending.equals("")) {
@@ -1284,10 +1287,10 @@ public class ModelManager implements Observer {
                 cmd = new ChangePosition(this, mmq);
                 break;
             case MOVE_FILE:
-                if (!mmq.elementType.equals(Types.FOLDER)) {
-                    cmd = new MoveFile(this, mmq);
-                } else {
+                if (mmq.elementType.equals(Types.FOLDER)) {
                     cmd = new MoveFolder(this, mmq);
+                } else {
+                    cmd = new MoveFile(this, mmq);
                 }
                 break;
             default:

@@ -69,19 +69,25 @@ public class AlicaCursor extends ImageCursor {
         forbidden,
 
         //folder
-        folder
+        folder,
+
+        //default
+        DEFAULT
     }
 
-    public AlicaCursor(Type type) {
-        super(new AlicaIcon(type.name(), AlicaIcon.Size.SMALL));
-    }
-
+    /**
+     * Cursor with specific hotspot
+     * @param type
+     * @param x
+     * @param y
+     */
     public AlicaCursor(Type type, int x, int y) {
         super(new AlicaIcon(type.name(), AlicaIcon.Size.SMALL), x, y);
     }
-
-    //For get BigIcon
-    public AlicaCursor(Type type, String string) {
-        super(new AlicaIcon(type.name(), AlicaIcon.Size.BIG));
+    public AlicaCursor(Type type) { super(new AlicaIcon(type.name(), AlicaIcon.Size.SMALL)); }
+    public AlicaCursor(Type type, AlicaIcon.Size size) {
+        super(new AlicaIcon(type.name(), size));
     }
+
+
 }

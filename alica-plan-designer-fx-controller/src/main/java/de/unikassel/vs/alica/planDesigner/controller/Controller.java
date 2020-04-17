@@ -230,6 +230,7 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
             case Types.PLAN:
             case Types.PLANTYPE:
             case Types.BEHAVIOUR:
+                updateGeneratedCode(event, viewModelElement);
             case Types.ROLESET:
             case Types.TASKREPOSITORY:
             case Types.CONFIGURATION:
@@ -240,12 +241,24 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
                 updateRepos(event.getEventType(), viewModelElement);
                 break;
         }
-        // Generate files for moved code
-        if(event.getEventType() == ModelEventType.ELEMENT_ATTRIBUTE_CHANGED  && "relativeDirectory".equals(event.getChangedAttribute())) {
-            mainWindowController.waitOnProgressLabel(() -> generateCode(new GuiModificationEvent(GuiEventType.GENERATE_ALL_ELEMENTS, event.getElementType(),
-                    modelElement.getName()), mainWindowController.getStatusText()));
-        }
+
         updateViewModel(event, viewModelElement, modelElement);
+    }
+
+    /**
+     * Generate files for moved code
+     * @param event
+     * @param viewModelElement
+     */
+    private void updateGeneratedCode(ModelEvent event, ViewModelElement viewModelElement) {
+        switch(event.getEventType()) {
+            case ELEMENT_ATTRIBUTE_CHANGED:
+                if ("relativeDirectory".equals(event.getChangedAttribute())) {
+                    mainWindowController.waitOnProgressLabel(() -> generateCode(new GuiModificationEvent(GuiEventType.GENERATE_ALL_ELEMENTS, event.getElementType(),
+                            viewModelElement.getName()), mainWindowController.getStatusText()));
+                }
+                break;
+        }
     }
 
     /**
