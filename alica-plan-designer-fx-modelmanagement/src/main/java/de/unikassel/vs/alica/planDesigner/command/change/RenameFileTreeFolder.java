@@ -59,7 +59,7 @@ public class RenameFileTreeFolder extends ChangeAttributeCommand {
         }
         File file = new File(oldValue.toString());
         file.delete();
-        ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+        ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
         modelEvent.setChangedAttribute(oldValue.toString());
         this.modelManager.fireEvent(modelEvent);
     }
@@ -96,7 +96,7 @@ public class RenameFileTreeFolder extends ChangeAttributeCommand {
         }
         File file = new File(newValue.toString());
         file.delete();
-        ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+        ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
         modelEvent.setChangedAttribute(newValue.toString());
         this.modelManager.fireEvent(modelEvent);
     }

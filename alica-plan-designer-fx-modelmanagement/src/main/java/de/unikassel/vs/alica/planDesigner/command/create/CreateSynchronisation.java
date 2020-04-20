@@ -33,7 +33,7 @@ public class CreateSynchronisation extends UiPositionCommand {
         this.plan.addSynchronisation(this.synchronisation);
         this.uiExtension.add(this.synchronisation.getId(), this.uiElement);
         this.modelManager.storePlanElement(Types.SYNCHRONISATION, synchronisation,false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, synchronisation);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, synchronisation);
     }
 
     @Override
@@ -41,6 +41,6 @@ public class CreateSynchronisation extends UiPositionCommand {
         this.plan.removeSynchronisation(synchronisation);
         this.uiExtension.remove(this.synchronisation.getId());
         modelManager.dropPlanElement(Types.SYNCHRONISATION, synchronisation, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, synchronisation);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, synchronisation);
     }
 }

@@ -41,7 +41,7 @@ public class MoveFolder extends ChangeAttributeCommand {
                 e.printStackTrace();
             }
 
-            ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+            ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
             modelEvent.setChangedAttribute(oldFile.toString());
             this.modelManager.fireEvent(modelEvent);
         } else {
@@ -77,7 +77,7 @@ public class MoveFolder extends ChangeAttributeCommand {
                 }
             }
             oldFile.delete();
-            ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+            ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
             modelEvent.setChangedAttribute(oldFile.toString());
             this.modelManager.fireEvent(modelEvent);
         }
@@ -94,7 +94,7 @@ public class MoveFolder extends ChangeAttributeCommand {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+            ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
             modelEvent.setChangedAttribute(newFile.toString());
             this.modelManager.fireEvent(modelEvent);
         } else {
@@ -125,7 +125,7 @@ public class MoveFolder extends ChangeAttributeCommand {
                 }
             }
             newFile.delete();
-            ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+            ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
             modelEvent.setChangedAttribute(newFile.toString());
             this.modelManager.fireEvent(modelEvent);
         }

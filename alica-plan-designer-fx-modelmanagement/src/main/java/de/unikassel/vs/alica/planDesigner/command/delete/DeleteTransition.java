@@ -13,7 +13,7 @@ import de.unikassel.vs.alica.planDesigner.modelmanagement.Types;
 import de.unikassel.vs.alica.planDesigner.uiextensionmodel.UiElement;
 import de.unikassel.vs.alica.planDesigner.uiextensionmodel.UiExtension;
 
-public class DeleteTransitionInPlan extends UiPositionCommand {
+public class DeleteTransition extends UiPositionCommand {
 
     private final UiExtension parentOfElement;
     private UiElement uiElement;
@@ -23,7 +23,7 @@ public class DeleteTransitionInPlan extends UiPositionCommand {
     private Synchronisation synchronisation;
     private PreCondition preCondition;
 
-    public DeleteTransitionInPlan(ModelManager manager, ModelModificationQuery mmq) {
+    public DeleteTransition(ModelManager manager, ModelModificationQuery mmq) {
         super(manager, mmq);
         this.parentOfElement = this.modelManager.getPlanUIExtensionPair(mmq.getParentId());
         this.transition = (Transition) this.modelManager.getPlanElement(mmq.getElementId());
@@ -59,7 +59,7 @@ public class DeleteTransitionInPlan extends UiPositionCommand {
         }
 
         this.modelManager.dropPlanElement(Types.TRANSITION, transition, true);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, transition);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, transition);
     }
 
     @Override
@@ -80,6 +80,6 @@ public class DeleteTransitionInPlan extends UiPositionCommand {
         }
 
         modelManager.storePlanElement(Types.TRANSITION, transition,false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, transition);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, transition);
     }
 }

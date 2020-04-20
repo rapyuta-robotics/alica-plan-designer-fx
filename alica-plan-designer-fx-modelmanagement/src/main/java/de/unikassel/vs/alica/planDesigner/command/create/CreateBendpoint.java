@@ -41,7 +41,7 @@ public class CreateBendpoint extends UiPositionCommand {
         this.uiElement.addBendpoint(index, bendPoint);
 
         this.modelManager.storePlanElement(mmq.getElementType(), bendPoint, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.bendPoint.getTransition());
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.bendPoint.getTransition());
     }
 
     @Override
@@ -50,6 +50,6 @@ public class CreateBendpoint extends UiPositionCommand {
         bendPointMap.put(Types.BENDPOINT, bendPoint.getId());
         this.uiElement.removeBendpoint(this.bendPoint);
         this.modelManager.dropPlanElement(mmq.getElementType(), bendPoint, false);
-        this.fireEvent(ModelEventType.ELEMENT_REMOVED, this.bendPoint.getTransition(), bendPointMap);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.bendPoint.getTransition(), bendPointMap);
     }
 }

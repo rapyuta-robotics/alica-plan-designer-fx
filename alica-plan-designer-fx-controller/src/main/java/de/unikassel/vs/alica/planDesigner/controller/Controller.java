@@ -22,7 +22,6 @@ import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiStatusHandler;
 import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelManager;
 import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelModificationQuery;
 import de.unikassel.vs.alica.planDesigner.plugin.PluginEventHandler;
-import de.unikassel.vs.alica.planDesigner.uiextensionmodel.BendPoint;
 import de.unikassel.vs.alica.planDesigner.view.I18NRepo;
 import de.unikassel.vs.alica.planDesigner.view.Types;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.AbstractPlanTab;
@@ -218,12 +217,12 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
      * @param event Object that describes the purpose/context of the fired event.
      */
     public void handleModelEvent(ModelEvent event) {
-        if(event.getEventType().equals(ModelEventType.ELEMENT_FOLDER_DELETED)){
+        if(event.getEventType().equals(ModelEventType.FOLDER_DELETED)){
             updateFileTreeView(event, null);
             return;
         }
         PlanElement modelElement = event.getElement();
-        ViewModelElement viewModelElement = viewModelManager.getViewModelElement(modelElement);
+        ViewModelElement viewModelElement = viewModelManager.updateViewModel(event, modelElement);
 
         switch (event.getElementType()) {
             case Types.MASTERPLAN:
@@ -242,7 +241,7 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
                 break;
         }
 
-        updateViewModel(event, viewModelElement, modelElement);
+
     }
 
     /**
@@ -253,9 +252,17 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
     private void updateGeneratedCode(ModelEvent event, ViewModelElement viewModelElement) {
         switch(event.getEventType()) {
             case ELEMENT_ATTRIBUTE_CHANGED:
+                // when something got moved, regenerate code into right folder
                 if ("relativeDirectory".equals(event.getChangedAttribute())) {
                     mainWindowController.waitOnProgressLabel(() -> generateCode(new GuiModificationEvent(GuiEventType.GENERATE_ALL_ELEMENTS, event.getElementType(),
                             viewModelElement.getName()), mainWindowController.getStatusText()));
+                }
+                break;
+            case ELEMENT_DELETED:
+                // when a Behaviour is deleted, regenerate the BehaviourCreator
+                if(viewModelElement instanceof BehaviourViewModel) {
+                    mainWindowController.waitOnProgressLabel(() -> generateCode(new GuiModificationEvent(GuiEventType.GENERATE_ALL_ELEMENTS, event.getElementType(),
+                            event.getElement().getName()), mainWindowController.getStatusText()));
                 }
                 break;
         }
@@ -302,72 +309,14 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
                     mainWindowController.getFileTreeView().addViewModelElement(viewModelElement);
                 }
                 break;
-            case ELEMENT_FOLDER_DELETED:
+            case FOLDER_DELETED:
                 // This should be unnecessary see: https://github.com/dasys-lab/alica-plan-designer-fx/issues/112
                 mainWindowController.getFileTreeView().removeFolder(event.getChangedAttribute());
                 break;
         }
     }
 
-    /**
-     * Handles the model event for the the view model elements.
-     *
-     * @param event
-     * @param viewModelElement
-     * @param planElement
-     */
-    private void updateViewModel(ModelEvent event, ViewModelElement viewModelElement, PlanElement planElement) {
-        switch (event.getEventType()) {
-            case ELEMENT_DELETED:
-            case ELEMENT_REMOVED:
-                viewModelManager.removeElement(event.getParentId(), viewModelElement, event.getRelatedObjects());
 
-                //When Behaviour is deleted, regenerate the BehaviourCreator.
-                if(viewModelElement instanceof BehaviourViewModel && event.getEventType().equals(ModelEventType.ELEMENT_DELETED)) {
-                    mainWindowController.waitOnProgressLabel(() -> generateCode(new GuiModificationEvent(GuiEventType.GENERATE_ALL_ELEMENTS, event.getElementType(),
-                            event.getElement().getName()), mainWindowController.getStatusText()));
-                }
-                break;
-            case ELEMENT_ATTRIBUTE_CHANGED:
-                viewModelManager.changeElementAttribute(viewModelElement, event.getChangedAttribute(), event.getNewValue(), event.getOldValue());
-                if(event.getChangedAttribute().equals("name")) {
-                    viewModelElement.setName(planElement.getName());
-                    updateFileTreeView(event, viewModelElement);
-                }
-                if(event.getChangedAttribute().equals("masterPlan")) {
-                    updateFileTreeView(event, viewModelElement);
-                }
-                break;
-            case ELEMENT_PARSED:
-            case ELEMENT_CREATED:
-            case ELEMENT_ADDED:
-                viewModelManager.addElement(event);
-                break;
-            case ELEMENT_CONNECTED:
-                viewModelManager.connectElement(event);
-                break;
-            case ELEMENT_DISCONNECTED:
-                viewModelManager.disconnectElement(event);
-                break;
-            case ELEMENT_CHANGED_POSITION:
-                viewModelManager.changePosition((PlanElementViewModel) viewModelElement, event);
-                break;
-            default:
-                System.out.println("Controller.updateViewModel(): Event type " + event.getEventType() + " is not handled.");
-                break;
-        }
-
-        if (event.getUiElement() != null && event.getUiElement().getBendPoints().size() != 0) {
-            TransitionViewModel transition = (TransitionViewModel) viewModelElement;
-            transition.getBendpoints().clear();
-            for (BendPoint bendPoint : event.getUiElement().getBendPoints()) {
-                BendPointViewModel bendPointViewModel = (BendPointViewModel) viewModelManager.getViewModelElement(bendPoint);
-                transition.addBendpoint(bendPointViewModel);
-            }
-            ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_CREATED, planElement, Types.BENDPOINT);
-            updateViewModel(modelEvent, viewModelElement, planElement);
-        }
-    }
 
     /**
      * Called by the 'ShowUsage'-ContextMenu of RepositoryHBoxes

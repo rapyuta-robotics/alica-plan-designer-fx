@@ -24,9 +24,6 @@ public abstract class StateMixIn {
     protected EntryPoint entryPoint;
     @JsonSerialize(using = InternalRefSerializer.class)
     protected Plan parentPlan;
-    @JsonSerialize(contentUsing = ExternalRefSerializer.class)
-    @JsonDeserialize(contentUsing = ExternalRefDeserializer.class)
-    protected ArrayList<AbstractPlan> abstractPlans;
     @JsonSerialize(contentUsing = InternalRefSerializer.class)
     protected ArrayList<Transition> inTransitions;
     @JsonSerialize(contentUsing = InternalRefSerializer.class)

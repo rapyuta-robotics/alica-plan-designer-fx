@@ -97,6 +97,7 @@ public class ModelManager implements Observer {
         objectMapper.addMixIn(UiExtension.class, UiExtensionMixIn.class);
         objectMapper.addMixIn(BendPoint.class, BendPointMixIn.class);
         objectMapper.addMixIn(Behaviour.class, BehaviourMixIn.class);
+        objectMapper.addMixIn(ConfAbstractPlanWrapper.class, ConfAbstractPlanWrapperMixIn.class);
     }
 
     public void setPlansPath(String plansPath) {
@@ -1114,7 +1115,7 @@ public class ModelManager implements Observer {
                     case Types.STATE:
                     case Types.SUCCESSSTATE:
                     case Types.FAILURESTATE:
-                        cmd = new DeleteStateInPlan(this, mmq);
+                        cmd = new DeleteState(this, mmq);
                         break;
                     case Types.ENTRYPOINT:
                         cmd = new DeleteEntryPoint(this, mmq);
@@ -1129,7 +1130,7 @@ public class ModelManager implements Observer {
                         cmd = new DeleteFolder(this, mmq);
                         break;
                     case Types.TRANSITION:
-                        cmd = new DeleteTransitionInPlan(this, mmq);
+                        cmd = new DeleteTransition(this, mmq);
                         break;
                     case Types.SYNCHRONISATION:
                         cmd = new DeleteSynchronisationFromPlan(this, mmq);
@@ -1198,7 +1199,7 @@ public class ModelManager implements Observer {
                         cmd = new CreateVariableBinding(this, mmq);
                         break;
                     default:
-                        System.err.println("ModelManager: Unknown model modification query element of type " + mmq.getElementType() + " gets ignored!");
+                        System.err.println("ModelManager: Addition of unknown model modification query element of type " + mmq.getElementType() + " gets ignored!");
                         return;
                 }
                 break;
@@ -1218,7 +1219,7 @@ public class ModelManager implements Observer {
                         cmd = new CopyConfiguration(this, mmq);
                         break;
                     default:
-                        System.err.println("ModelManager: Unknown model modification query element of type " + mmq.getElementType() + " gets ignored!");
+                        System.err.println("ModelManager: Copying of unknown model modification query element of type " + mmq.getElementType() + " gets ignored!");
                         return;
                 }
                 break;
@@ -1242,7 +1243,7 @@ public class ModelManager implements Observer {
                         cmd = new RemoveAbstractPlanFromState(this, mmq);
                         break;
                     default:
-                        System.err.println("ModelManager: Unknown model modification query element of type " + mmq.getElementType() + " gets ignored!");
+                        System.err.println("ModelManager: Removing of unknown model modification query element of type " + mmq.getElementType() + " gets ignored!");
                         return;
                 }
                 break;

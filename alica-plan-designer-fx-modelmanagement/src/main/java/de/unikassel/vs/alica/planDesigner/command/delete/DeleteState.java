@@ -13,18 +13,18 @@ import de.unikassel.vs.alica.planDesigner.uiextensionmodel.UiElement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeleteStateInPlan extends UiPositionCommand {
+public class DeleteState extends UiPositionCommand {
 
     protected State state;
     protected Plan plan;
     private UiElement uiElement;
     private final UiExtension parentOfElement;
     private EntryPoint entryPoint;
-    private List<DeleteTransitionInPlan> deleteTransitionInPlansList = new ArrayList<>();
+    private List<DeleteTransition> deleteTransitionInPlansList = new ArrayList<>();
     private List<DeleteVariableBinding> deleteVariableBindingList = new ArrayList<>();
     private List<RemoveAbstractPlanFromState> removeAbstractPlanFromStateList = new ArrayList<>();
 
-    public DeleteStateInPlan(ModelManager modelManager, ModelModificationQuery mmq) {
+    public DeleteState(ModelManager modelManager, ModelModificationQuery mmq) {
         super(modelManager, mmq);
         this.state = (State) modelManager.getPlanElement(mmq.getElementId());
         this.plan = (Plan) modelManager.getPlanElement(mmq.getParentId());
@@ -43,7 +43,7 @@ public class DeleteStateInPlan extends UiPositionCommand {
             if(state.getOutTransitions().size() !=0) {
                 deleteTransitions(state.getOutTransitions());
             }
-            for (DeleteTransitionInPlan d: deleteTransitionInPlansList) { d.doCommand(); }
+            for (DeleteTransition d: deleteTransitionInPlansList) { d.doCommand(); }
         }
 
         if(state.getConfAbstractPlanWrappers().size() != 0) {
@@ -62,7 +62,7 @@ public class DeleteStateInPlan extends UiPositionCommand {
         uiElement = parentOfElement.getUiElement(state.getId());
         parentOfElement.remove(state.getId());
         parentOfElement.getPlan().removeState(state);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, state);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, state);
     }
 
     @Override
@@ -74,12 +74,12 @@ public class DeleteStateInPlan extends UiPositionCommand {
             state.setEntryPoint(entryPoint);
             entryPoint.setState(state);
         }
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, state);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, state);
 
         if(deleteTransitionInPlansList != null) {
             mmq.setElementType(Types.TRANSITION);
             mmq.setParentId(plan.getId());
-            for (DeleteTransitionInPlan d: deleteTransitionInPlansList) { d.undoCommand(); }
+            for (DeleteTransition d: deleteTransitionInPlansList) { d.undoCommand(); }
         }
         if(deleteVariableBindingList != null){
             mmq.setElementType(Types.VARIABLEBINDING);
@@ -120,8 +120,8 @@ public class DeleteStateInPlan extends UiPositionCommand {
             ModelModificationQuery transitionMMQ = mmq;
             transitionMMQ.setParentId(plan.getId());
             transitionMMQ.setElementId(transition.getId());
-            DeleteTransitionInPlan deleteTransitionInPlan = new DeleteTransitionInPlan(modelManager, transitionMMQ);
-            deleteTransitionInPlansList.add(deleteTransitionInPlan);
+            DeleteTransition deleteTransition = new DeleteTransition(modelManager, transitionMMQ);
+            deleteTransitionInPlansList.add(deleteTransition);
         }
     }
 }

@@ -44,7 +44,7 @@ public class CreateState extends UiPositionCommand {
         this.plan.addState(state);
         this.uiExtension.add(state.getId(), uiElement);
         modelManager.storePlanElement(mmq.getElementType(), state,false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, state);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, state);
     }
 
     @Override

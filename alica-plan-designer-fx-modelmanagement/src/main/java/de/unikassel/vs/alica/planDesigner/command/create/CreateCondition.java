@@ -83,7 +83,7 @@ public class CreateCondition extends ConditionCommand {
     public void doCommand() {
         setCondition(newCondition, planElement);
 
-        if (oldCondition != null){
+        if (oldCondition != null) {
             modelManager.dropPlanElement(mmq.getElementType(), oldCondition, false);
             this.fireEvent(ModelEventType.ELEMENT_DELETED, oldCondition);
         }

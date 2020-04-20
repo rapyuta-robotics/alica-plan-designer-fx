@@ -3,6 +3,7 @@ package de.unikassel.vs.alica.defaultPlugin;
 import de.unikassel.vs.alica.planDesigner.alicamodel.Plan
 import de.unikassel.vs.alica.planDesigner.alicamodel.Behaviour
 import de.unikassel.vs.alica.planDesigner.alicamodel.State
+import de.unikassel.vs.alica.planDesigner.alicamodel.ConfAbstractPlanWrapper
 import de.unikassel.vs.alica.planDesigner.alicamodel.TerminalState
 import de.unikassel.vs.alica.planDesigner.alicamodel.Transition
 import de.unikassel.vs.alica.planDesigner.alicamodel.Variable
@@ -28,9 +29,9 @@ class DefaultTemplate {
                 * Outgoing transition:
                 *   - Name: «transition.preCondition.name», ConditionString: «transition.preCondition.conditionString», Comment: «transition.comment»
                 *
-                * Abstract plans in current state: «var  List<AbstractPlan> plans = state.abstractPlans»
-                «FOR plan : plans»
-                *   - «plan.name» («plan.id»)
+                * Abstract plans in current state: «var  List<ConfAbstractPlanWrapper> wrappers = state.confAbstractPlanWrappers»
+                «FOR wrapper : wrappers»
+                *   - «wrapper.abstractPlan.name» («wrapper.abstractPlan.id»)
                 «ENDFOR»
                 *
                 * Tasks in plan: «var  List<EntryPoint> entryPoints = state.parentPlan.entryPoints»
@@ -352,9 +353,9 @@ class DefaultTemplate {
                     * - Comment: «transition.preCondition.comment»
                     * - ConditionString: «transition.preCondition.conditionString»
                     *
-                    * «var  List<AbstractPlan> plans = state.abstractPlans»
-                    * Plans in State: «FOR plan : plans»
-                    * - Plan Name: «plan.name», PlanID: «plan.id» «ENDFOR»
+                    * «var  List<ConfAbstractPlanWrapper> wrappers = state.confAbstractPlanWrappers»
+                    * AbstractPlans in State: «FOR wrapper : wrappers»
+                    * - AbstractPlan Name: «wrapper.abstractPlan.name», PlanID: «wrapper.abstractPlan.id» «ENDFOR»
                     «var  List<Variable> variables =  transition.preCondition.variables»
                     «IF (variables !== null)»
                          * Static Variables: «FOR variable : variables»«variable.name» «ENDFOR»

@@ -25,5 +25,4 @@ public class ConfAbstractPlanWrapper extends PlanElement {
     public SimpleObjectProperty<Configuration> configurationProperty(){
         return configuration;
     }
-
 }

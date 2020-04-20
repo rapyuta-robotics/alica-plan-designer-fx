@@ -48,7 +48,7 @@ public class CreateTransition extends UiPositionCommand {
         this.out.addInTransition(this.transition);
 
         this.modelManager.storePlanElement(Types.TRANSITION, this.transition,false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.transition);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.transition);
     }
 
     @Override
@@ -57,6 +57,6 @@ public class CreateTransition extends UiPositionCommand {
         this.in.removeOutTransition(this.transition);
         this.out.removeInTransition(this.transition);
         this.modelManager.dropPlanElement(Types.TRANSITION, this.transition, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.transition);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.transition);
     }
 }

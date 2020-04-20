@@ -31,7 +31,7 @@ public class CreateTask extends Command {
     public void doCommand() {
         this.taskRepository.addTask(task);
         modelManager.storePlanElement(Types.TASK, this.task,  false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.task);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.task);
 
         // Save the new Task directly
         PlanElement planElement = modelManager.getPlanElement(task.getTaskRepository().getId());
@@ -42,6 +42,6 @@ public class CreateTask extends Command {
     public void undoCommand() {
         this.taskRepository.removeTask(task);
         modelManager.dropPlanElement(Types.TASK, this.task, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.task);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.task);
     }
 }
