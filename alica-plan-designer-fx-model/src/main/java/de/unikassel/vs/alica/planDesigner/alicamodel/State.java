@@ -49,6 +49,7 @@ public class State extends PlanElement {
     public void addConfAbstractPlanWrapper(ConfAbstractPlanWrapper confAbstractPlanWrapper) {
         confAbstractPlanWrappers.add(confAbstractPlanWrapper);
         if (this.changeListener != null) {
+            confAbstractPlanWrapper.registerDirtyFlag(this.changeListener);
             this.changeListener.setDirty();
         }
     }
@@ -109,6 +110,10 @@ public class State extends PlanElement {
         this.changeListener = listener;
         this.name.addListener(listener);
         this.comment.addListener(listener);
+
+        for (ConfAbstractPlanWrapper wrapper : confAbstractPlanWrappers) {
+            wrapper.registerDirtyFlag(listener);
+        }
 
         for (VariableBinding param : variableBindings) {
             param.registerDirtyFlag(listener);

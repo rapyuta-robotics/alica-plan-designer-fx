@@ -14,14 +14,15 @@ public class ConnectEntryPointsWithState extends Command {
     protected EntryPoint entryPoint;
     protected State newState;
     protected State oldState;
-    protected Plan plan;
 
     public ConnectEntryPointsWithState(ModelManager manager, ModelModificationQuery mmq) {
         super(manager, mmq);
+        // hack to make the fireEvent-Method work
+        mmq.setParentId(mmq.getRelatedObjects().get(Types.STATE));
+
         entryPoint = (EntryPoint) manager.getPlanElement((mmq.getRelatedObjects().get(Types.ENTRYPOINT)));
-        oldState = entryPoint.getState();
         newState = (State) manager.getPlanElement(mmq.getRelatedObjects().get(Types.STATE));
-        plan = (Plan) manager.getPlanElement(mmq.getParentId());
+        oldState = entryPoint.getState();
     }
 
 
@@ -44,5 +45,6 @@ public class ConnectEntryPointsWithState extends Command {
     @Override
     public void undoCommand() {
         entryPoint.setState(oldState);
+        fireEvent(ModelEventType.ELEMENT_CONNECTED, entryPoint);
     }
 }

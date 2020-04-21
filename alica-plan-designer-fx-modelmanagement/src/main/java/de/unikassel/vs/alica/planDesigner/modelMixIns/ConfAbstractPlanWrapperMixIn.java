@@ -8,12 +8,11 @@ import de.unikassel.vs.alica.planDesigner.deserialization.ExternalRefDeserialize
 import de.unikassel.vs.alica.planDesigner.serialization.ExternalRefSerializer;
 
 public class ConfAbstractPlanWrapperMixIn {
-
-    @JsonSerialize(contentUsing = ExternalRefSerializer.class)
-    @JsonDeserialize(contentUsing = ExternalRefDeserializer.class)
+    @JsonSerialize(using = ExternalRefSerializer.class)
+    @JsonDeserialize(using = ExternalRefDeserializer.class)
     protected AbstractPlan abstractPlan;
 
-    @JsonSerialize(contentUsing = ExternalRefSerializer.class)
-    @JsonDeserialize(contentUsing = ExternalRefDeserializer.class)
+    @JsonSerialize(using = ExternalRefSerializer.class)
+    @JsonDeserialize(using = ExternalRefDeserializer.class)
     protected Configuration configuration;
 }

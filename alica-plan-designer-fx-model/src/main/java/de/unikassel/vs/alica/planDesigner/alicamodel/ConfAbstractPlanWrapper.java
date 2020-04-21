@@ -6,6 +6,8 @@ public class ConfAbstractPlanWrapper extends PlanElement {
     private final SimpleObjectProperty<AbstractPlan> abstractPlan = new SimpleObjectProperty<>(this, "abstractPlan", null);
     private final SimpleObjectProperty<Configuration> configuration = new SimpleObjectProperty<>(this, "configuration", null);
 
+    private ChangeListenerForDirtyFlag changeListener;
+
     public AbstractPlan getAbstractPlan() {
         return abstractPlan.get();
     }
@@ -24,5 +26,15 @@ public class ConfAbstractPlanWrapper extends PlanElement {
     }
     public SimpleObjectProperty<Configuration> configurationProperty(){
         return configuration;
+    }
+
+    public void registerDirtyFlag(ChangeListenerForDirtyFlag listener) {
+        this.changeListener = listener;
+        this.name.addListener(listener);
+        this.comment.addListener(listener);
+
+        this.abstractPlan.addListener(listener);
+        this.configuration.addListener(listener);
+
     }
 }

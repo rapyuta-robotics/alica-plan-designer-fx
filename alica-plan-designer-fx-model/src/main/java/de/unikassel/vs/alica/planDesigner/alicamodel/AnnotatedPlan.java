@@ -35,10 +35,9 @@ public class AnnotatedPlan extends PlanElement {
     }
 
     public void registerDirtyFlag(ChangeListenerForDirtyFlag listener) {
-        this.nameProperty().addListener(listener);
-        this.commentProperty().addListener(listener);
-        this.activatedProperty().addListener(listener);
-        this.planProperty().addListener(listener);
-        this.activatedProperty().addListener(listener);
+        name.addListener(listener);
+        comment.addListener(listener);
+        activated.addListener(listener);
+        plan.addListener(listener);
     }
 }

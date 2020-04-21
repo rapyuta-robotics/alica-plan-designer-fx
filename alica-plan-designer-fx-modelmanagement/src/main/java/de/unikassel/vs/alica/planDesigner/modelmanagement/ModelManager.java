@@ -472,7 +472,7 @@ public class ModelManager implements Observer {
             }
 
             for (ConfAbstractPlanWrapper wrapper : state.getConfAbstractPlanWrappers()) {
-                wrapper.setAbstractPlan((AbstractPlan) planElementMap.get(wrapper.getAbstractPlan()));
+                wrapper.setAbstractPlan((AbstractPlan) planElementMap.get(wrapper.getAbstractPlan().getId()));
             }
 
             // here they are inserted again

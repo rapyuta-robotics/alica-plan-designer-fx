@@ -81,9 +81,10 @@ public class SyncTransitionTool extends AbstractTool {
 
                 if (parent instanceof TransitionContainer) {
                     trans = (TransitionViewModel) ((TransitionContainer) parent).getPlanElementViewModel();
+
                     HashMap<String, Long> related = new HashMap<>();
-                    related.put(Types.SYNCHRONISATION, sync.getId());
                     related.put(Types.TRANSITION, trans.getId());
+                    related.put(Types.SYNCHRONISATION, sync.getId());
                     planTab.fireModificationEvent(GuiEventType.ADD_ELEMENT, Types.SYNCTRANSITION, null, related);
                     return;
                 }

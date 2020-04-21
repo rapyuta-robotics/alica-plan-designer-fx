@@ -96,7 +96,7 @@ public class ViewModelManager {
         }  else if (planElement instanceof ConfAbstractPlanWrapper) {
             element = createConfAbstractPlanWrapperViewModel((ConfAbstractPlanWrapper) planElement);
         } else {
-            System.err.println("ViewModelManager: getViewModelElement for type " + planElement.getClass().toString() + " not implemented!");
+            throw new RuntimeException("ViewModelManager: getViewModelElement for type " + planElement.getClass().toString() + " not implemented!");
         }
 
         viewModelElements.put(planElement.getId(), element);
@@ -181,7 +181,6 @@ public class ViewModelManager {
     private RoleViewModel createRoleViewModel(Role role) {
         RoleViewModel roleViewModel = new RoleViewModel(role.getId(), role.getName());
         ObservableMap<TaskViewModel, Float> taskPriorities = FXCollections.observableHashMap();
-//        ObservableList<CharacteristicViewModel> characteristics = FXCollections.observableArrayList();
 
         for (Task task: role.getTaskPriorities().keySet()) {
             TaskViewModel taskViewModel = (TaskViewModel)this.getViewModelElement(task);
@@ -192,7 +191,6 @@ public class ViewModelManager {
             CharacteristicViewModel characteristicViewModel = (CharacteristicViewModel)this.getViewModelElement(characteristic);
             characteristicViewModel.setRoleViewModel(roleViewModel);
             characteristicViewModel.getRoleViewModel().addRoleCharacteristic(characteristicViewModel);
-//            characteristics.add(characteristicViewModel);
         }
 
         roleViewModel.setTaskPrioritieViewModels(taskPriorities);
@@ -212,10 +210,6 @@ public class ViewModelManager {
 
         if(roleViewModel != null)
             roleViewModel.addRoleCharacteristic(characteristicViewModel);
-//        if(viewModelElement == null)
-//            viewModelElement = getViewModelElement(characteristic.getRole());
-//        characteristicViewModel.setRoleViewModel((RoleViewModel) viewModelElement);
-//        characteristicViewModel.getRoleViewModel().addRoleCharacteristic(characteristicViewModel);
         return characteristicViewModel;
     }
 
@@ -324,7 +318,7 @@ public class ViewModelManager {
         }
 
         for (VariableBinding param: planType.getVariableBindings()) {
-            planTypeViewModel.addVariableBinding((VariableBindingViewModel) getViewModelElement(modelManager.getPlanElement(param.getId())));
+            planTypeViewModel.addVariableBinding((VariableBindingViewModel) getViewModelElement(param));
         }
 
         for (Variable var : planType.getVariables()) {
@@ -362,17 +356,16 @@ public class ViewModelManager {
         stateViewModel.setYPosition(uiElement.getY());
 
         for (ConfAbstractPlanWrapper confAbstractPlanWrapper : state.getConfAbstractPlanWrappers()) {
-            stateViewModel.addConfAbstractPlanWrapper((ConfAbstractPlanWrapperViewModel) getViewModelElement(modelManager.getPlanElement(confAbstractPlanWrapper.getId())));
+            stateViewModel.addConfAbstractPlanWrapper((ConfAbstractPlanWrapperViewModel) getViewModelElement(confAbstractPlanWrapper));
         }
         if (state.getEntryPoint() != null) {
-            stateViewModel.setEntryPoint((EntryPointViewModel) getViewModelElement(modelManager.getPlanElement(state.getEntryPoint().getId())));
+            stateViewModel.setEntryPoint((EntryPointViewModel) getViewModelElement(state.getEntryPoint()));
         }
         if(state instanceof TerminalState && ((TerminalState) state).getPostCondition() != null) {
             stateViewModel.setPostCondition((ConditionViewModel) getViewModelElement(((TerminalState) state).getPostCondition()));
         }
-
         for (VariableBinding param: state.getVariableBindings()) {
-            stateViewModel.addVariableBinding((VariableBindingViewModel) getViewModelElement(modelManager.getPlanElement(param.getId())));
+            stateViewModel.addVariableBinding((VariableBindingViewModel) getViewModelElement(param));
         }
 
         return stateViewModel;
@@ -383,7 +376,7 @@ public class ViewModelManager {
         // we need to put the ep before creating the state, in order to avoid circles (EntryPoint <-> State)
         this.viewModelElements.put(entryPointViewModel.getId(), entryPointViewModel);
         if (ep.getState() != null) {
-            StateViewModel entryState = (StateViewModel) getViewModelElement(modelManager.getPlanElement(ep.getState().getId()));
+            StateViewModel entryState = (StateViewModel) getViewModelElement(ep.getState());
             entryPointViewModel.setState(entryState);
             entryState.setEntryPoint(entryPointViewModel);
         }
