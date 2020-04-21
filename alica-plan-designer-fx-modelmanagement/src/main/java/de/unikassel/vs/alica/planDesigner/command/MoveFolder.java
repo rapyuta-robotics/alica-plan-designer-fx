@@ -64,7 +64,7 @@ public class MoveFolder extends ChangeAttributeCommand {
                     if (planElement instanceof PlanType) {
                         types = Types.PLANTYPE;
                     }
-                    this.ending = FileSystemUtil.getExtension((SerializablePlanElement) planElement);
+                    this.ending = FileSystemUtil.getType((SerializablePlanElement) planElement);
                     this.modelManager.moveFile((SerializablePlanElement) planElement, types, newFile.getAbsolutePath(), ending);
                     fireEvent((SerializablePlanElement) planElement, types, "relativeDirectory");
                 } else {
@@ -117,7 +117,7 @@ public class MoveFolder extends ChangeAttributeCommand {
                     if (planElement instanceof PlanType) {
                         types = Types.PLANTYPE;
                     }
-                    this.ending = FileSystemUtil.getExtension((SerializablePlanElement) planElement);
+                    this.ending = FileSystemUtil.getType((SerializablePlanElement) planElement);
                     this.modelManager.moveFile((SerializablePlanElement) planElement, types, oldFile.getAbsolutePath(), ending);
                     fireEvent((SerializablePlanElement) planElement, types, "relativeDirectory");
                 } else {

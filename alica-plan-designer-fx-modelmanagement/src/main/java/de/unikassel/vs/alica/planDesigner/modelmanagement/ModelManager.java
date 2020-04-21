@@ -313,8 +313,8 @@ public class ModelManager implements Observer {
      */
     private void loadModelFile(File modelFile, boolean resolveReferences) {
         // 0. check if valid plan ending
-        String stringType = FileSystemUtil.getExtension(modelFile);
-        if ((stringType == Types.UNSUPPORTED)) {
+        String type = FileSystemUtil.getType(modelFile);
+        if ((type == Types.UNSUPPORTED)) {
             return;
         }
 
@@ -326,7 +326,7 @@ public class ModelManager implements Observer {
         }
 
         // Special Case for UIExtension Files
-        if (stringType == Types.UIEXTENSION) {
+        if (type == Types.UIEXTENSION) {
             UiExtension uiExtension = (UiExtension) parsedObject;
             uiExtensionMap.put(uiExtension.getPlan().getId(), uiExtension);
             if (resolveReferences) {
@@ -337,20 +337,20 @@ public class ModelManager implements Observer {
 
         // 2. add plan element and its children into to maps of the model manager
         SerializablePlanElement planElement = (SerializablePlanElement) parsedObject;
-        storePlanElement(FileSystemUtil.getExtension(modelFile), (PlanElement) parsedObject, false);
+        storePlanElement(FileSystemUtil.getType(modelFile), (PlanElement) parsedObject, false);
 
         // 3. resolve references
         if (resolveReferences) {
-            if (Types.PLAN.equals(stringType)) {
+            if (Types.PLAN.equals(type)) {
                 resolveReferences((Plan) parsedObject);
-            } else if (Types.PLANTYPE.equals(stringType)) {
+            } else if (Types.PLANTYPE.equals(type)) {
                 resolveReferences((PlanType) parsedObject);
             }
         }
 
         // 4. add listener to dirty flag
         planElement.dirtyProperty().addListener((observable, oldValue, newValue) -> {
-            ModelEvent event = new ModelEvent(ModelEventType.ELEMENT_ATTRIBUTE_CHANGED, planElement, stringType);
+            ModelEvent event = new ModelEvent(ModelEventType.ELEMENT_ATTRIBUTE_CHANGED, planElement, type);
             event.setChangedAttribute("dirty");
             event.setNewValue(newValue);
             this.fireEvent(event);
@@ -364,7 +364,7 @@ public class ModelManager implements Observer {
             if (parsedObject instanceof Plan && ((Plan) parsedObject).getMasterPlan()) {
                 fireEvent(new ModelEvent(ModelEventType.ELEMENT_PARSED, planElement, Types.MASTERPLAN));
             } else {
-                fireEvent(new ModelEvent(ModelEventType.ELEMENT_PARSED, planElement, stringType));
+                fireEvent(new ModelEvent(ModelEventType.ELEMENT_PARSED, planElement, type));
             }
         }
     }
@@ -860,6 +860,9 @@ public class ModelManager implements Observer {
 
         if (planElement instanceof AbstractPlan) {
             usages.addAll(getAbstractPlanUsages(planElement));
+        } else if (planElement instanceof ConfAbstractPlanWrapper) {
+            // Ignore confAbstractPlanWrappers and search for abstractPlans they are wrapping, because wrappers are not reused
+            usages.addAll(getAbstractPlanUsages(((ConfAbstractPlanWrapper) planElement).getAbstractPlan()));
         } else if (planElement instanceof Task) {
             usages.addAll(getTaskUsages(planElement));
         } else if (planElement instanceof Variable) {
@@ -871,9 +874,10 @@ public class ModelManager implements Observer {
         } else if (planElement instanceof RoleSet) {
             usages.addAll(getRoleSetUsages(planElement));
         } else if (planElement instanceof State) {
-            usages.add(((State) planElement).getParentPlan()); // A State is always used in exactly one Plan
+            // A State is always used in exactly one Plan
+            usages.add(((State) planElement).getParentPlan());
         } else {
-            throw new RuntimeException("Usages requested for unhandled elementType of element with id  " + modelElementId);
+            throw new RuntimeException("ModelManager: Usages requested for unhandled elementType of element with id  " + modelElementId);
         }
         return usages;
     }
@@ -1343,7 +1347,7 @@ public class ModelManager implements Observer {
         // for testing, comment if you see this uncommented
 //        generateJsonSchema();
 
-        String fileExtension = FileSystemUtil.getExtension(planElement);
+        String fileExtension = FileSystemUtil.getType(planElement);
         try {
             // Setting the values in the elementsSaved map at the beginning,
             // because otherwise listeners may react before values are updated
@@ -1430,7 +1434,7 @@ public class ModelManager implements Observer {
      * @param planElement
      */
     public void removeFromDisk(SerializablePlanElement planElement, int ignoreEventCounter) {
-        String extension = FileSystemUtil.getExtension(planElement);
+        String extension = FileSystemUtil.getType(planElement);
         if (ignoreEventCounter > 0) {
             elementDeletedMap.put(planElement.getId(), ignoreEventCounter);
         }
@@ -1512,16 +1516,16 @@ public class ModelManager implements Observer {
      * @return the {@link UiExtension} corresponding to the given id
      */
     public UiExtension getPlanUIExtensionPair(long id) {
-        UiExtension pmvo = uiExtensionMap.get(id);
-        if (pmvo == null) {
+        UiExtension uiExtension = uiExtensionMap.get(id);
+        if (uiExtension == null) {
             Plan plan = planMap.get(id);
             if (plan == null) {
-                throw new RuntimeException("ModelManager: Cannot create UiExtension, because no plan with id " + id + "exists");
+                throw new RuntimeException("ModelManager: Cannot create UiExtension, because no plan with id " + id + " exists!");
             }
-            pmvo = new UiExtension(plan);
-            uiExtensionMap.put(id, pmvo);
+            uiExtension = new UiExtension(plan);
+            uiExtensionMap.put(id, uiExtension);
         }
-        return pmvo;
+        return uiExtension;
     }
 
     /**

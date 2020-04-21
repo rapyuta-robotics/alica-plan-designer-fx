@@ -38,13 +38,13 @@ public class DeleteBendpoint extends UiPositionCommand {
         bendPointMap.put(Types.BENDPOINT, bendPoint.getId());
         uiElement.removeBendpoint(bendPoint);
         modelManager.dropPlanElement(mmq.getElementType(), bendPoint, false);
-        fireEvent(ModelEventType.ELEMENT_REMOVED, this.transition, bendPointMap);
+        fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.transition, bendPointMap);
     }
 
     @Override
     public void undoCommand() {
         uiElement.getBendPoints().add(index, bendPoint);
         modelManager.storePlanElement(mmq.getElementType(), bendPoint, false);
-        fireEvent(ModelEventType.ELEMENT_CREATED, this.bendPoint.getTransition());
+        fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.bendPoint.getTransition());
     }
 }

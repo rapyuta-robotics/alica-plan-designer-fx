@@ -70,7 +70,7 @@ public class FileSystemUtil {
      * @param planElement whose file ending is to be determined
      * @return file ending of the plan element
      */
-    public static String getExtension(SerializablePlanElement planElement) {
+    public static String getType(SerializablePlanElement planElement) {
         if (planElement instanceof Plan) {
             return Extensions.PLAN;
         } else if (planElement instanceof Behaviour) {
@@ -88,7 +88,7 @@ public class FileSystemUtil {
         }
     }
 
-    public static String getExtension(File file) {
+    public static String getType(File file) {
         switch (getFileExtensionInternal(file)) {
             case Extensions.PLAN:
                 return Types.PLAN;

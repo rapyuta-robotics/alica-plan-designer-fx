@@ -16,7 +16,7 @@ public class MoveFile extends ChangeAttributeCommand {
     public MoveFile(ModelManager modelManager, ModelModificationQuery mmq) {
         super(modelManager, mmq);
         this.elementToMove = (SerializablePlanElement) modelManager.getPlanElement(mmq.getElementId());
-        this.ending = FileSystemUtil.getExtension(this.elementToMove);
+        this.ending = FileSystemUtil.getType(this.elementToMove);
         this.newAbsoluteDirectory = mmq.getAbsoluteDirectory();
         this.originalRelativeDirectory = this.elementToMove.getRelativeDirectory();
         this.type = mmq.getElementType();

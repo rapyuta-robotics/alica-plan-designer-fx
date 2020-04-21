@@ -2,8 +2,6 @@ package de.unikassel.vs.alica.planDesigner.ViewModelManagement;
 
 import de.unikassel.vs.alica.planDesigner.alicamodel.*;
 import de.unikassel.vs.alica.planDesigner.controller.MainWindowController;
-import de.unikassel.vs.alica.planDesigner.events.GuiEventType;
-import de.unikassel.vs.alica.planDesigner.events.GuiModificationEvent;
 import de.unikassel.vs.alica.planDesigner.events.ModelEvent;
 import de.unikassel.vs.alica.planDesigner.events.ModelEventType;
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
@@ -496,11 +494,13 @@ public class ViewModelManager {
 
         switch (event.getEventType()) {
             case ELEMENT_DELETED:
-            case ELEMENT_REMOVED:
-                removeElement(event.getParentId(), viewModelElement, event.getRelatedObjects());
+                if (viewModelElement instanceof PlanViewModel) {
+                    updatePlansInPlanTypeViewModels((PlanViewModel) viewModelElement, event.getEventType());
+                }
                 break;
-            case ELEMENT_ATTRIBUTE_CHANGED:
-                changeElementAttribute(viewModelElement, event.getChangedAttribute(), event.getNewValue(), event.getOldValue());
+            case ELEMENT_REMOVED:
+            case ELEMENT_REMOVED_AND_DELETED:
+                removeElement(event.getParentId(), viewModelElement, event.getRelatedObjects());
                 break;
             case ELEMENT_CREATED_AND_ADDED:
             case ELEMENT_ADDED:
@@ -515,9 +515,14 @@ public class ViewModelManager {
             case ELEMENT_CHANGED_POSITION:
                 changePosition((PlanElementViewModel) viewModelElement, event);
                 break;
+            case ELEMENT_ATTRIBUTE_CHANGED:
+                changeElementAttribute(viewModelElement, event.getChangedAttribute(), event.getNewValue(), event.getOldValue());
+                break;
             case ELEMENT_PARSED:
             case ELEMENT_CREATED:
-                // No-Op
+                if (viewModelElement instanceof PlanViewModel) {
+                    updatePlansInPlanTypeViewModels((PlanViewModel) viewModelElement, event.getEventType());
+                }
                 break;
             default:
                 System.out.println("Controller.updateViewModel(): Event type " + event.getEventType() + " is not handled.");
@@ -615,7 +620,7 @@ public class ViewModelManager {
                 break;
             case Types.PLAN:
             case Types.MASTERPLAN:
-                updatePlansInPlanViewModels((PlanViewModel) viewModelElement, ModelEventType.ELEMENT_REMOVED);
+                updatePlansInPlanTypeViewModels((PlanViewModel) viewModelElement, ModelEventType.ELEMENT_REMOVED);
                 break;
             case Types.CONF_ABSTRACTPLAN_WRAPPER:
                 ConfAbstractPlanWrapperViewModel confAbstractPlanWrapperViewModel = (ConfAbstractPlanWrapperViewModel) viewModelElement;
@@ -721,49 +726,28 @@ public class ViewModelManager {
      * @param event
      */
     public void addElement(ModelEvent event) {
-        PlanElement parentPlanElement = modelManager.getPlanElement(event.getParentId());
+        ViewModelElement viewModelElement = getViewModelElement(event.getElement());
         ViewModelElement parentViewModel = null;
+        PlanElement parentPlanElement = modelManager.getPlanElement(event.getParentId());
         if(parentPlanElement != null) {
             parentViewModel = getViewModelElement(parentPlanElement);
         }
-        ViewModelElement viewModelElement = getViewModelElement(event.getElement());
 
-        if (parentViewModel instanceof  ConfAbstractPlanWrapperViewModel && !event.getElementType().equals(Types.ABSTRACTPLAN)
-                && !event.getElementType().equals(Types.PRECONDITION) && !event.getElementType().equals(Types.RUNTIMECONDITION)) {
+        if (parentViewModel instanceof PlanViewModel) {
             addToPlan((PlanViewModel) parentViewModel, viewModelElement, event);
             return;
         }
-        IPluginEventHandler pluginHandler = MainWindowController.getInstance().getConfigWindowController().getPluginEventHandler();
-        ConditionViewModel conditionViewModel;
 
         switch (event.getElementType()) {
             case Types.ANNOTATEDPLAN:
-                AnnotatedPlanViewModel annotatedPlanViewModel = (AnnotatedPlanViewModel) viewModelElement;
-                PlanTypeViewModel planTypeViewModel = (PlanTypeViewModel) parentViewModel;
-                planTypeViewModel.getPlansInPlanType().add(annotatedPlanViewModel);
-
-                PlanType planType = (PlanType) modelManager.getPlanElement(planTypeViewModel.getId());
-                for (VariableBinding variableBinding : planType.getVariableBindings()) {
-                    if (variableBinding.getSubPlan().getId() == annotatedPlanViewModel.getPlanId()) {
-                        VariableBindingViewModel variableBindingViewModel = new VariableBindingViewModel(variableBinding.getId(), variableBinding.getName());
-                        variableBindingViewModel.setSubPlan((AbstractPlanViewModel) getViewModelElement(variableBinding.getSubPlan()));
-                        variableBindingViewModel.setSubVariable((VariableViewModel) getViewModelElement(variableBinding.getSubVariable()));
-                        variableBindingViewModel.setVariable((VariableViewModel) getViewModelElement(variableBinding.getVariable()));
-                        planTypeViewModel.addVariableBinding(variableBindingViewModel);
-                    }
-                }
+                ((PlanTypeViewModel) parentViewModel).getPlansInPlanType().add((AnnotatedPlanViewModel) viewModelElement);
                 break;
             case Types.TASK:
-                TaskViewModel taskViewModel = (TaskViewModel) viewModelElement;
-                if (event.getEventType() == ModelEventType.ELEMENT_ADDED) {
-                    ((EntryPointViewModel) parentViewModel).setTask(taskViewModel);
-                } else if (event.getEventType() == ModelEventType.ELEMENT_CREATED) {
-                    ((TaskRepositoryViewModel) parentViewModel).addTask(taskViewModel);
+                if (parentViewModel instanceof EntryPointViewModel) {
+                    ((EntryPointViewModel) parentViewModel).setTask((TaskViewModel) viewModelElement);
+                } else if (parentViewModel instanceof TaskRepositoryViewModel) {
+                    ((TaskRepositoryViewModel) parentViewModel).addTask((TaskViewModel) viewModelElement);
                 }
-                break;
-            case Types.PLAN:
-            case Types.MASTERPLAN:
-                updatePlansInPlanViewModels((PlanViewModel) viewModelElement, event.getEventType());
                 break;
             case Types.CONF_ABSTRACTPLAN_WRAPPER:
                 ConfAbstractPlanWrapperViewModel confAbstractPlanWrapperViewModel = (ConfAbstractPlanWrapperViewModel) viewModelElement;
@@ -822,8 +806,7 @@ public class ViewModelManager {
                 }
                 break;
             case Types.QUANTIFIER:
-                conditionViewModel = (ConditionViewModel) parentViewModel;
-                conditionViewModel.getQuantifiers().add((QuantifierViewModel) viewModelElement);
+                ((ConditionViewModel) parentViewModel).getQuantifiers().add((QuantifierViewModel) viewModelElement);
                 break;
             case Types.ROLE_CHARCTERISTIC:
                 CharacteristicViewModel characteristicViewModel = (CharacteristicViewModel) viewModelElement;
@@ -972,9 +955,10 @@ public class ViewModelManager {
                 break;
             case Types.PRECONDITION:
             case Types.RUNTIMECONDITION:
-                // NO-OP
+                // NO-OP, because conditions are only shown in the ElementInformationPane
                 break;
             case Types.VARIABLEBINDING:
+                // TODO: REWORK!
                 // Return Variable Bindings by undo
                 VariableBindingViewModel var = null;
                 for (StateViewModel stateViewModel1:parentPlan.getStates()) {
@@ -1003,6 +987,10 @@ public class ViewModelManager {
         switch (event.getElementType()) {
             case Types.SYNCTRANSITION:
                 ((SynchronisationViewModel) parentViewModel).getTransitions().add((TransitionViewModel) viewModelElement);
+                break;
+            case Types.INITSTATECONNECTION:
+                ((EntryPointViewModel) viewModelElement).setState((StateViewModel) parentViewModel);
+                ((StateViewModel) parentViewModel).setEntryPoint((EntryPointViewModel) viewModelElement);
                 break;
             default:
                 System.err.println("ViewModelManager: Connect Element not supported for type: " + event.getElementType());
@@ -1055,16 +1043,22 @@ public class ViewModelManager {
         }
     }
 
-    private void updatePlansInPlanViewModels(PlanViewModel planViewModel, ModelEventType type) {
+    private void updatePlansInPlanTypeViewModels(PlanViewModel planViewModel, ModelEventType type) {
         for(PlanType planType : modelManager.getPlanTypes()) {
             // Just updating the already existing PlanTypeViewModels and not creating new ones
             if(viewModelElements.containsKey(planType.getId())) {
                 PlanTypeViewModel planTypeViewModel = (PlanTypeViewModel) viewModelElements.get(planType.getId());
-                // Prevent double inclusions
-                if (type == ModelEventType.ELEMENT_CREATED && !planTypeViewModel.getAllPlans().contains(planViewModel)) {
-                    planTypeViewModel.addPlanToAllPlans(planViewModel);
-                } else if(type == ModelEventType.ELEMENT_DELETED) {
-                    planTypeViewModel.removePlanFromAllPlans(planViewModel.getId());
+                switch (type) {
+                    case ELEMENT_CREATED:
+                    case ELEMENT_PARSED:
+                        // Prevent double inclusions
+                        if (!planTypeViewModel.getAllPlans().contains(planViewModel)) {
+                            planTypeViewModel.addPlanToAllPlans(planViewModel);
+                        }
+                        break;
+                    case ELEMENT_DELETED:
+                        planTypeViewModel.removePlanFromAllPlans(planViewModel.getId());
+                        break;
                 }
             }
         }

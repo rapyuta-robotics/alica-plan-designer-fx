@@ -107,7 +107,6 @@ public final class RepositoryViewModel {
     public ObservableList<ViewModelElement> getPlanTypes() {return planTypes; }
     public ObservableList<ViewModelElement> getConfigurations() {return configurations; }
 
-
     public void addElement(ViewModelElement viewModelElement) {
         switch (viewModelElement.getType()) {
             case Types.MASTERPLAN:

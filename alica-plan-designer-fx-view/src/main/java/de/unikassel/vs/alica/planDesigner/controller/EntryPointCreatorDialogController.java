@@ -48,7 +48,6 @@ public class EntryPointCreatorDialogController implements Initializable {
         createTaskButton.setOnAction(e -> createTask());
         confirmTaskChoiceButton.setText(i18NRepo.getString("action.confirm"));
 
-
         ObservableList<ViewModelElement> tasks = MainWindowController.getInstance().getGuiModificationHandler().getRepoViewModel().getTasks();
         taskComboBox.setItems(tasks);
         taskComboBox.setConverter(new StringConverter<ViewModelElement>() {
@@ -73,7 +72,6 @@ public class EntryPointCreatorDialogController implements Initializable {
         });
 
         createTaskButton.setOnAction(e -> createTask());
-
     }
 
     public void setSelectedTaskReference(AtomicReference<TaskViewModel> taskReference){

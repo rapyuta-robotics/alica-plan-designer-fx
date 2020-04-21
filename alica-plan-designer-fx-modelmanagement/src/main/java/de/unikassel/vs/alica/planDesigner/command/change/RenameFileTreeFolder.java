@@ -40,7 +40,7 @@ public class RenameFileTreeFolder extends ChangeAttributeCommand {
                         if(planElement instanceof PlanType) { elementType = Types.PLANTYPE; }
                         if(planElement instanceof Behaviour) { elementType = Types.BEHAVIOUR; }
                         if(planElement instanceof TaskRepository) { elementType = Types.TASKREPOSITORY; }
-                        ending = FileSystemUtil.getExtension((SerializablePlanElement) planElement);
+                        ending = FileSystemUtil.getType((SerializablePlanElement) planElement);
                         this.modelManager.moveFile(((SerializablePlanElement) planElement),elementType, newValue.toString(), ending);
                         fireEvent(((SerializablePlanElement) planElement), elementType, "relativeDirectory");
                         emptyFolder = false;
@@ -77,7 +77,7 @@ public class RenameFileTreeFolder extends ChangeAttributeCommand {
                         if(planElement instanceof PlanType) { elementType = Types.PLANTYPE; }
                         if(planElement instanceof Behaviour) { elementType = Types.BEHAVIOUR; }
                         if(planElement instanceof TaskRepository) { elementType = Types.TASKREPOSITORY; }
-                        ending = FileSystemUtil.getExtension((SerializablePlanElement) planElement);
+                        ending = FileSystemUtil.getType((SerializablePlanElement) planElement);
                         this.modelManager.moveFile(((SerializablePlanElement) planElement),elementType, oldValue.toString(), ending);
                         fireEvent(((SerializablePlanElement) planElement), elementType, "relativeDirectory");
                         emptyFolder = false;

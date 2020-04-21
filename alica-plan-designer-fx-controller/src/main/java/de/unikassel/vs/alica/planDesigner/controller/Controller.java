@@ -217,7 +217,7 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
      * @param event Object that describes the purpose/context of the fired event.
      */
     public void handleModelEvent(ModelEvent event) {
-        if(event.getEventType().equals(ModelEventType.FOLDER_DELETED)){
+        if(event.getEventType().equals(ModelEventType.FOLDER_DELETED)) {
             updateFileTreeView(event, null);
             return;
         }
@@ -240,8 +240,6 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
                 updateRepos(event.getEventType(), viewModelElement);
                 break;
         }
-
-
     }
 
     /**
@@ -278,9 +276,11 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
         switch (eventType) {
             case ELEMENT_PARSED:
             case ELEMENT_CREATED:
+            case ELEMENT_CREATED_AND_ADDED:
                 repoViewModel.addElement(viewModelElement);
                 break;
             case ELEMENT_DELETED:
+            case ELEMENT_REMOVED_AND_DELETED:
                 repoViewModel.removeElement(viewModelElement);
                 break;
         }
