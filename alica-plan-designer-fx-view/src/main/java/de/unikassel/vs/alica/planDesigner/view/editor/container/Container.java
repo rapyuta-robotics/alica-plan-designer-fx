@@ -29,7 +29,7 @@ public abstract class Container extends Pane implements DraggableEditorElement {
 
 
     protected static final Effect standardEffect = new DropShadow(BlurType.THREE_PASS_BOX,
-            new Color(0,0,0,0.8), 10, 0, 0, 0);
+            new Color(0, 0, 0, 0.8), 10, 0, 0, 0);
 
     protected PlanElementViewModel planElementViewModel;
     protected Node visualRepresentation;
@@ -48,16 +48,16 @@ public abstract class Container extends Pane implements DraggableEditorElement {
         setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
             @Override
             public void handle(ContextMenuEvent e) {
-                if(planElementViewModel instanceof StateViewModel || planElementViewModel instanceof PlanTypeViewModel
+                if (planElementViewModel instanceof StateViewModel || planElementViewModel instanceof PlanTypeViewModel
                         || planElementViewModel instanceof SynchronisationViewModel) {
                     return;
                 }
 
                 ContextMenu contextMenu;
-                if(planElementViewModel instanceof BehaviourViewModel || planElementViewModel instanceof PlanViewModel){
-                     contextMenu = new ContextMenu(new ShowGeneratedSourcesMenuItem(planElementViewModel.getId()));
+                if (planElementViewModel instanceof BehaviourViewModel || planElementViewModel instanceof PlanViewModel) {
+                    contextMenu = new ContextMenu(new ShowGeneratedSourcesMenuItem(planElementViewModel.getId()));
                 } else {
-                     contextMenu = new ContextMenu(new ShowGeneratedSourcesMenuItem(planElementViewModel.getParentId()));
+                    contextMenu = new ContextMenu(new ShowGeneratedSourcesMenuItem(planElementViewModel.getParentId()));
                 }
                 contextMenu.show(Container.this, e.getScreenX(), e.getScreenY());
             }
@@ -86,11 +86,11 @@ public abstract class Container extends Pane implements DraggableEditorElement {
             } else {
                 // Find the first Container in the hierarchy above the targeted Node
                 Node targetNode = event.getPickResult().getIntersectedNode();
-                while(targetNode != null && !(targetNode instanceof Container)) {
+                while (targetNode != null && !(targetNode instanceof Container)) {
                     targetNode = targetNode.getParent();
                 }
                 // If the targeted Container is this, select this and consume the event
-                if(targetNode == this) {
+                if (targetNode == this) {
                     handleMouseClickedEvent(event);
                 }
                 // If the targeted Container is not this (meaning it's a child of this) don't consume the event to
@@ -168,13 +168,13 @@ public abstract class Container extends Pane implements DraggableEditorElement {
     /**
      * Making the {@link Container} update its position, whenever the {@link PlanElementViewModel}
      * changes its coordinates.
-     *
+     * <p>
      * Method also sets the current position according to the {@link PlanElementViewModel} on call.
      *
-     * @param node  the Node to change the position of
-     * @param planElementViewModel  the element, that containsPlan the coordinates to listen to
+     * @param node                 the Node to change the position of
+     * @param planElementViewModel the element, that containsPlan the coordinates to listen to
      */
-    public void createPositionListeners(Node node, PlanElementViewModel planElementViewModel){
+    public void createPositionListeners(Node node, PlanElementViewModel planElementViewModel) {
         //Set to initial Position
         node.setLayoutX(planElementViewModel.getXPosition());
         node.setLayoutY(planElementViewModel.getYPosition());
@@ -197,13 +197,6 @@ public abstract class Container extends Pane implements DraggableEditorElement {
             public void onChanged(Change<? extends PlanElementViewModel> c) {
                 Platform.runLater(Container.this::redrawElement);
             }
-        });
-    }
-
-    public void createTaskToEntryPointListeners(Node node, EntryPointViewModel entryPoint){
-
-        entryPoint.taskProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(this::redrawElement);
         });
     }
 
@@ -232,10 +225,12 @@ public abstract class Container extends Pane implements DraggableEditorElement {
     public abstract Color getVisualisationColor();
 
     @Override
-    public void redrawElement() {}
+    public void redrawElement() {
+    }
 
     @Override
-    public void setDragged(boolean dragged) {}
+    public void setDragged(boolean dragged) {
+    }
 
     @Override
     public boolean wasDragged() {

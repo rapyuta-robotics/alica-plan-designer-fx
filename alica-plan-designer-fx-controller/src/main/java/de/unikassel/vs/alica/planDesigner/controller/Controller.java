@@ -221,8 +221,7 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
             updateFileTreeView(event, null);
             return;
         }
-        PlanElement modelElement = event.getElement();
-        ViewModelElement viewModelElement = viewModelManager.updateViewModel(event, modelElement);
+        ViewModelElement viewModelElement = viewModelManager.updateViewModel(event);
 
         switch (event.getElementType()) {
             case Types.MASTERPLAN:

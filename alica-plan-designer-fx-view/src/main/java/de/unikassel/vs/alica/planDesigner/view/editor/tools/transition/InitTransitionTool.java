@@ -108,7 +108,7 @@ public class InitTransitionTool extends AbstractTool {
 
     private boolean isClickValid(MouseEvent event) {
         if (!(event.getTarget() instanceof  Node)) {
-            System.err.println("InitTransitionTool: Type clicked on does not match tool!");
+            System.err.println("InitTransitionTool: Type clicked on does not match tool! Type was: '" + event.getTarget().getClass().getSimpleName() + "'");
             return false;
         }
 

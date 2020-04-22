@@ -47,17 +47,17 @@ public class RoleViewModel extends PlanElementViewModel {
         this.taskPrioritieViewModels = taskPrioritieViewModels;
     }
 
-    public void setTaskPriority(HashMap<Long, Float> taskPriorities) {
-        this.taskPrioritieViewModels.clear();
-        ObservableList<TaskViewModel> taskViewModels = this.getRoleSetViewModel().getTaskRepository().getTaskViewModels();
-
-        taskPriorities.forEach((t, p) -> {
-            taskViewModels.forEach(tvm -> {
-                if (tvm.getId() == t)
-                    this.taskPrioritieViewModels.put(tvm, p);
-            });
-        });
-    }
+//    public void setTaskPriority(HashMap<Long, Float> taskPriorities) {
+//        this.taskPrioritieViewModels.clear();
+//        ObservableList<TaskViewModel> taskViewModels = this.getRoleSetViewModel().getTaskRepository().getTaskViewModels();
+//
+//        taskPriorities.forEach((t, p) -> {
+//            taskViewModels.forEach(tvm -> {
+//                if (tvm.getId() == t)
+//                    this.taskPrioritieViewModels.put(tvm, p);
+//            });
+//        });
+//    }
 
     public Float getTaskPriority(long taskID) {
         Optional<TaskViewModel> task = taskPrioritieViewModels.keySet().stream().filter(t -> t.getId() == taskID).findFirst();

@@ -25,6 +25,9 @@ public class RepositoryListView extends ListView<RepositoryLabel> {
         modelElementComparator = modelElementComparator.thenComparing(o -> o.getViewModelName());
 
         // forward of event to RepositoryLabel which comprises the actual logic
+        setOnMouseClicked(e -> {
+            getSelectionModel().getSelectedItem().getOnMouseClicked().handle(e);
+        });
         setOnDragDetected(e -> {
             getSelectionModel().getSelectedItem().getOnDragDetected().handle(e);
         });

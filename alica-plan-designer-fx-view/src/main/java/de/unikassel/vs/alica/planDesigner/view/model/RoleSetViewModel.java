@@ -16,7 +16,7 @@ import java.util.List;
 
 public class RoleSetViewModel extends SerializableViewModel {
 
-    private TaskRepositoryViewModel taskRepository;
+//    private TaskRepositoryViewModel taskRepository;
     private FloatProperty defaultPriority;
     private BooleanProperty defaultRoleSet;
     private ObservableList<RoleViewModel> roleViewModels;
@@ -90,11 +90,11 @@ public class RoleSetViewModel extends SerializableViewModel {
         return roleViewModels;
     }
 
-    public TaskRepositoryViewModel getTaskRepository() {
-        return taskRepository;
-    }
-
-    public void setTaskRepository(TaskRepositoryViewModel taskRepository) {
-        this.taskRepository = taskRepository;
-    }
+//    public TaskRepositoryViewModel getTaskRepository() {
+//        return taskRepository;
+//    }
+//
+//    public void setTaskRepository(TaskRepositoryViewModel taskRepository) {
+//        this.taskRepository = taskRepository;
+//    }
 }

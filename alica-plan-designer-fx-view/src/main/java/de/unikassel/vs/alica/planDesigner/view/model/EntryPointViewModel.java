@@ -54,15 +54,14 @@ public class EntryPointViewModel extends PlanElementViewModel {
     public StateViewModel getState() {
         return state.getValue();
     }
-
+    public SimpleObjectProperty<StateViewModel> stateProperty() {return state; }
     public void setState(StateViewModel state) {
         this.state.setValue(state);
     }
 
+
     public TaskViewModel getTask() { return task.get(); }
-
     public SimpleObjectProperty<TaskViewModel> taskProperty() { return task; }
-
     public void setTask(TaskViewModel task) { this.task.set(task); }
 
     public final SimpleBooleanProperty successRequiredProperty() {return successRequired; }
