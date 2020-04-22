@@ -27,7 +27,6 @@ import javafx.scene.paint.Color;
  */
 public abstract class Container extends Pane implements DraggableEditorElement {
 
-
     protected static final Effect standardEffect = new DropShadow(BlurType.THREE_PASS_BOX,
             new Color(0, 0, 0, 0.8), 10, 0, 0, 0);
 

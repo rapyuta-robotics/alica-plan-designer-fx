@@ -157,7 +157,7 @@ public class ElementInformationPane extends TitledPane {
             if (idx != -1) {
                 retList[idx] = item;
             } else {
-                System.err.println("ElementInformationPane: Unkown PropertySheet.Item Type, because it is maybe missing in the uiPropertyList of the ViewModelElement.");
+                System.err.println("ElementInformationPane: Unknown PropertySheet.Item Type, because it is maybe missing in the uiPropertyList of the ViewModelElement.");
             }
         }
         ObservableList<PropertySheet.Item> retObsList = FXCollections.observableArrayList();

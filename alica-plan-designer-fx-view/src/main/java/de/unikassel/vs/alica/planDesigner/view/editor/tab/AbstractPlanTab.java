@@ -1,7 +1,9 @@
 package de.unikassel.vs.alica.planDesigner.view.editor.tab;
 
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
+import de.unikassel.vs.alica.planDesigner.view.editor.container.ConfAbstractPlanWrapperContainer;
 import de.unikassel.vs.alica.planDesigner.view.editor.container.Container;
+import de.unikassel.vs.alica.planDesigner.view.model.ConfAbstractPlanWrapperViewModel;
 import de.unikassel.vs.alica.planDesigner.view.model.PlanViewModel;
 import de.unikassel.vs.alica.planDesigner.view.model.SerializableViewModel;
 import javafx.beans.property.SimpleObjectProperty;
@@ -40,7 +42,11 @@ public abstract class AbstractPlanTab extends EditorTab {
         }
 
         // update properties gui
-        this.elementInformationPane.setViewModelElement(containerToSelect.getPlanElementViewModel());
+        if (containerToSelect instanceof ConfAbstractPlanWrapperContainer) {
+            this.elementInformationPane.setViewModelElement(((ConfAbstractPlanWrapperViewModel)containerToSelect.getPlanElementViewModel()).getAbstractPlan());
+        } else {
+            this.elementInformationPane.setViewModelElement(containerToSelect.getPlanElementViewModel());
+        }
     }
 
     private DropShadow createSelectedEffect() {

@@ -9,6 +9,7 @@ import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator;
 import de.unikassel.vs.alica.planDesigner.alicamodel.*;
 import de.unikassel.vs.alica.planDesigner.command.*;
 import de.unikassel.vs.alica.planDesigner.command.add.AddAbstractPlan;
+import de.unikassel.vs.alica.planDesigner.command.add.AddConfigurationToConfAbstractPlanWrapper;
 import de.unikassel.vs.alica.planDesigner.command.add.AddTaskToEntryPoint;
 import de.unikassel.vs.alica.planDesigner.command.add.AddVariableToCondition;
 import de.unikassel.vs.alica.planDesigner.command.change.*;
@@ -586,6 +587,9 @@ public class ModelManager implements Observer {
                     if (state instanceof TerminalState) {
                         TerminalState terminalState = (TerminalState) state;
                         storeCondition(terminalState.getPostCondition());
+                    }
+                    for (ConfAbstractPlanWrapper wrapper : state.getConfAbstractPlanWrappers()) {
+                        planElementMap.put(wrapper.getId(), wrapper);
                     }
                 }
                 for (Variable variable : plan.getVariables()) {
@@ -1201,6 +1205,9 @@ public class ModelManager implements Observer {
                         break;
                     case Types.VARIABLEBINDING:
                         cmd = new CreateVariableBinding(this, mmq);
+                        break;
+                    case Types.CONFIGURATION:
+                        cmd = new AddConfigurationToConfAbstractPlanWrapper(this, mmq);
                         break;
                     default:
                         System.err.println("ModelManager: Addition of unknown model modification query element of type " + mmq.getElementType() + " gets ignored!");
