@@ -28,6 +28,10 @@ public class ExternalRefSerializer extends StdSerializer<PlanElement> {
             jsonGenerator.writeString(Paths.get(((SerializablePlanElement) planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.BEHAVIOUR + "#" + planElement.getId()).toString());
         } else if (planElement instanceof PlanType) {
             jsonGenerator.writeString(Paths.get(((SerializablePlanElement)planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.PLANTYPE + "#" + planElement.getId()).toString());
+        } else if (planElement instanceof Configuration) {
+            jsonGenerator.writeString(Paths.get(((SerializablePlanElement) planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.CONFIGURATION + "#" + planElement.getId()).toString());
+        } else if (planElement instanceof RoleSet) {
+            jsonGenerator.writeString(Paths.get(((SerializablePlanElement)planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.ROLESET + "#" + planElement.getId()).toString());
         } else if (planElement instanceof TaskRepository) {
             jsonGenerator.writeString(Paths.get(((SerializablePlanElement)planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.TASKREPOSITORY + "#" + planElement.getId()).toString());
         } else if (planElement instanceof Task) {
@@ -39,8 +43,6 @@ public class ExternalRefSerializer extends StdSerializer<PlanElement> {
             } else {
                 throw new RuntimeException("ExternalRefSerializer: Unkown type to serialize... :P");
             }
-        } else if (planElement instanceof RoleSet) {
-            jsonGenerator.writeString(Paths.get(((SerializablePlanElement)planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.ROLESET + "#" + planElement.getId()).toString());
         } else if (planElement instanceof Variable) {
             // special case for external reference to variable from within a variable binding
             SerializablePlanElement parent = ((VariableBinding)jsonGenerator.getCurrentValue()).getSubPlan();

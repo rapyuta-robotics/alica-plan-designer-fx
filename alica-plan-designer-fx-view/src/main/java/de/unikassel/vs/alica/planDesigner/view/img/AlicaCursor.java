@@ -95,6 +95,13 @@ public class AlicaCursor extends ImageCursor {
     /**
      * This constructor only handles non-add/forbidden types of cursors
      */
+    public AlicaCursor(String type, AlicaIcon.Size size, int x, int y) {
+        super(new AlicaIcon(type, size), x, y);
+    }
+
+    /**
+     * This constructor only handles non-add/forbidden types of cursors
+     */
     public AlicaCursor(String type, AlicaIcon.Size size) {
         super(new AlicaIcon(type, size));
     }

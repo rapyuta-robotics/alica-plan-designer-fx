@@ -16,10 +16,11 @@ public class RoleSetViewModelFactory extends InternalViewModelFactory<RoleSetVie
         viewModelManager.putViewModelForAvoidingLoops(roleSetViewModel);
 
         for (Role role : roleSet.getRoles()) {
-            roleSetViewModel.addRole((RoleViewModel) viewModelManager.getViewModelElement(role));
+            RoleViewModel roleViewModel = (RoleViewModel) viewModelManager.getViewModelElement(role);
+            roleViewModel.setParentId(roleSet.getId());
+            roleSetViewModel.addRole(roleViewModel);
         }
 
-//        roleSetViewModel.setTaskRepository(this.getTaskRepositoryViewModel());
         return roleSetViewModel;
     }
 }

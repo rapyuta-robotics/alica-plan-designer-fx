@@ -71,7 +71,7 @@ public class RepositoryLabel extends Label {
         // set the onDragObjectImage to cursor
         setOnDragDetected(e -> {
 //            System.out.println("RepositoryLabel: Drag Started Source: " + e.getSource() + " " + " Target: " + e.getTarget());
-            getScene().setCursor(new AlicaCursor(viewModelElement.getType(), AlicaIcon.Size.SMALL));
+            getScene().setCursor(new AlicaCursor(viewModelElement.getType(), AlicaIcon.Size.SMALL,8,8));
             e.consume();
         });
 
@@ -81,7 +81,10 @@ public class RepositoryLabel extends Label {
             getScene().setCursor(Cursor.DEFAULT);
             PickResult pickResult = e.getPickResult();
             Node pickedElement = pickResult.getIntersectedNode();
-            while (!(pickedElement instanceof Container) && pickedElement.getParent() != null) {
+            while (!(pickedElement instanceof StateContainer
+                    || pickedElement instanceof EntryPointContainer
+                    || pickedElement instanceof ConfAbstractPlanWrapperContainer)
+                    && pickedElement.getParent() != null) {
                 pickedElement = pickedElement.getParent();
             }
 

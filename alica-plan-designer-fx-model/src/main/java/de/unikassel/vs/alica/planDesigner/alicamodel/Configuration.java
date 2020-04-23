@@ -11,6 +11,17 @@ public class Configuration extends SerializablePlanElement {
         return Collections.unmodifiableMap(parameters);
     }
 
+    public Configuration () {
+        super();
+    }
+
+    /**
+     * For deserialization through Jackson only.
+     */
+    public Configuration (long id) {
+        this.id = id;
+    }
+
     public String putParameter(String key, String value) {
         setDirty(true);
         return parameters.put(key, value);

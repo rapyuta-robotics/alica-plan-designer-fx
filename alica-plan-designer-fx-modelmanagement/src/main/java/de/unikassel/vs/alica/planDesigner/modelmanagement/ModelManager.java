@@ -20,6 +20,7 @@ import de.unikassel.vs.alica.planDesigner.command.copy.CopyPlanType;
 import de.unikassel.vs.alica.planDesigner.command.create.*;
 import de.unikassel.vs.alica.planDesigner.command.delete.*;
 import de.unikassel.vs.alica.planDesigner.command.remove.RemoveAbstractPlanFromState;
+import de.unikassel.vs.alica.planDesigner.command.remove.RemoveConfigurationFromWrapper;
 import de.unikassel.vs.alica.planDesigner.command.remove.RemoveVariableFromCondition;
 import de.unikassel.vs.alica.planDesigner.events.IModelEventHandler;
 import de.unikassel.vs.alica.planDesigner.events.ModelEvent;
@@ -474,6 +475,9 @@ public class ModelManager implements Observer {
 
             for (ConfAbstractPlanWrapper wrapper : state.getConfAbstractPlanWrappers()) {
                 wrapper.setAbstractPlan((AbstractPlan) planElementMap.get(wrapper.getAbstractPlan().getId()));
+                if (wrapper.getConfiguration() != null) {
+                    wrapper.setConfiguration((Configuration) planElementMap.get(wrapper.getConfiguration().getId()));
+                }
             }
 
             // here they are inserted again
@@ -1252,6 +1256,9 @@ public class ModelManager implements Observer {
                     case Types.PLAN:
                     case Types.PLANTYPE:
                         cmd = new RemoveAbstractPlanFromState(this, mmq);
+                        break;
+                    case Types.CONFIGURATION:
+                        cmd = new RemoveConfigurationFromWrapper(this, mmq);
                         break;
                     default:
                         System.err.println("ModelManager: Removing of unknown model modification query element of type " + mmq.getElementType() + " gets ignored!");

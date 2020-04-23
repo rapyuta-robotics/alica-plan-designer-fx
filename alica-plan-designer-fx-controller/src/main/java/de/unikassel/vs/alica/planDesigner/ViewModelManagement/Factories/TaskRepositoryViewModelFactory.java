@@ -14,7 +14,9 @@ public class TaskRepositoryViewModelFactory extends InternalViewModelFactory<Tas
         // we need to put the repo before creating tasks, in order to avoid circles (Task <-> Repo)
         viewModelManager.putViewModelForAvoidingLoops(taskRepositoryViewModel);
         for (Task task : taskRepository.getTasks()) {
-            taskRepositoryViewModel.addTask((TaskViewModel) viewModelManager.getViewModelElement(task));
+            TaskViewModel taskViewModel = (TaskViewModel) viewModelManager.getViewModelElement(task);
+            taskViewModel.setParentId(taskRepository.getId());
+            taskRepositoryViewModel.addTask(taskViewModel);
         }
         return taskRepositoryViewModel;
     }

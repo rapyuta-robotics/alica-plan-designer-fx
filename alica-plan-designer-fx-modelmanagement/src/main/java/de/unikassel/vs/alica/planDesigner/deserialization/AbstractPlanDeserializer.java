@@ -10,14 +10,13 @@ import de.unikassel.vs.alica.planDesigner.alicamodel.AbstractPlan;
 
 import java.io.IOException;
 
+public class AbstractPlanDeserializer extends StdDeserializer<AbstractPlan> {
 
-public class ExternalRefDeserializer extends StdDeserializer<AbstractPlan> {
-
-    public ExternalRefDeserializer() {
+    public AbstractPlanDeserializer() {
         this(null);
     }
 
-    public ExternalRefDeserializer(Class<?> vc) {
+    public AbstractPlanDeserializer(Class<?> vc) {
         super(vc);
     }
 

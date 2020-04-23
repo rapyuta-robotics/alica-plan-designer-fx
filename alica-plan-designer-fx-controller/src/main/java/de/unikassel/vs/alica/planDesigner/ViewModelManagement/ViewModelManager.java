@@ -138,7 +138,7 @@ public class ViewModelManager {
                             stateViewModel.setEntryPoint(null);
                         }
                     }
-                    //to update gui
+                    //to update gui -> TODO: fix this with correct ui listener implementation of EntryPoint Container
                     planViewModel.getEntryPoints().remove(entryPointVM);
                     planViewModel.getEntryPoints().add(entryPointVM);
                 }
@@ -202,10 +202,13 @@ public class ViewModelManager {
                 stateViewModel = (StateViewModel) getViewModelElement(modelManager.getPlanElement(parentId));
                 stateViewModel.removeConfAbstractPlanWrapper(confAbstractPlanWrapperViewModel);
 
-                // HACK: you have duplicates if don't remove and add
+                // HACK: you have duplicates if don't remove and add -> TODO: Fix this with better ui listener implementation
                 planViewModel = (PlanViewModel) getViewModelElement(modelManager.getPlanElement(stateViewModel.getParentId()));
                 planViewModel.getStates().remove(stateViewModel);
                 planViewModel.getStates().add(stateViewModel);
+                break;
+            case Types.CONFIGURATION:
+                ((ConfAbstractPlanWrapperViewModel) getViewModelElement(modelManager.getPlanElement(parentId))).setConfiguration(null);
                 break;
             case Types.VARIABLE:
                 ViewModelElement parentViewModel = getViewModelElement(modelManager.getPlanElement(parentId));
@@ -395,7 +398,8 @@ public class ViewModelManager {
                 //No-OP
                 break;
             case Types.CONFIGURATION:
-                System.err.println("ViewModelManager: Adding configurations not implemented, yet!");
+                ConfigurationViewModel configuration = (ConfigurationViewModel) viewModelElement;
+                ((ConfAbstractPlanWrapperViewModel) parentViewModel).setConfiguration(configuration);
                 break;
             default:
                 System.err.println("ViewModelManager: Add Element not supported for type: " + viewModelElement.getType());

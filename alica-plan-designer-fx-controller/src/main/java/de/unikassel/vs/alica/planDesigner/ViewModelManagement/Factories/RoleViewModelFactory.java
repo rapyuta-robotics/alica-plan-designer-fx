@@ -17,8 +17,9 @@ public class RoleViewModelFactory extends InternalViewModelFactory<RoleViewModel
         ObservableMap<TaskViewModel, Float> taskPriorities = FXCollections.observableHashMap();
 
         for (Task task: role.getTaskPriorities().keySet()) {
-            TaskViewModel taskViewModel = (TaskViewModel)viewModelManager.getViewModelElement(task);
-            taskPriorities.put( taskViewModel, role.getTaskPriorities().get(task));
+            Task resolvedTask = (Task) resolveDummy(task);
+            TaskViewModel taskViewModel = (TaskViewModel)viewModelManager.getViewModelElement(resolvedTask);
+            taskPriorities.put( taskViewModel, role.getTaskPriorities().get(resolvedTask));
         }
 
         for (Characteristic characteristic : role.getCharacteristics()) {
@@ -29,8 +30,6 @@ public class RoleViewModelFactory extends InternalViewModelFactory<RoleViewModel
 
         roleViewModel.setTaskPrioritieViewModels(taskPriorities);
         roleViewModel.setRoleSetViewModel((RoleSetViewModel) viewModelManager.getViewModelElement(role.getRoleSet()));
-        roleViewModel.getRoleSetViewModel().addRole(roleViewModel);
-        roleViewModel.setParentId(role.getRoleSet().getId());
         return roleViewModel;
     }
 }

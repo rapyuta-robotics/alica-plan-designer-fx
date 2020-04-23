@@ -19,20 +19,29 @@ public class PlanViewModelFactory extends InternalViewModelFactory<PlanViewModel
         planViewModel.setRelativeDirectory(plan.getRelativeDirectory());
 
         for (Variable var : plan.getVariables()) {
-            planViewModel.getVariables().add((VariableViewModel) viewModelManager.getViewModelElement(var));
+            VariableViewModel variableViewModel = (VariableViewModel) viewModelManager.getViewModelElement(var);
+            variableViewModel.setParentId(plan.getId());
+            planViewModel.getVariables().add(variableViewModel);
         }
         for (State state : plan.getStates()) {
-            planViewModel.getStates().add(
-                    (StateViewModel) viewModelManager.getViewModelElement(state));
+            StateViewModel stateViewModel = (StateViewModel) viewModelManager.getViewModelElement(state);
+            stateViewModel.setParentId(plan.getId());
+            planViewModel.getStates().add(stateViewModel);
         }
         for (EntryPoint ep : plan.getEntryPoints()) {
-            planViewModel.getEntryPoints().add((EntryPointViewModel) viewModelManager.getViewModelElement(ep));
+            EntryPointViewModel entryPointViewModel = (EntryPointViewModel) viewModelManager.getViewModelElement(ep);
+            entryPointViewModel.setParentId(plan.getId());
+            planViewModel.getEntryPoints().add(entryPointViewModel);
         }
         for (Transition transition : plan.getTransitions()) {
-            planViewModel.getTransitions().add((TransitionViewModel) viewModelManager.getViewModelElement(transition));
+            TransitionViewModel transitionViewModel = (TransitionViewModel) viewModelManager.getViewModelElement(transition);
+            transitionViewModel.setParentId(plan.getId());
+            planViewModel.getTransitions().add(transitionViewModel);
         }
         for (Synchronisation synchronisation : plan.getSynchronisations()) {
-            planViewModel.getSynchronisations().add((SynchronisationViewModel) viewModelManager.getViewModelElement(synchronisation));
+            SynchronisationViewModel synchronisationViewModel = (SynchronisationViewModel) viewModelManager.getViewModelElement(synchronisation);
+            synchronisationViewModel.setParentId(plan.getId());
+            planViewModel.getSynchronisations().add(synchronisationViewModel);
         }
         if (plan.getPreCondition() != null) {
             ConditionViewModel conditionViewModel = (ConditionViewModel) viewModelManager.getViewModelElement(plan.getPreCondition());

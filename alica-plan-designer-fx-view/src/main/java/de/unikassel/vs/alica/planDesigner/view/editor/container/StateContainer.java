@@ -18,14 +18,12 @@ public class StateContainer extends Container implements Observable {
     public static final double STATE_RADIUS = 20.0;
     private boolean dragged;
     private List<InvalidationListener> invalidationListeners;
-    private List<ConfAbstractPlanWrapperContainer> statePlans;
     private StateViewModel state;
 
     public StateContainer(StateViewModel state, PlanTab planTab) {
         super(state, planTab);
         this.setId("StateContainer");
         this.state = state;
-        this.statePlans = new ArrayList<>();
         invalidationListeners = new ArrayList<>();
         makeDraggable(this);
         createNameListener();
@@ -46,11 +44,7 @@ public class StateContainer extends Container implements Observable {
         elementName.setLayoutY(elementName.getLayoutY() - STATE_RADIUS * 1.3);
 
         for (ConfAbstractPlanWrapperViewModel wrapperViewModel : state.getConfAbstractPlanWrappers()) {
-            statePlans.add(new ConfAbstractPlanWrapperContainer(this, wrapperViewModel, this.planTab));
-        }
-
-        if (statePlans != null && !statePlans.isEmpty()) {
-            getChildren().addAll(statePlans);
+            getChildren().add(new ConfAbstractPlanWrapperContainer(this, wrapperViewModel, this.planTab));
         }
     }
 
@@ -83,10 +77,6 @@ public class StateContainer extends Container implements Observable {
     @Override
     public void removeListener(InvalidationListener listener) {
         invalidationListeners.remove(listener);
-    }
-
-    public List<ConfAbstractPlanWrapperContainer> getStatePlans() {
-        return statePlans;
     }
 
     public StateViewModel getState() {

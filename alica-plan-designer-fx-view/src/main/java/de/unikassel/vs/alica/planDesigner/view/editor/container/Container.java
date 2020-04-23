@@ -3,6 +3,7 @@ package de.unikassel.vs.alica.planDesigner.view.editor.container;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.planTab.PlanEditorGroup;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.planTab.PlanTab;
 import de.unikassel.vs.alica.planDesigner.view.editor.tools.AbstractTool;
+import de.unikassel.vs.alica.planDesigner.view.img.AlicaIcon;
 import de.unikassel.vs.alica.planDesigner.view.menu.ShowGeneratedSourcesMenuItem;
 import de.unikassel.vs.alica.planDesigner.view.model.*;
 import javafx.application.Platform;
@@ -14,6 +15,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -99,7 +101,7 @@ public abstract class Container extends Pane implements DraggableEditorElement {
     }
 
     protected void handleMouseClickedEvent(MouseEvent event) {
-        Container.this.planTab.setSelectedContainer(Container.this);
+        planTab.setSelectedContainer(this);
         event.consume();
     }
 
@@ -222,6 +224,10 @@ public abstract class Container extends Pane implements DraggableEditorElement {
     }
 
     public abstract Color getVisualisationColor();
+
+    public ImageView getGraphic(String iconName) {
+        return new ImageView(new AlicaIcon(iconName, AlicaIcon.Size.SMALL));
+    }
 
     @Override
     public void redrawElement() {

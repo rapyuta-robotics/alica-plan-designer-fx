@@ -17,7 +17,9 @@ public class BehaviourViewModelFactory extends InternalViewModelFactory<Behaviou
         behaviourViewModel.setEventDriven(behaviour.isEventDriven());
 
         for (Variable variable : behaviour.getVariables()) {
-            behaviourViewModel.getVariables().add((VariableViewModel) viewModelManager.getViewModelElement(variable));
+            VariableViewModel variableViewModel = (VariableViewModel) viewModelManager.getViewModelElement(variable);
+            variableViewModel.setParentId(behaviour.getId());
+            behaviourViewModel.getVariables().add(variableViewModel);
         }
 
         if (behaviour.getPreCondition() != null) {

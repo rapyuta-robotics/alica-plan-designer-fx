@@ -27,7 +27,9 @@ public class StateViewModelFactory extends InternalViewModelFactory<StateViewMod
         stateViewModel.setYPosition(uiElement.getY());
 
         for (ConfAbstractPlanWrapper confAbstractPlanWrapper : state.getConfAbstractPlanWrappers()) {
-            stateViewModel.addConfAbstractPlanWrapper((ConfAbstractPlanWrapperViewModel) viewModelManager.getViewModelElement(confAbstractPlanWrapper));
+            ConfAbstractPlanWrapperViewModel confAbstractPlanWrapperViewModel = (ConfAbstractPlanWrapperViewModel) viewModelManager.getViewModelElement(confAbstractPlanWrapper);
+            confAbstractPlanWrapperViewModel.setParentId(stateViewModel.getId());
+            stateViewModel.addConfAbstractPlanWrapper(confAbstractPlanWrapperViewModel);
         }
         if (state.getEntryPoint() != null) {
             stateViewModel.setEntryPoint((EntryPointViewModel) viewModelManager.getViewModelElement(state.getEntryPoint()));

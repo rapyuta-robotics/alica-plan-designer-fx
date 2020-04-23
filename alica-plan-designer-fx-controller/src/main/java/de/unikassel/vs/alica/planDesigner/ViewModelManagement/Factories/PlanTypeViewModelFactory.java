@@ -21,15 +21,21 @@ public class PlanTypeViewModelFactory extends InternalViewModelFactory<PlanTypeV
 
         for (AnnotatedPlan annotatedPlan : planType.getAnnotatedPlans()) {
             planTypeViewModel.removePlanFromAllPlans(annotatedPlan.getPlan().getId());
-            planTypeViewModel.getPlansInPlanType().add((AnnotatedPlanViewModel) viewModelManager.getViewModelElement(annotatedPlan));
+            AnnotatedPlanViewModel annotatedPlanViewModel = (AnnotatedPlanViewModel) viewModelManager.getViewModelElement(annotatedPlan);
+            annotatedPlanViewModel.setParentId(planType.getId());
+            planTypeViewModel.getPlansInPlanType().add(annotatedPlanViewModel);
         }
 
         for (VariableBinding param: planType.getVariableBindings()) {
-            planTypeViewModel.addVariableBinding((VariableBindingViewModel) viewModelManager.getViewModelElement(param));
+            VariableBindingViewModel variableBindingViewModel = (VariableBindingViewModel) viewModelManager.getViewModelElement(param);
+            variableBindingViewModel.setParentId(planType.getId());
+            planTypeViewModel.addVariableBinding(variableBindingViewModel);
         }
 
         for (Variable var : planType.getVariables()) {
-            planTypeViewModel.getVariables().add((VariableViewModel) viewModelManager.getViewModelElement(var));
+            VariableViewModel variableViewModel = (VariableViewModel) viewModelManager.getViewModelElement(var);
+            variableViewModel.setParentId(planType.getId());
+            planTypeViewModel.getVariables().add(variableViewModel);
         }
 
         return planTypeViewModel;

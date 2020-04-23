@@ -25,7 +25,6 @@ public class ConditionViewModelFactory extends InternalViewModelFactory<Conditio
             conditionViewModel.getVariables().add((VariableViewModel) viewModelManager.getViewModelElement(var));
         }
         for (Quantifier quantifier : condition.getQuantifiers()) {
-            // TODO: Quantifier is not very clean or fully implemented, yet.
             conditionViewModel.getQuantifiers().add((QuantifierViewModel) viewModelManager.getViewModelElement(quantifier));
         }
         return conditionViewModel;

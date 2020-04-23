@@ -9,8 +9,8 @@ public class VariableBindingViewModelFactory extends InternalViewModelFactory<Va
     @Override
     VariableBindingViewModel create(VariableBinding variableBinding) {
         VariableBindingViewModel variableBindingViewModel = new VariableBindingViewModel(variableBinding.getId(), variableBinding.getName());
-        variableBindingViewModel.setSubPlan((AbstractPlanViewModel) viewModelManager.getViewModelElement(variableBinding.getSubPlan()));
-        variableBindingViewModel.setSubVariable((VariableViewModel) viewModelManager.getViewModelElement(variableBinding.getSubVariable()));
+        variableBindingViewModel.setSubPlan((AbstractPlanViewModel) viewModelManager.getViewModelElement(resolveDummy(variableBinding.getSubPlan())));
+        variableBindingViewModel.setSubVariable((VariableViewModel) viewModelManager.getViewModelElement(resolveDummy(variableBinding.getSubVariable())));
         variableBindingViewModel.setVariable((VariableViewModel) viewModelManager.getViewModelElement(variableBinding.getVariable()));
         return variableBindingViewModel;
     }

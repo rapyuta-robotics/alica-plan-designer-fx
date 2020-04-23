@@ -5,7 +5,6 @@ import de.unikassel.vs.alica.planDesigner.view.model.QuantifierViewModel;
 
 public class QuantifierViewModelFactory extends InternalViewModelFactory<QuantifierViewModel, Quantifier> {
 
-
     @Override
     QuantifierViewModel create(Quantifier quantifier) {
         QuantifierViewModel viewModel = new QuantifierViewModel(quantifier.getId(), quantifier.getName());

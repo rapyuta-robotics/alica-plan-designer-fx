@@ -12,7 +12,7 @@ public class ConfAbstractPlanWrapperViewModelFactory extends InternalViewModelFa
         ConfAbstractPlanWrapperViewModel confAbstractPlanWrapperViewModel = new ConfAbstractPlanWrapperViewModel(confAbstractPlanWrapper.getId(), confAbstractPlanWrapper.getName());
         confAbstractPlanWrapperViewModel.setAbstractPlan((AbstractPlanViewModel) viewModelManager.getViewModelElement(resolveDummy(confAbstractPlanWrapper.getAbstractPlan())));
         if (confAbstractPlanWrapper.getConfiguration() != null) {
-            confAbstractPlanWrapperViewModel.setConfiguration((ConfigurationViewModel) viewModelManager.getViewModelElement(confAbstractPlanWrapper.getConfiguration()));
+            confAbstractPlanWrapperViewModel.setConfiguration((ConfigurationViewModel) viewModelManager.getViewModelElement(resolveDummy(confAbstractPlanWrapper.getConfiguration())));
         }
         return confAbstractPlanWrapperViewModel;
     }
