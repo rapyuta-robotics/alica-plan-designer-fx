@@ -335,7 +335,6 @@ public final class FileTreeView extends TreeView<File> {
             if (!(node instanceof FileTreeCell)) {
                 node = node.getParent();
             }
-//            System.out.println("FileTreeView: Mouse Drag Source: " + event.getSource() + " Target: " + event.getTarget());
             if (!(node instanceof FileTreeCell)) {
                 event.consume();
                 return;
@@ -349,7 +348,7 @@ public final class FileTreeView extends TreeView<File> {
             if (draggedItem.getViewModelElement() != null) {
                 setCursor(new AlicaCursor(draggedItem.getViewModelElement().getType()));
             } else {
-                setCursor(new AlicaCursor(Types.FOLDER));
+                setCursor(new AlicaCursor(Types.FOLDER, AlicaIcon.Size.BIG));
             }
             wasDragged = true;
             event.consume();
