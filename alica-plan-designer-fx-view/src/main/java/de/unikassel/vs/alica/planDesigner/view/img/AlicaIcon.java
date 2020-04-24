@@ -2,6 +2,8 @@ package de.unikassel.vs.alica.planDesigner.view.img;
 
 import javafx.scene.image.Image;
 
+import java.io.InputStream;
+
 public class AlicaIcon extends Image {
 
     public static final String ADD = "add";
@@ -24,7 +26,7 @@ public class AlicaIcon extends Image {
     public AlicaIcon(String iconName, Size size) {
         super(AlicaIcon.class.getResourceAsStream("/images/" +
                 iconName.toLowerCase() + size.size + ".png"));
-        resourcePath = "images/" + iconName.toLowerCase() + size.size + ".png";
+        resourcePath = "/images/" + iconName.toLowerCase() + size.size + ".png";
     }
 
     public String getResourcePath() {

@@ -69,9 +69,6 @@ public class State extends PlanElement {
         }
     }
 
-    public List<VariableBinding> getVariableBindings() {
-        return Collections.unmodifiableList(variableBindings);
-    }
     public void addVariableBinding(VariableBinding binding) {
         this.variableBindings.add(binding);
         if (this.changeListener != null) {
@@ -84,6 +81,9 @@ public class State extends PlanElement {
         if (this.changeListener != null) {
             this.changeListener.setDirty();
         }
+    }
+    public List<VariableBinding> getVariableBindings() {
+        return Collections.unmodifiableList(variableBindings);
     }
 
     public List<Transition> getOutTransitions() {

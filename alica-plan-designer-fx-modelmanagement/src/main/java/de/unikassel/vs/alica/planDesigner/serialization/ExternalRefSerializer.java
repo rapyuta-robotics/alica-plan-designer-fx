@@ -41,7 +41,7 @@ public class ExternalRefSerializer extends StdSerializer<PlanElement> {
             } else if (jsonGenerator.getCurrentValue() instanceof EntryPoint) {
                 jsonGenerator.writeString(Paths.get(taskRepository.getRelativeDirectory(), taskRepository.getName() + "." + Extensions.TASKREPOSITORY + "#" + planElement.getId()).toString());
             } else {
-                throw new RuntimeException("ExternalRefSerializer: Unkown type to serialize... :P");
+                throw new RuntimeException("ExternalRefSerializer: Unknown type to serialize... :P");
             }
         } else if (planElement instanceof Variable) {
             // special case for external reference to variable from within a variable binding
@@ -53,10 +53,10 @@ public class ExternalRefSerializer extends StdSerializer<PlanElement> {
             } else if (parent instanceof Plan) {
                 jsonGenerator.writeString(Paths.get(parent.getRelativeDirectory(), parent.getName() + "." + Extensions.PLAN+ "#" + planElement.getId()).toString());
             } else {
-                throw new RuntimeException("ExternalRefSerializer: Unkown type to serialize... :P");
+                throw new RuntimeException("ExternalRefSerializer: Unknown type to serialize... :P");
             }
         } else {
-            throw new RuntimeException("ExternalRefSerializer: Unkown type to serialize... :P");
+            throw new RuntimeException("ExternalRefSerializer: Unknown type to serialize... :P");
         }
     }
 }

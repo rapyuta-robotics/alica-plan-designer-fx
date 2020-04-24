@@ -347,6 +347,8 @@ public class ModelManager implements Observer {
                 resolveReferences((Plan) parsedObject);
             } else if (Types.PLANTYPE.equals(type)) {
                 resolveReferences((PlanType) parsedObject);
+            } else if (Types.TASKREPOSITORY.equals(type)) {
+                resolveReferences((TaskRepository) parsedObject);
             }
         }
 
@@ -423,6 +425,7 @@ public class ModelManager implements Observer {
     }
 
     private void resolveReferences() {
+        resolveReferences(taskRepository);
         for (Plan plan : planMap.values()) {
             resolveReferences(plan);
         }
@@ -451,6 +454,12 @@ public class ModelManager implements Observer {
         role.setTaskPriorities(taskPriorities);
     }
 
+    private void resolveReferences(TaskRepository taskRepo) {
+        for (Task task : taskRepo.getTasks()) {
+            task.setTaskRepository(taskRepo);
+        }
+    }
+
     private void resolveReferences(Plan plan) {
         for (EntryPoint ep : plan.getEntryPoints()) {
             Task task = taskRepository.getTask(ep.getTask().getId());
@@ -465,9 +474,10 @@ public class ModelManager implements Observer {
 
         for (State state : plan.getStates()) {
             // need to copy temporarily, because "state.removeAbstractPlan" does also remove bindings
-            ArrayList<VariableBinding> bindings = new ArrayList<>(state.getVariableBindings());
-            for (int i = 0; i < bindings.size(); i++) {
-                VariableBinding binding = bindings.get(i);
+//            ArrayList<VariableBinding> bindings = new ArrayList<>(state.getVariableBindings());
+//            for (int i = 0; i < bindings.size(); i++) {
+//                VariableBinding binding = bindings.get(i);
+            for (VariableBinding binding : state.getVariableBindings()) {
                 binding.setSubPlan((AbstractPlan) getPlanElement(binding.getSubPlan().getId()));
                 binding.setSubVariable((Variable) getPlanElement(binding.getSubVariable().getId()));
                 binding.setVariable((Variable) getPlanElement(binding.getVariable().getId()));
@@ -481,9 +491,9 @@ public class ModelManager implements Observer {
             }
 
             // here they are inserted again
-            for (int i = 0; i < bindings.size(); i++) {
-                state.addVariableBinding(bindings.get(i));
-            }
+//            for (int i = 0; i < bindings.size(); i++) {
+//                state.addVariableBinding(bindings.get(i));
+//            }
 
             if (state instanceof TerminalState) {
                 resolveQuantifierScopes(((TerminalState) state).getPostCondition());

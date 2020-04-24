@@ -28,6 +28,7 @@ public abstract class StateMixIn {
     protected ArrayList<Transition> inTransitions;
     @JsonSerialize(contentUsing = InternalRefSerializer.class)
     protected ArrayList<Transition> outTransitions;
+
     // just necessary for backwards compatibility
     @JsonAlias({"abstractPlans"})
     @JsonDeserialize(contentUsing = ConfAbstractPlanWrapperDeserializer.class)
