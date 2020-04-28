@@ -54,7 +54,7 @@ class DefaultTemplate {
                     «IF (protectedRegions.containsKey(transition.id + ""))»
                         «protectedRegions.get(transition.id + "")»
                     «ELSE»
-                    std::cout << "The PreCondition «transition.preCondition.id» in Transition «transition.getName» is not implement yet!" << std::endl;
+                    std::cout << "The PreCondition «transition.preCondition.id» in Transition '«transition.getName»' is not implement yet!" << std::endl;
                     return false;
                     «ENDIF»
                     /*PROTECTED REGION END*/
@@ -77,7 +77,7 @@ class DefaultTemplate {
                 «IF (protectedRegions.containsKey(plan.preCondition.id + ""))»
                     «protectedRegions.get(plan.preCondition.id + "")»
                 «ELSE»
-                    std::cout << "The PreCondition «plan.preCondition.id» in Plan «plan.getName» is not implement yet!" << std::endl;
+                    std::cout << "The PreCondition «plan.preCondition.id» in Plan '«plan.getName»' is not implement yet!" << std::endl;
                     return false;
                 «ENDIF»
                 /*PROTECTED REGION END*/
@@ -95,7 +95,7 @@ class DefaultTemplate {
                 «IF (protectedRegions.containsKey(plan.runtimeCondition.id + ""))»
                     «protectedRegions.get(plan.runtimeCondition.id + "")»
                 «ELSE»
-                    std::cout << "The RunTimeCondition «plan.runtimeCondition.id» in Plan «plan.getName» is not implement yet!" << std::endl;
+                    std::cout << "The RunTimeCondition «plan.runtimeCondition.id» in Plan '«plan.getName»' is not implement yet!" << std::endl;
                     return false;
                 «ENDIF»
                 /*PROTECTED REGION END*/
@@ -118,8 +118,8 @@ class DefaultTemplate {
                 «IF (protectedRegions.containsKey(terminalState.postCondition.id + ""))»
                     «protectedRegions.get(terminalState.postCondition.id + "")»
                 «ELSE»
-                    std::cout << "The PostCondition «terminalState.postCondition.id» in TerminalState «terminalState.getName» is not implement yet!" << std::endl;
-                    std::cout << "However, PostConditions are a feature that makes sense in the context of planning, which is not supported by ALICA, yet! So don't worry.'" << std::endl;
+                    std::cout << "The PostCondition «terminalState.postCondition.id» in TerminalState '«terminalState.getName»' is not implement yet!" << std::endl;
+                    std::cout << "However, PostConditions are a feature that makes sense in the context of planning, which is not supported by ALICA, yet! So don't worry." << std::endl;
                     return false;
                 «ENDIF»
                 /*PROTECTED REGION END*/
@@ -180,7 +180,7 @@ class DefaultTemplate {
                 «IF (protectedRegions.containsKey(behaviour.postCondition.id + ""))»
                     «protectedRegions.get(behaviour.postCondition.id + "")»
                 «ELSE»
-                    std::cout << "The PostCondition «behaviour.postCondition.id» in Behaviour «behaviour.getName» is not implement yet!" << std::endl;
+                    std::cout << "The PostCondition «behaviour.postCondition.id» in Behaviour '«behaviour.getName»' is not implement, yet!" << std::endl;
                     return false;
                 «ENDIF»
                 /*PROTECTED REGION END*/
