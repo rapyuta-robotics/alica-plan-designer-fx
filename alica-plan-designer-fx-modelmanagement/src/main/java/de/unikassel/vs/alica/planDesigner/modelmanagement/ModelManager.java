@@ -441,6 +441,7 @@ public class ModelManager implements Observer {
 
         if (roleSet != null) {
             roleSet.getRoles().forEach(role -> resolveReferences(role));
+            roleSet.setDirty(false);
         }
     }
 
@@ -458,6 +459,7 @@ public class ModelManager implements Observer {
         for (Task task : taskRepo.getTasks()) {
             task.setTaskRepository(taskRepo);
         }
+        taskRepo.setDirty(false);
     }
 
     private void resolveReferences(Plan plan) {
@@ -540,6 +542,8 @@ public class ModelManager implements Observer {
             variableBinding.setSubVariable((Variable) getPlanElement(variableBinding.getSubVariable().getId()));
             variableBinding.setVariable((Variable) getPlanElement(variableBinding.getVariable().getId()));
         }
+
+        planType.setDirty(false);
     }
 
     private void resolveReferences(Behaviour behaviour) {
