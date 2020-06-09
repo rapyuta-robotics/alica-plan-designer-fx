@@ -24,13 +24,13 @@ public class DeleteQuantifier extends Command {
     public void doCommand() {
         ((Condition) this.parentElement).removeQuantifier(this.quantifier);
         this.modelManager.dropPlanElement(Types.QUANTIFIER, this.quantifier, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.quantifier);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.quantifier);
     }
 
     @Override
     public void undoCommand() {
         ((Condition) parentElement).addQuantifier(this.quantifier);
         this.modelManager.storePlanElement(Types.QUANTIFIER, this.quantifier, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.quantifier);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.quantifier);
     }
 }

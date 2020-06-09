@@ -9,11 +9,7 @@ import de.unikassel.vs.alica.planDesigner.view.editor.container.*;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.AbstractPlanTab;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.EditorTabPane;
 import de.unikassel.vs.alica.planDesigner.view.editor.tools.EditorToolBar;
-import de.unikassel.vs.alica.planDesigner.view.editor.tools.transition.TransitionTool;
-import de.unikassel.vs.alica.planDesigner.view.model.PlanElementViewModel;
-import de.unikassel.vs.alica.planDesigner.view.model.PlanViewModel;
-import de.unikassel.vs.alica.planDesigner.view.model.SerializableViewModel;
-import de.unikassel.vs.alica.planDesigner.view.model.ViewModelElement;
+import de.unikassel.vs.alica.planDesigner.view.model.*;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
@@ -22,7 +18,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class PlanTab extends AbstractPlanTab {
 
@@ -131,39 +126,33 @@ public class PlanTab extends AbstractPlanTab {
             case Types.BEHAVIOUR:
             case Types.PLAN:
             case Types.PLANTYPE:
-            case Types.CONFIGURATION:
                 GuiModificationEvent event = new GuiModificationEvent(GuiEventType.REMOVE_ELEMENT, planElementViewModel.getType(), planElementViewModel.getName());
-                event.setParentId(((AbstractPlanContainer)selectedContainer).getParentStateContainer().getState().getId());
+                ConfAbstractPlanWrapperContainer confAbstractPlanWrapperContainer = ((AbstractPlanContainer) selectedContainer).getParentWrapperContainer();
+                event.setParentId(confAbstractPlanWrapperContainer.getPlanElementViewModel().getParentId());
+                event.setElementId(confAbstractPlanWrapperContainer.getPlanElementViewModel().getId());
+                return event;
+            case Types.CONFIGURATION:
+                event = new GuiModificationEvent(GuiEventType.REMOVE_ELEMENT, planElementViewModel.getType(), planElementViewModel.getName());
+                confAbstractPlanWrapperContainer = ((ConfigurationContainer) selectedContainer).getParentWrapperContainer();
+                event.setParentId(confAbstractPlanWrapperContainer.getPlanElementViewModel().getId());
                 event.setElementId(planElementViewModel.getId());
                 return event;
             case Types.STATE:
             case Types.SUCCESSSTATE:
             case Types.FAILURESTATE:
             case Types.ENTRYPOINT:
+            case Types.SYNCHRONISATION:
+            case Types.TRANSITION:
                 event = new GuiModificationEvent(GuiEventType.DELETE_ELEMENT, planElementViewModel.getType(), planElementViewModel.getName());
                 event.setParentId(planElementViewModel.getParentId());
                 event.setElementId(planElementViewModel.getId());
                 return event;
             case Types.BENDPOINT:
-                BendpointContainer bpC = (BendpointContainer) selectedContainer;
-                TransitionContainer tC = bpC.getTransitionContainer();
                 event = new GuiModificationEvent(GuiEventType.DELETE_ELEMENT, Types.BENDPOINT, null);
-                event.setElementId(tC.getContainedElement().getId());
+                event.setElementId(planElementViewModel.getParentId());
                 HashMap<String, Long> bendpoint = new HashMap<>();
-                bendpoint.put(bpC.getContainedElement().getType(), bpC.getContainedElement().getId());
+                bendpoint.put(planElementViewModel.getType(), planElementViewModel.getId());
                 event.setRelatedObjects(bendpoint);
-                event.setParentId(getSerializableViewModel().getId());
-                return event;
-            case Types.TRANSITION:
-                tC = (TransitionContainer) selectedContainer;
-                event = new GuiModificationEvent(GuiEventType.DELETE_ELEMENT, Types.TRANSITION, null);
-                event.setElementId(tC.getContainedElement().getId());
-                event.setParentId(getSerializableViewModel().getId());
-                return event;
-            case Types.SYNCHRONISATION:
-                SynchronizationContainer sC = (SynchronizationContainer) selectedContainer;
-                event = new GuiModificationEvent(GuiEventType.DELETE_ELEMENT, Types.SYNCHRONISATION, null);
-                event.setElementId(sC.getPlanElementViewModel().getId());
                 event.setParentId(getSerializableViewModel().getId());
                 return event;
             default:

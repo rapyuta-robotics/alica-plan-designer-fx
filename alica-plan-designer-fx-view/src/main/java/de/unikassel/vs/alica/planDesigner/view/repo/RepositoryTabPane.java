@@ -23,6 +23,7 @@ public class RepositoryTabPane extends TabPane {
     RepositoryTab planTypesTab;
     RepositoryTab behavioursTab;
     RepositoryTab tasksTab;
+    RepositoryTab configurationTab;
 
     public RepositoryTabPane() {
         TabPane planEditorTabPane = MainWindowController.getInstance().getEditorTabPane();
@@ -30,6 +31,7 @@ public class RepositoryTabPane extends TabPane {
         RepositoryTool behaviourTool = new RepositoryTool(planEditorTabPane);
         RepositoryTool planTypeTool = new RepositoryTool(planEditorTabPane);
         RepositoryTool taskTool = new RepositoryTool(planEditorTabPane);
+        RepositoryTool configurationTool = new RepositoryTool(planEditorTabPane);
 
         plansTab = new RepositoryTab("Plans", planTool);
         plansTab.setId("plansTab");
@@ -39,8 +41,10 @@ public class RepositoryTabPane extends TabPane {
         behavioursTab.setId("behavioursTab");
         tasksTab = new RepositoryTab("Tasks", taskTool);
         tasksTab.setId("tasksTab");
+        configurationTab = new RepositoryTab("Configurations", configurationTool);
+        configurationTab.setId("configurationsTab");
 
-        getTabs().addAll(plansTab, planTypesTab, behavioursTab, tasksTab);
+        getTabs().addAll(plansTab, planTypesTab, behavioursTab, tasksTab, configurationTab);
     }
 
     public void setGuiModificationHandler(IGuiModificationHandler usageHandler) {
@@ -48,6 +52,7 @@ public class RepositoryTabPane extends TabPane {
         planTypesTab.setGuiModificationHandler(usageHandler);
         behavioursTab.setGuiModificationHandler(usageHandler);
         tasksTab.setGuiModificationHandler(usageHandler);
+        configurationTab.setGuiModificationHandler(usageHandler);
     }
 
     public void addPlan(ViewModelElement plan) {
@@ -82,11 +87,20 @@ public class RepositoryTabPane extends TabPane {
         tasksTab.addElements(tasks);
     }
 
+    public void addConfiguration(ViewModelElement configuration) {
+        configurationTab.addElement(configuration);
+    }
+
+    public void addConfigurations(List<ViewModelElement> configurations) {
+        configurationTab.addElements(configurations);
+    }
+
     public void clearGuiContent() {
         plansTab.clearGuiContent();
         planTypesTab.clearGuiContent();
         behavioursTab.clearGuiContent();
         tasksTab.clearGuiContent();
+        configurationTab.clearGuiContent();
     }
 
     public void clearPlansTab() {
@@ -105,22 +119,26 @@ public class RepositoryTabPane extends TabPane {
         tasksTab.clearGuiContent();
     }
 
+    public void clearConfigurationsTab() {
+        configurationTab.clearGuiContent();
+    }
+
     public GuiModificationEvent handleDelete() {
         RepositoryTab selectedTab = (RepositoryTab) this.getSelectionModel().getSelectedItem();
         boolean focused = this.isFocused()
                 || selectedTab.getContent().isFocused();
-        if(!focused) {
+        if (!focused) {
             return null;
         }
 
         ViewModelElement selectedItem = selectedTab.getSelectedItem();
-        if(selectedItem.getType().equals(Types.TASK)) {
+        if (selectedItem.getType().equals(Types.TASK)) {
             // TODO: Implement deletion of Tasks
             return null;
-        }else {
+        } else {
             IGuiModificationHandler guiModificationHandler = MainWindowController.getInstance().getGuiModificationHandler();
             List<ViewModelElement> usages = guiModificationHandler.getUsages(selectedItem);
-            if(!usages.isEmpty()) {
+            if (!usages.isEmpty()) {
                 UsagesWindowController.createUsagesWindow(usages
                         , I18NRepo.getInstance().getString("label.usage.nodelete"), guiModificationHandler);
                 return null;

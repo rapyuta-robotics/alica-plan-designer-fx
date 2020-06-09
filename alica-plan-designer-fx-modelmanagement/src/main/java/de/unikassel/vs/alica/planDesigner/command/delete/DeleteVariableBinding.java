@@ -26,7 +26,7 @@ public class DeleteVariableBinding extends Command {
             ((PlanType) this.parent).removeVariableBinding(variableBinding);
         }
         this.modelManager.dropPlanElement(Types.VARIABLE, this.variableBinding, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.variableBinding);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.variableBinding);
     }
 
     @Override
@@ -37,6 +37,6 @@ public class DeleteVariableBinding extends Command {
             ((PlanType) this.parent).addVariableBinding(variableBinding);
         }
         this.modelManager.storePlanElement(Types.VARIABLEBINDING, this.variableBinding, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.variableBinding);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.variableBinding);
     }
 }

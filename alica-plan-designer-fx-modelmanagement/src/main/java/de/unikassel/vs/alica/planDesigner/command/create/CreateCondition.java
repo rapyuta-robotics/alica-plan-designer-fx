@@ -83,13 +83,13 @@ public class CreateCondition extends ConditionCommand {
     public void doCommand() {
         setCondition(newCondition, planElement);
 
-        if (oldCondition != null){
+        if (oldCondition != null) {
             modelManager.dropPlanElement(mmq.getElementType(), oldCondition, false);
-            this.fireEvent(ModelEventType.ELEMENT_DELETED, oldCondition);
+            this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, oldCondition);
         }
 
         modelManager.storePlanElement(mmq.getElementType(), newCondition, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, newCondition);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, newCondition);
     }
 
     @Override
@@ -97,11 +97,11 @@ public class CreateCondition extends ConditionCommand {
         setCondition(oldCondition, planElement);
 
         modelManager.dropPlanElement(mmq.getElementType(), newCondition, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, newCondition);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, newCondition);
 
         if (oldCondition != null){
             modelManager.storePlanElement(mmq.getElementType(), oldCondition, false);
-            this.fireEvent(ModelEventType.ELEMENT_CREATED, oldCondition);
+            this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, oldCondition);
         }
     }
 }

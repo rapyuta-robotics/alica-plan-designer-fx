@@ -19,8 +19,8 @@ public class QuantifierViewModel extends PlanElementViewModel{
     protected SimpleLongProperty scope = new SimpleLongProperty(this, "scope", 0L);
     protected SimpleStringProperty sorts = new SimpleStringProperty(this, "sorts", "");
 
-    public QuantifierViewModel(long id, String name, String quantifierType) {
-        super(id, name, quantifierType);
+    public QuantifierViewModel(long id, String name) {
+        super(id, name, Types.QUANTIFIER);
 
         this.uiPropertyList.clear();
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "comment", "relativeDirectory"));

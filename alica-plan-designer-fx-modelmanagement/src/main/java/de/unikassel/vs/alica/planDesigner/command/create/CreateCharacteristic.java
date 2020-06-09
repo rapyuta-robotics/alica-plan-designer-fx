@@ -31,13 +31,13 @@ public class CreateCharacteristic extends Command {
     public void doCommand() {
         this.role.addCharacteristic(characteristic);
         modelManager.storePlanElement(Types.ROLE_CHARACTERISTIC, this.characteristic,  false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.characteristic);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.characteristic);
     }
 
     @Override
     public void undoCommand() {
         this.role.removeCharacteristic(characteristic);
         modelManager.dropPlanElement(Types.ROLE_CHARACTERISTIC, this.characteristic, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.characteristic);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.characteristic);
     }
 }

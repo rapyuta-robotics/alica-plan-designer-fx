@@ -28,6 +28,10 @@ public class ExternalRefSerializer extends StdSerializer<PlanElement> {
             jsonGenerator.writeString(Paths.get(((SerializablePlanElement) planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.BEHAVIOUR + "#" + planElement.getId()).toString());
         } else if (planElement instanceof PlanType) {
             jsonGenerator.writeString(Paths.get(((SerializablePlanElement)planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.PLANTYPE + "#" + planElement.getId()).toString());
+        } else if (planElement instanceof Configuration) {
+            jsonGenerator.writeString(Paths.get(((SerializablePlanElement) planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.CONFIGURATION + "#" + planElement.getId()).toString());
+        } else if (planElement instanceof RoleSet) {
+            jsonGenerator.writeString(Paths.get(((SerializablePlanElement)planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.ROLESET + "#" + planElement.getId()).toString());
         } else if (planElement instanceof TaskRepository) {
             jsonGenerator.writeString(Paths.get(((SerializablePlanElement)planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.TASKREPOSITORY + "#" + planElement.getId()).toString());
         } else if (planElement instanceof Task) {
@@ -37,10 +41,8 @@ public class ExternalRefSerializer extends StdSerializer<PlanElement> {
             } else if (jsonGenerator.getCurrentValue() instanceof EntryPoint) {
                 jsonGenerator.writeString(Paths.get(taskRepository.getRelativeDirectory(), taskRepository.getName() + "." + Extensions.TASKREPOSITORY + "#" + planElement.getId()).toString());
             } else {
-                throw new RuntimeException("ExternalRefSerializer: Unkown type to serialize... :P");
+                throw new RuntimeException("ExternalRefSerializer: Unknown type to serialize... :P");
             }
-        } else if (planElement instanceof RoleSet) {
-            jsonGenerator.writeString(Paths.get(((SerializablePlanElement)planElement).getRelativeDirectory(), planElement.getName() + "." + Extensions.ROLESET + "#" + planElement.getId()).toString());
         } else if (planElement instanceof Variable) {
             // special case for external reference to variable from within a variable binding
             SerializablePlanElement parent = ((VariableBinding)jsonGenerator.getCurrentValue()).getSubPlan();
@@ -51,10 +53,10 @@ public class ExternalRefSerializer extends StdSerializer<PlanElement> {
             } else if (parent instanceof Plan) {
                 jsonGenerator.writeString(Paths.get(parent.getRelativeDirectory(), parent.getName() + "." + Extensions.PLAN+ "#" + planElement.getId()).toString());
             } else {
-                throw new RuntimeException("ExternalRefSerializer: Unkown type to serialize... :P");
+                throw new RuntimeException("ExternalRefSerializer: Unknown type to serialize... :P");
             }
         } else {
-            throw new RuntimeException("ExternalRefSerializer: Unkown type to serialize... :P");
+            throw new RuntimeException("ExternalRefSerializer: Unknown type to serialize... :P");
         }
     }
 }

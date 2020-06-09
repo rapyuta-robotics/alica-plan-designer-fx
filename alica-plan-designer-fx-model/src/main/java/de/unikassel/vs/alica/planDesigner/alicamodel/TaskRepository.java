@@ -10,6 +10,8 @@ public class TaskRepository extends SerializablePlanElement {
 
     public TaskRepository() {}
 
+    public TaskRepository(long id) { this.id = id; }
+
     public void addTask(Task task) {
         if (task.getTaskRepository() != this) {
             task.setTaskRepository(this);

@@ -21,7 +21,7 @@ public class DeleteFolder extends UiPositionCommand {
     public void doCommand() {
         File file = new File(mmq.getName());
         file.delete();
-        ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+        ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
         modelEvent.setChangedAttribute(mmq.getName());
         this.modelManager.fireEvent(modelEvent);
     }

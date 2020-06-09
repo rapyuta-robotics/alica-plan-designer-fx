@@ -978,8 +978,8 @@ public class SavePlanTest extends ApplicationTest {
         Assert.assertEquals("", state1.getComment());
         Assert.assertEquals(entryPoint.getId(), state1.getEntryPoint().getId());
         Assert.assertEquals(plan.getId(), state1.getParentPlan().getId());
-        Assert.assertEquals(1, state1.getAbstractPlans().size());
-        Assert.assertEquals(behaviour.getId(), state1.getAbstractPlans().get(0).getId());
+        Assert.assertEquals(1, state1.getConfAbstractPlanWrappers().size());
+        Assert.assertEquals(behaviour.getId(), state1.getConfAbstractPlanWrappers().get(0).getId());
         Assert.assertEquals(0, state1.getVariableBindings().size());
         Assert.assertEquals(2, state1.getOutTransitions().size());
         Assert.assertTrue(state1.getOutTransitions().contains(transitionState1ToState2));
@@ -991,8 +991,8 @@ public class SavePlanTest extends ApplicationTest {
         Assert.assertEquals("", state2.getComment());
         Assert.assertNull(state2.getEntryPoint());
         Assert.assertEquals(plan.getId(), state2.getParentPlan().getId());
-        Assert.assertEquals(1, state2.getAbstractPlans().size());
-        Assert.assertEquals(planType.getId(), state2.getAbstractPlans().get(0).getId());
+        Assert.assertEquals(1, state2.getConfAbstractPlanWrappers().size());
+        Assert.assertEquals(planType.getId(), state2.getConfAbstractPlanWrappers().get(0).getId());
         Assert.assertEquals(0, state2.getVariableBindings().size());
         Assert.assertEquals(1, state2.getOutTransitions().size());
         Assert.assertTrue(state2.getOutTransitions().contains(transitionState2ToSuccessState));
@@ -1005,8 +1005,8 @@ public class SavePlanTest extends ApplicationTest {
         Assert.assertEquals("", state3.getComment());
         Assert.assertNull(state3.getEntryPoint());
         Assert.assertEquals(plan.getId(), state3.getParentPlan().getId());
-        Assert.assertEquals(1, state3.getAbstractPlans().size());
-        Assert.assertEquals(plan2.getId(), state3.getAbstractPlans().get(0).getId());
+        Assert.assertEquals(1, state3.getConfAbstractPlanWrappers().size());
+        Assert.assertEquals(plan2.getId(), state3.getConfAbstractPlanWrappers().get(0).getId());
         Assert.assertEquals(0, state3.getVariableBindings().size());
         Assert.assertEquals(1, state3.getOutTransitions().size());
         Assert.assertTrue(state3.getOutTransitions().contains(transitionState3ToState2));
@@ -1018,7 +1018,7 @@ public class SavePlanTest extends ApplicationTest {
         Assert.assertEquals("", successState.getComment());
         Assert.assertNull(successState.getEntryPoint());
         Assert.assertEquals(plan.getId(), successState.getParentPlan().getId());
-        Assert.assertEquals(0, successState.getAbstractPlans().size());
+        Assert.assertEquals(0, successState.getConfAbstractPlanWrappers().size());
         Assert.assertEquals(0, successState.getVariableBindings().size());
         Assert.assertEquals(0, successState.getOutTransitions().size());
         Assert.assertEquals(transitionState2ToSuccessState.getId(), successState.getInTransitions().get(0).getId());
@@ -1070,6 +1070,5 @@ public class SavePlanTest extends ApplicationTest {
         Assert.assertNull(behaviour.getPreCondition());
         Assert.assertNull(behaviour.getRuntimeCondition());
         Assert.assertNull(behaviour.getPostCondition());
-        Assert.assertEquals(Collections.<String, String>emptyMap(), behaviour.getParameters());
     }
 }

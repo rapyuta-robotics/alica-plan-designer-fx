@@ -41,7 +41,7 @@ public class MoveFolder extends ChangeAttributeCommand {
                 e.printStackTrace();
             }
 
-            ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+            ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
             modelEvent.setChangedAttribute(oldFile.toString());
             this.modelManager.fireEvent(modelEvent);
         } else {
@@ -64,7 +64,7 @@ public class MoveFolder extends ChangeAttributeCommand {
                     if (planElement instanceof PlanType) {
                         types = Types.PLANTYPE;
                     }
-                    this.ending = FileSystemUtil.getExtension((SerializablePlanElement) planElement);
+                    this.ending = FileSystemUtil.getType((SerializablePlanElement) planElement);
                     this.modelManager.moveFile((SerializablePlanElement) planElement, types, newFile.getAbsolutePath(), ending);
                     fireEvent((SerializablePlanElement) planElement, types, "relativeDirectory");
                 } else {
@@ -77,7 +77,7 @@ public class MoveFolder extends ChangeAttributeCommand {
                 }
             }
             oldFile.delete();
-            ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+            ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
             modelEvent.setChangedAttribute(oldFile.toString());
             this.modelManager.fireEvent(modelEvent);
         }
@@ -94,7 +94,7 @@ public class MoveFolder extends ChangeAttributeCommand {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+            ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
             modelEvent.setChangedAttribute(newFile.toString());
             this.modelManager.fireEvent(modelEvent);
         } else {
@@ -117,7 +117,7 @@ public class MoveFolder extends ChangeAttributeCommand {
                     if (planElement instanceof PlanType) {
                         types = Types.PLANTYPE;
                     }
-                    this.ending = FileSystemUtil.getExtension((SerializablePlanElement) planElement);
+                    this.ending = FileSystemUtil.getType((SerializablePlanElement) planElement);
                     this.modelManager.moveFile((SerializablePlanElement) planElement, types, oldFile.getAbsolutePath(), ending);
                     fireEvent((SerializablePlanElement) planElement, types, "relativeDirectory");
                 } else {
@@ -125,7 +125,7 @@ public class MoveFolder extends ChangeAttributeCommand {
                 }
             }
             newFile.delete();
-            ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+            ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
             modelEvent.setChangedAttribute(newFile.toString());
             this.modelManager.fireEvent(modelEvent);
         }

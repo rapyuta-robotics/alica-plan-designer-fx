@@ -211,7 +211,7 @@ public class CharacteristicsTableView extends PropertiesTable<CharacteristicsTab
     }
 
     public void addPlaceholder() {
-        CharacteristicViewModel characteristicViewModel = new CharacteristicViewModelCreatable(0,"", Types.ROLE_CHARCTERISTIC, roleTableView );
+        CharacteristicViewModel characteristicViewModel = new CharacteristicViewModelCreatable(0,"", roleTableView );
 //            CharacteristicsTablePlaceholder element = new CharacteristicsTablePlaceholder(this,
 //                    characteristicViewModel, "", "");
         CharacteristicsTableElement element = new CharacteristicsTableElement(this, characteristicViewModel, "", "");

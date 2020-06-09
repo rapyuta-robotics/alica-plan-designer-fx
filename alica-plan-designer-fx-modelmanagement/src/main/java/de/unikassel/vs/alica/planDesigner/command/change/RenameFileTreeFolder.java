@@ -40,7 +40,7 @@ public class RenameFileTreeFolder extends ChangeAttributeCommand {
                         if(planElement instanceof PlanType) { elementType = Types.PLANTYPE; }
                         if(planElement instanceof Behaviour) { elementType = Types.BEHAVIOUR; }
                         if(planElement instanceof TaskRepository) { elementType = Types.TASKREPOSITORY; }
-                        ending = FileSystemUtil.getExtension((SerializablePlanElement) planElement);
+                        ending = FileSystemUtil.getType((SerializablePlanElement) planElement);
                         this.modelManager.moveFile(((SerializablePlanElement) planElement),elementType, newValue.toString(), ending);
                         fireEvent(((SerializablePlanElement) planElement), elementType, "relativeDirectory");
                         emptyFolder = false;
@@ -59,7 +59,7 @@ public class RenameFileTreeFolder extends ChangeAttributeCommand {
         }
         File file = new File(oldValue.toString());
         file.delete();
-        ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+        ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
         modelEvent.setChangedAttribute(oldValue.toString());
         this.modelManager.fireEvent(modelEvent);
     }
@@ -77,7 +77,7 @@ public class RenameFileTreeFolder extends ChangeAttributeCommand {
                         if(planElement instanceof PlanType) { elementType = Types.PLANTYPE; }
                         if(planElement instanceof Behaviour) { elementType = Types.BEHAVIOUR; }
                         if(planElement instanceof TaskRepository) { elementType = Types.TASKREPOSITORY; }
-                        ending = FileSystemUtil.getExtension((SerializablePlanElement) planElement);
+                        ending = FileSystemUtil.getType((SerializablePlanElement) planElement);
                         this.modelManager.moveFile(((SerializablePlanElement) planElement),elementType, oldValue.toString(), ending);
                         fireEvent(((SerializablePlanElement) planElement), elementType, "relativeDirectory");
                         emptyFolder = false;
@@ -96,7 +96,7 @@ public class RenameFileTreeFolder extends ChangeAttributeCommand {
         }
         File file = new File(newValue.toString());
         file.delete();
-        ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_FOLDER_DELETED, null, null);
+        ModelEvent modelEvent = new ModelEvent(ModelEventType.FOLDER_DELETED, null, null);
         modelEvent.setChangedAttribute(newValue.toString());
         this.modelManager.fireEvent(modelEvent);
     }

@@ -1,5 +1,7 @@
 package de.unikassel.vs.alica.planDesigner.view.model;
 
+import de.unikassel.vs.alica.planDesigner.view.Types;
+
 import java.util.Arrays;
 
 public class BendPointViewModel extends PlanElementViewModel {
@@ -7,8 +9,8 @@ public class BendPointViewModel extends PlanElementViewModel {
     private double y;
     private TransitionViewModel transition;
 
-    public BendPointViewModel(long id, String name, String type) {
-        super(id, name, type);
+    public BendPointViewModel(long id, String name) {
+        super(id, name, Types.BENDPOINT);
 
         this.uiPropertyList.clear();
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "comment", "relativeDirectory"));

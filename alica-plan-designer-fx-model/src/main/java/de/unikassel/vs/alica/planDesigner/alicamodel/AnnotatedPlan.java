@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleObjectProperty;
 public class AnnotatedPlan extends PlanElement {
 
     private final SimpleBooleanProperty activated = new SimpleBooleanProperty(this, "activated", false);
+    //Note: Property name must match the name of the corresponding AnnotatedPlanViewModel field, therefore it is "planId" not "plan"
     private final SimpleObjectProperty<Plan> plan = new SimpleObjectProperty<>(this, "planId", null);
 
     @Override
@@ -34,10 +35,9 @@ public class AnnotatedPlan extends PlanElement {
     }
 
     public void registerDirtyFlag(ChangeListenerForDirtyFlag listener) {
-        this.nameProperty().addListener(listener);
-        this.commentProperty().addListener(listener);
-        this.activatedProperty().addListener(listener);
-        this.planProperty().addListener(listener);
-        this.activatedProperty().addListener(listener);
+        name.addListener(listener);
+        comment.addListener(listener);
+        activated.addListener(listener);
+        plan.addListener(listener);
     }
 }

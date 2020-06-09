@@ -1,5 +1,6 @@
 package de.unikassel.vs.alica.planDesigner.view.model;
 
+import de.unikassel.vs.alica.planDesigner.view.Types;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -10,8 +11,8 @@ public class TaskRepositoryViewModel extends SerializableViewModel {
 
     private ObservableList<TaskViewModel> tasks;
 
-    public TaskRepositoryViewModel(long id, String name, String type) {
-        super(id, name, type);
+    public TaskRepositoryViewModel(long id, String name) {
+        super(id, name, Types.TASKREPOSITORY);
         tasks = FXCollections.observableArrayList(new ArrayList<>());
 
         this.uiPropertyList.clear();

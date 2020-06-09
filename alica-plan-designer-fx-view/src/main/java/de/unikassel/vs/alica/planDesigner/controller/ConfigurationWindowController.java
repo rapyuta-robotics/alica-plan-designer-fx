@@ -384,7 +384,6 @@ public class ConfigurationWindowController implements Initializable {
     public void selectActiveConfig(String selectedConfName) {
         activeConfLabel.setText(selectedConfName);
         activeConfLabel.setId("activeConfLabel");
-        //availableWorkspacesListView.getSelectionModel().select(selectedConfName);
     }
 
     public void disableConfigInput(boolean disable) {

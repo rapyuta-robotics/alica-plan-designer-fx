@@ -40,8 +40,8 @@ public final class FileTreeView extends TreeView<File> {
 
     private boolean wasDragged;
     private FileTreeItem draggedItem;
-    private Cursor originalCursor;
     private String startFolder;
+
     private VirtualDirectoryTreeItem virtualDirectoryTreeItem;
     private String plansPath;
     private String taskPath;
@@ -111,11 +111,11 @@ public final class FileTreeView extends TreeView<File> {
         if (topLevelFolder == null) {
             return;
         }
-        if(viewModelElement.getType() == Types.TASKREPOSITORY) {
-            ((FileTreeViewContextMenu)this.getContextMenu()).showTaskrepositoryItem(false);
+        if (viewModelElement.getType() == Types.TASKREPOSITORY) {
+            ((FileTreeViewContextMenu) this.getContextMenu()).showTaskrepositoryItem(false);
         }
-        if(viewModelElement.getType() == Types.ROLESET){
-            ((FileTreeViewContextMenu)this.getContextMenu()).showRoleSetItem(false);
+        if (viewModelElement.getType() == Types.ROLESET) {
+            ((FileTreeViewContextMenu) this.getContextMenu()).showRoleSetItem(false);
         }
 
         FileTreeItem folder = findFolder(viewModelElement, topLevelFolder, 0);
@@ -124,9 +124,8 @@ public final class FileTreeView extends TreeView<File> {
                     AlicaIcon.Size.BIG)), viewModelElement);
             folder.getChildren().add(newItem);
             folder.getChildren().sort(Comparator.comparing(TreeItem::getValue));
-
         } else {
-            throw new RuntimeException("Destination folder for PlanElement " + viewModelElement.getName() + " does not exist!");
+            throw new RuntimeException("FileTreeView: Destination folder for PlanElement " + viewModelElement.getName() + " does not exist!");
         }
     }
 
@@ -135,11 +134,11 @@ public final class FileTreeView extends TreeView<File> {
         if (topLevelFolder == null) {
             return;
         }
-        if(viewModelElement.getType() == Types.TASKREPOSITORY) {
-            ((FileTreeViewContextMenu)this.getContextMenu()).showTaskrepositoryItem(true);
+        if (viewModelElement.getType() == Types.TASKREPOSITORY) {
+            ((FileTreeViewContextMenu) this.getContextMenu()).showTaskrepositoryItem(true);
         }
-        if(viewModelElement.getType() == Types.ROLESET){
-            ((FileTreeViewContextMenu)this.getContextMenu()).showRoleSetItem(true);
+        if (viewModelElement.getType() == Types.ROLESET) {
+            ((FileTreeViewContextMenu) this.getContextMenu()).showRoleSetItem(true);
         }
         removeModelElementFromFolder(viewModelElement, topLevelFolder);
     }
@@ -189,6 +188,8 @@ public final class FileTreeView extends TreeView<File> {
                 return Paths.get(plansPath, viewModelElement.getRelativeDirectory(), viewModelElement.getName() + ".rst").toFile();
             case Types.TASKREPOSITORY:
                 return Paths.get(taskPath, viewModelElement.getRelativeDirectory(), viewModelElement.getName() + ".tsk").toFile();
+            case Types.CONFIGURATION:
+                return Paths.get(plansPath, viewModelElement.getRelativeDirectory(), viewModelElement.getName() + ".cfg").toFile();
             default:
                 System.err.println("FileTreeView: " + viewModelElement.getType() + " not handled!");
                 return null;
@@ -207,6 +208,7 @@ public final class FileTreeView extends TreeView<File> {
             case Types.MASTERPLAN:
             case Types.PLAN:
             case Types.PLANTYPE:
+            case Types.CONFIGURATION:
                 return plansFileTreeItem;
             case Types.TASKREPOSITORY:
                 return tasksFileTreeItem;
@@ -228,10 +230,9 @@ public final class FileTreeView extends TreeView<File> {
      * @return
      */
     private FileTreeItem findFolder(ViewModelElement modelElement, FileTreeItem treeItem, int index) {
-        String relativePath = modelElement.getRelativeDirectory();
         // The value of File.separator under Windows is "\", which doesn't work here, because split requires a regex and
         // "\" is not a valid regex. Patten.quote() allows to fit the input exactly (ignoring regex-like syntax)
-        String[] folders = relativePath.split(Pattern.quote(File.separator));
+        String[] folders = modelElement.getRelativeDirectory().split(Pattern.quote(File.separator));
         if (folders.length == 1 && folders[0].isEmpty()) {
             return treeItem;
         }
@@ -282,7 +283,7 @@ public final class FileTreeView extends TreeView<File> {
     }
 
     public GuiModificationEvent handleDelete() {
-        if(!this.isFocused()) {
+        if (!this.isFocused()) {
             return null;
         }
         FileTreeItem focused = (FileTreeItem) getFocusModel().getFocusedItem();
@@ -292,7 +293,7 @@ public final class FileTreeView extends TreeView<File> {
             return null;
         }
         List<ViewModelElement> usages = controller.getGuiModificationHandler().getUsages(toDelete);
-        if(!usages.isEmpty()) {
+        if (!usages.isEmpty()) {
             UsagesWindowController.createUsagesWindow(usages
                     , I18NRepo.getInstance().getString("label.usage.nodelete"), controller.getGuiModificationHandler());
             return null;
@@ -333,42 +334,24 @@ public final class FileTreeView extends TreeView<File> {
     public class MouseDraggedEventHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent event) {
-            originalCursor = FileTreeView.this.getCursor();
-            Node node = ((Node) event.getTarget()).getParent();
+            Node node = ((Node) event.getTarget());
+            if (!(node instanceof FileTreeCell)) {
+                node = node.getParent();
+            }
             if (!(node instanceof FileTreeCell)) {
                 event.consume();
                 return;
             }
-            System.out.println("Source: " + event.getSource() + " Target: " + event.getTarget());
+
             // TODO: Fix in case of Folder
             draggedItem = (FileTreeItem) ((FileTreeCell) node).getTreeItem();
             startFolder = draggedItem.getValue().getAbsolutePath();
             startFolder = startFolder.substring(0, startFolder.lastIndexOf(File.separator));
 
-            if(draggedItem.getViewModelElement() != null) {
-                switch (draggedItem.getViewModelElement().getType()) {
-                    case Types.BEHAVIOUR:
-                        FileTreeView.this.getScene().setCursor(new AlicaCursor(AlicaCursor.Type.behaviour));
-                        break;
-                    case Types.PLAN:
-                        FileTreeView.this.getScene().setCursor(new AlicaCursor(AlicaCursor.Type.plan));
-                        break;
-                    case Types.MASTERPLAN:
-                        FileTreeView.this.getScene().setCursor(new AlicaCursor(AlicaCursor.Type.masterplan));
-                        break;
-                    case Types.PLANTYPE:
-                        FileTreeView.this.getScene().setCursor(new AlicaCursor(AlicaCursor.Type.plantype));
-                        break;
-                    case Types.TASKREPOSITORY:
-                        FileTreeView.this.getScene().setCursor(new AlicaCursor(AlicaCursor.Type.tasks));
-                        break;
-                    default:
-                        System.err.println("FileTreeView: " + draggedItem.getViewModelElement().getType() + " not handled!");
-                }
+            if (draggedItem.getViewModelElement() != null) {
+                setCursor(new AlicaCursor(draggedItem.getViewModelElement().getType()));
             } else {
-                //For move Folder
-                AlicaCursor folderCursor = new AlicaCursor(AlicaCursor.Type.folder, null);
-                FileTreeView.this.getScene().setCursor(folderCursor);
+                setCursor(new AlicaCursor(Types.FOLDER, AlicaIcon.Size.BIG));
             }
             wasDragged = true;
             event.consume();
@@ -378,7 +361,7 @@ public final class FileTreeView extends TreeView<File> {
     private class MouseReleasedEventHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent e) {
-            FileTreeView.this.getScene().setCursor(originalCursor);
+            setCursor(Cursor.DEFAULT);
             if (!wasDragged) {
                 e.consume();
                 return;
@@ -433,21 +416,21 @@ public final class FileTreeView extends TreeView<File> {
                 e.consume();
                 return;
             }
-            if(draggedItem.getViewModelElement() != null) {
-                GuiModificationEvent event = new GuiModificationEvent(GuiEventType.MOVE_FILE, draggedItem.getViewModelElement().getType(),
+
+            GuiModificationEvent event;
+            if (draggedItem.getViewModelElement() != null) {
+                event = new GuiModificationEvent(GuiEventType.MOVE_FILE, draggedItem.getViewModelElement().getType(),
                         draggedItem.getViewModelElement().getName());
                 event.setElementId(draggedItem.getViewModelElement().getId());
-                event.setAbsoluteDirectory(parent.toString());
-                controller.getGuiModificationHandler().handle(event);
-                e.consume();
             } else {
                 //for folder
-                GuiModificationEvent event = new GuiModificationEvent(GuiEventType.MOVE_FILE, Types.FOLDER,
+                event = new GuiModificationEvent(GuiEventType.MOVE_FILE, Types.FOLDER,
                         draggedItem.getAbsolutepath());
-                event.setAbsoluteDirectory(parent.toString());
-                controller.getGuiModificationHandler().handle(event);
-                e.consume();
             }
+            event.setAbsoluteDirectory(targetFolder);
+            controller.getGuiModificationHandler().handle(event);
+
+            e.consume();
         }
     }
 }

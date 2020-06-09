@@ -2,7 +2,6 @@ package de.unikassel.vs.alica.planDesigner.view.editor.container;
 
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.planTab.PlanTab;
 import de.unikassel.vs.alica.planDesigner.view.model.BendPointViewModel;
-import de.unikassel.vs.alica.planDesigner.view.model.PlanElementViewModel;
 import de.unikassel.vs.alica.planDesigner.view.model.ViewModelElement;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -19,19 +18,17 @@ import javafx.scene.shape.Rectangle;
 public class BendpointContainer extends Container implements DraggableEditorElement {
     public static final double WIDTH = 10.0;
     public static final double HEIGHT = 10.0;
-
-    protected ViewModelElement containedElement;
     protected boolean dragged;
-    protected ViewModelElement parent;
-    private PlanTab planTab;
+
+    protected BendPointViewModel bendPointViewModel;
+    protected ViewModelElement transitionViewModel;
     private TransitionContainer transitionContainer;
 
-    public BendpointContainer(PlanElementViewModel containedElement, ViewModelElement parent, PlanTab planTab, TransitionContainer transitionContainer) {
-        super(containedElement, planTab);
-        this.containedElement = containedElement;
-        this.parent = parent;
-        this.planTab = planTab;
-        this.setTransitionContainer(transitionContainer);
+    public BendpointContainer(BendPointViewModel bendPointViewModel, ViewModelElement transitionViewModel, PlanTab planTab, TransitionContainer transitionContainer) {
+        super(bendPointViewModel, planTab);
+        this.bendPointViewModel = bendPointViewModel;
+        this.transitionContainer = transitionContainer;
+        this.transitionViewModel = transitionViewModel;
         setupContainer();
     }
 
@@ -83,7 +80,7 @@ public class BendpointContainer extends Container implements DraggableEditorElem
                 node.setLayoutY(dragContext.initialLayoutY + mouseEvent.getSceneY() - dragContext.mouseAnchorY);
 
 
-                planTab.fireBendPointChangePositionEvent(this, this.parent, containedElement.getType(), node.getLayoutX(), node.getLayoutY());
+                planTab.fireBendPointChangePositionEvent(this, this.transitionViewModel, bendPointViewModel.getType(), node.getLayoutX(), node.getLayoutY());
 
                 //getCommandStackForDrag().storeAndExecute(createMoveElementCommand());
                 mouseEvent.consume();
@@ -92,11 +89,6 @@ public class BendpointContainer extends Container implements DraggableEditorElem
             }
         });
     }
-//
-//    @Override
-//    public PlanElementViewModel getPlanElementViewModel() {
-//        return containedElement;
-//    }
 
     @Override
     public void setupContainer() {
@@ -105,18 +97,14 @@ public class BendpointContainer extends Container implements DraggableEditorElem
         setEffectToStandard();
         getChildren().add(visualRepresentation);
 
-        this.setLayoutX(((BendPointViewModel)containedElement).getX() - (WIDTH/2.0));
-        this.setLayoutY(((BendPointViewModel)containedElement).getY() - (HEIGHT/2.0));
+        this.setLayoutX(((BendPointViewModel) bendPointViewModel).getX() - (WIDTH/2.0));
+        this.setLayoutY(((BendPointViewModel) bendPointViewModel).getY() - (HEIGHT/2.0));
         makeDraggable(this);
-    }
-
-    public ViewModelElement getContainedElement() {
-        return containedElement;
     }
 
     @Override
     public void redrawElement() {
-        getTransitionContainer().redrawElement();
+        transitionContainer.redrawElement();
     }
 
     @Override
@@ -129,11 +117,4 @@ public class BendpointContainer extends Container implements DraggableEditorElem
         return dragged;
     }
 
-    public TransitionContainer getTransitionContainer() {
-        return transitionContainer;
-    }
-
-    public void setTransitionContainer(TransitionContainer transitionContainer) {
-        this.transitionContainer = transitionContainer;
-    }
 }

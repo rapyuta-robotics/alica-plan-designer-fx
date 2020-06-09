@@ -9,8 +9,6 @@ import javafx.beans.property.StringProperty;
 import java.util.Arrays;
 
 public class PlanElementViewModel extends ViewModelElement {
-
-    //protected final SimpleStringProperty name = new SimpleStringProperty(null, "name", "");
     protected final SimpleStringProperty comment = new SimpleStringProperty(null, "comment", "");
 
     private final SimpleIntegerProperty xPosition = new SimpleIntegerProperty(null, "xPosition", 0);

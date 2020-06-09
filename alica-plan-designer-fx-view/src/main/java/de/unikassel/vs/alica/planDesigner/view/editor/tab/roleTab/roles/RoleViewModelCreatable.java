@@ -9,8 +9,8 @@ import de.unikassel.vs.alica.planDesigner.view.model.RoleViewModel;
 public class RoleViewModelCreatable extends RoleViewModel {
 
 
-    public RoleViewModelCreatable(long id, String name, String type) {
-        super(id, name, type);
+    public RoleViewModelCreatable(long id, String name) {
+        super(id, name);
     }
 
     public void registerListener(IGuiModificationHandler handler) {

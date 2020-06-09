@@ -6,10 +6,8 @@ import de.unikassel.vs.alica.planDesigner.events.GuiEventType;
 import de.unikassel.vs.alica.planDesigner.events.GuiModificationEvent;
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
 import de.unikassel.vs.alica.planDesigner.view.Types;
-import de.unikassel.vs.alica.planDesigner.view.editor.container.EntryPointContainer;
-import de.unikassel.vs.alica.planDesigner.view.editor.container.FailureStateContainer;
-import de.unikassel.vs.alica.planDesigner.view.editor.container.StateContainer;
-import de.unikassel.vs.alica.planDesigner.view.editor.container.SuccessStateContainer;
+import de.unikassel.vs.alica.planDesigner.view.editor.container.*;
+import de.unikassel.vs.alica.planDesigner.view.img.AlicaCursor;
 import de.unikassel.vs.alica.planDesigner.view.img.AlicaIcon;
 import de.unikassel.vs.alica.planDesigner.view.menu.DeleteElementMenuItem;
 import de.unikassel.vs.alica.planDesigner.view.menu.RenameElementMenuItem;
@@ -17,6 +15,7 @@ import de.unikassel.vs.alica.planDesigner.view.menu.ShowUsagesMenuItem;
 import de.unikassel.vs.alica.planDesigner.view.model.*;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -63,7 +62,7 @@ public class RepositoryLabel extends Label {
                     TaskViewModel taskViewModel = (TaskViewModel) viewModelElement;
                     MainWindowController.getInstance().openFile(taskViewModel.getTaskRepositoryViewModel());
                 } else {
-                    throw new RuntimeException("RepositoryLabel: Unkown ViewModelElement type " + viewModelElement.getType() + " for opening tab!");
+                    throw new RuntimeException("RepositoryLabel: Unknown ViewModelElement type " + viewModelElement.getType() + " for opening tab!");
                 }
                 e.consume();
             }
@@ -71,42 +70,55 @@ public class RepositoryLabel extends Label {
 
         // set the onDragObjectImage to cursor
         setOnDragDetected(e -> {
-            RepositoryLabel repositoryLabel = (RepositoryLabel) e.getSource();
-            ImageCursor cursor = new ImageCursor(new AlicaIcon(viewModelElement.getType(), AlicaIcon.Size.SMALL));
-            getScene().setCursor(cursor);
-         });
+//            System.out.println("RepositoryLabel: Drag Started Source: " + e.getSource() + " " + " Target: " + e.getTarget());
+            getScene().setCursor(new AlicaCursor(viewModelElement.getType(), AlicaIcon.Size.SMALL,8,8));
+            e.consume();
+        });
 
         //Drag from RepositoryList to add a AbstractPlan to State or Task to EntryPoint
-        setOnMouseReleased(e ->{
+        setOnMouseReleased(e -> {
+//            System.out.println("RepositoryLabel: Drag Release Source: " + e.getSource() + " " + " Target: " + e.getTarget());
             getScene().setCursor(Cursor.DEFAULT);
             PickResult pickResult = e.getPickResult();
-            Parent parent = pickResult.getIntersectedNode().getParent();
+            Node pickedElement = pickResult.getIntersectedNode();
+            while (!(pickedElement instanceof StateContainer
+                    || pickedElement instanceof EntryPointContainer
+                    || pickedElement instanceof ConfAbstractPlanWrapperContainer)
+                    && pickedElement.getParent() != null) {
+                pickedElement = pickedElement.getParent();
+            }
 
-            if(parent instanceof FailureStateContainer || parent instanceof SuccessStateContainer) { return; }
+            if (!(pickedElement instanceof Container)
+                    // It is not allowed to put anything into terminal states.
+                    || pickedElement instanceof FailureStateContainer
+                    || pickedElement instanceof SuccessStateContainer) {
+                return;
+            }
 
-            if(pickResult.getIntersectedNode() instanceof Circle) {
-                try {
-                    if (parent instanceof StateContainer) {
-                        if (viewModelElement instanceof TaskViewModel) { return; }
-
-                        StateContainer stateContainer = (StateContainer) parent;
-                        GuiModificationEvent guiModificationEvent = new GuiModificationEvent(GuiEventType.ADD_ELEMENT, viewModelElement.getType(), viewModelElement.getName());
-                        guiModificationEvent.setElementId(viewModelElement.getId());
-                        guiModificationEvent.setParentId(stateContainer.getState().getId());
-                        guiModificationHandler.handle(guiModificationEvent);
-                    }
-                    if (parent instanceof EntryPointContainer && viewModelElement instanceof TaskViewModel) {
-                        EntryPointContainer entryPointContainer = (EntryPointContainer) parent;
-                        GuiModificationEvent guiModificationEvent = new GuiModificationEvent(GuiEventType.ADD_ELEMENT, viewModelElement.getType(), viewModelElement.getName());
-                        guiModificationEvent.setParentId(entryPointContainer.getPlanElementViewModel().getId());
-                        guiModificationEvent.setElementId(viewModelElement.getId());
-                        guiModificationHandler.handle(guiModificationEvent);
-                    }
-                } catch (RuntimeException excp){
-                    // Exception might get thrown, because the element can't be added, because this would cause a loop
-                    // in the model
-                    ErrorWindowController.createErrorWindow(excp.getMessage(), null);
+            try {
+                if (pickedElement instanceof StateContainer && viewModelElement instanceof AbstractPlanViewModel) {
+                    StateContainer stateContainer = (StateContainer) pickedElement;
+                    GuiModificationEvent guiModificationEvent = new GuiModificationEvent(GuiEventType.ADD_ELEMENT, viewModelElement.getType(), viewModelElement.getName());
+                    guiModificationEvent.setElementId(viewModelElement.getId());
+                    guiModificationEvent.setParentId(stateContainer.getState().getId());
+                    guiModificationHandler.handle(guiModificationEvent);
+                } else if (pickedElement instanceof EntryPointContainer && viewModelElement instanceof TaskViewModel) {
+                    EntryPointContainer entryPointContainer = (EntryPointContainer) pickedElement;
+                    GuiModificationEvent guiModificationEvent = new GuiModificationEvent(GuiEventType.ADD_ELEMENT, viewModelElement.getType(), viewModelElement.getName());
+                    guiModificationEvent.setParentId(entryPointContainer.getPlanElementViewModel().getId());
+                    guiModificationEvent.setElementId(viewModelElement.getId());
+                    guiModificationHandler.handle(guiModificationEvent);
+                } else if (pickedElement instanceof ConfAbstractPlanWrapperContainer && viewModelElement instanceof ConfigurationViewModel) {
+                    ConfAbstractPlanWrapperContainer confAbstractPlanWrapperContainer = (ConfAbstractPlanWrapperContainer) pickedElement;
+                    GuiModificationEvent guiModificationEvent = new GuiModificationEvent(GuiEventType.ADD_ELEMENT, viewModelElement.getType(), viewModelElement.getName());
+                    guiModificationEvent.setParentId(confAbstractPlanWrapperContainer.getPlanElementViewModel().getId());
+                    guiModificationEvent.setElementId(viewModelElement.getId());
+                    guiModificationHandler.handle(guiModificationEvent);
                 }
+            } catch (RuntimeException excp) {
+                // Exception might get thrown, because the element can't be added, because this would cause a loop
+                // in the model
+                ErrorWindowController.createErrorWindow(excp.getMessage(), null);
             }
             e.consume();
         });

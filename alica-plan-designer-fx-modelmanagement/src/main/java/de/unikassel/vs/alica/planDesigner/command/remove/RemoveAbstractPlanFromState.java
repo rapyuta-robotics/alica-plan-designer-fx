@@ -1,6 +1,6 @@
 package de.unikassel.vs.alica.planDesigner.command.remove;
 
-import de.unikassel.vs.alica.planDesigner.alicamodel.AbstractPlan;
+import de.unikassel.vs.alica.planDesigner.alicamodel.ConfAbstractPlanWrapper;
 import de.unikassel.vs.alica.planDesigner.alicamodel.State;
 import de.unikassel.vs.alica.planDesigner.command.Command;
 import de.unikassel.vs.alica.planDesigner.events.ModelEventType;
@@ -9,23 +9,23 @@ import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelModificationQuery
 
 public class RemoveAbstractPlanFromState extends Command {
     protected State state;
-    protected AbstractPlan abstractPlan;
+    protected ConfAbstractPlanWrapper confAbstractPlanWrapper;
 
     public RemoveAbstractPlanFromState(ModelManager modelManager, ModelModificationQuery mmq) {
         super(modelManager, mmq);
         this.state = (State) modelManager.getPlanElement(mmq.getParentId());
-        this.abstractPlan = (AbstractPlan) modelManager.getPlanElement(mmq.getElementId());
+        this.confAbstractPlanWrapper = (ConfAbstractPlanWrapper) modelManager.getPlanElement(mmq.getElementId());
     }
 
     @Override
     public void doCommand() {
-        this.state.removeAbstractPlan(abstractPlan);
-        this.fireEvent(ModelEventType.ELEMENT_REMOVED, abstractPlan);
+        this.state.removeConfAbstractPlanWrapper(confAbstractPlanWrapper);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED, confAbstractPlanWrapper);
     }
 
     @Override
     public void undoCommand() {
-        this.state.addAbstractPlan(abstractPlan);
-        this.fireEvent(ModelEventType.ELEMENT_ADDED, abstractPlan);
+        this.state.addConfAbstractPlanWrapper(confAbstractPlanWrapper);
+        this.fireEvent(ModelEventType.ELEMENT_ADDED, confAbstractPlanWrapper);
     }
 }

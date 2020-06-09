@@ -59,7 +59,7 @@ public class ChangeAttributeValue extends ChangeAttributeCommand {
                 return;
             }
             SerializablePlanElement elementToMove = (SerializablePlanElement) planElement;
-            String ending = FileSystemUtil.getExtension(elementToMove);
+            String ending = FileSystemUtil.getType(elementToMove);
 
             this.modelManager.moveFile(elementToMove, elementType, path, ending);
         }

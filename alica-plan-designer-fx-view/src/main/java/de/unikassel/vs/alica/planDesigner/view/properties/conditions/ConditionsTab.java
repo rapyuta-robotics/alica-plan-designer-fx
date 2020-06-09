@@ -10,6 +10,7 @@ import de.unikassel.vs.alica.planDesigner.view.Types;
 import de.unikassel.vs.alica.planDesigner.view.img.AlicaIcon;
 import de.unikassel.vs.alica.planDesigner.view.model.*;
 import de.unikassel.vs.alica.planDesigner.view.properties.variables.VariablesTable;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
@@ -45,6 +46,7 @@ public class ConditionsTab extends Tab {
 
     private final String type;
     private final IPluginEventHandler pluginHandler;
+    private final IGuiModificationHandler guiModificationHandler;
 
     private ComboBox<String> pluginSelection;
     private PropertySheet properties;
@@ -61,13 +63,14 @@ public class ConditionsTab extends Tab {
     private final ListChangeListener<VariableViewModel> allVariablesListener;
     private final ListChangeListener<QuantifierViewModel> quantifierListener;
 
-    public ConditionsTab(String title, String type) {
+    public ConditionsTab(String title, String type, IGuiModificationHandler guiModificationHandler) {
         super(title);
+        this.guiModificationHandler = guiModificationHandler;
         this.type = type;
         pluginHandler = MainWindowController.getInstance().getConfigWindowController().getPluginEventHandler();
 
         allVariablesListener = c -> {
-            while(c.next()) {
+            while (c.next()) {
                 for (VariableViewModel rem : c.getRemoved()) {
                     variables.removeItem(rem);
                 }
@@ -78,11 +81,11 @@ public class ConditionsTab extends Tab {
         };
 
         quantifierListener = c -> {
-            while (c.next()){
-                for (QuantifierViewModel rem : c.getRemoved()){
+            while (c.next()) {
+                for (QuantifierViewModel rem : c.getRemoved()) {
                     quantifiers.removeItem(rem);
                 }
-                for (QuantifierViewModel add : c.getAddedSubList()){
+                for (QuantifierViewModel add : c.getAddedSubList()) {
                     quantifiers.addItem(add);
                 }
             }
@@ -98,15 +101,18 @@ public class ConditionsTab extends Tab {
         pluginSelection.getItems().addAll(availablePlugins);
         pluginSelection.getItems();
         pluginSelection.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-            @Override public ListCell<String> call(ListView<String> param) {
+            @Override
+            public ListCell<String> call(ListView<String> param) {
                 return new ListCell<String>() {
                     {
                         super.setPrefWidth(100);
                     }
-                    @Override public void updateItem(String item, boolean empty) {
+
+                    @Override
+                    public void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
                         setText(item);
-                        if(NONE.equals(item)){
+                        if (NONE.equals(item)) {
                             setFont(Font.font(Font.getDefault().getFamily(), FontPosture.ITALIC, Font.getDefault().getSize()));
                         }
                     }
@@ -137,7 +143,7 @@ public class ConditionsTab extends Tab {
 
         VBox vBox;
         //None Quatifiers for Behaviours
-        if(!(this.parentElement instanceof BehaviourViewModel)) {
+        if (!(this.parentElement instanceof BehaviourViewModel)) {
             String quantifiersTitle = I18NRepo.getInstance().getString("label.caption.quantifiers");
             quantifiers = createQuantifierTable();
             TitledPane quantifierSection = new TitledPane(quantifiersTitle, quantifiers);
@@ -157,18 +163,18 @@ public class ConditionsTab extends Tab {
         this.setContent(mainPane);
     }
 
-    public void setViewModelElement(ViewModelElement viewModelElement){
+    public void setViewModelElement(ViewModelElement viewModelElement) {
 
-        if(variablesHoldingParent != null) {
+        if (variablesHoldingParent != null) {
             variablesHoldingParent.getVariables().removeListener(allVariablesListener);
         }
 
         this.parentElement = viewModelElement;
         ObjectProperty<ConditionViewModel> conditionProperty;
 
-        switch(this.type){
+        switch (this.type) {
             case Types.PRECONDITION:
-                switch (parentElement.getType()){
+                switch (parentElement.getType()) {
                     case Types.PLAN:
                     case Types.MASTERPLAN:
                         PlanViewModel plan = (PlanViewModel) parentElement;
@@ -183,8 +189,7 @@ public class ConditionsTab extends Tab {
 
                     case Types.TRANSITION:
                         TransitionViewModel transition = (TransitionViewModel) parentElement;
-                        this.variablesHoldingParent = (AbstractPlanViewModel) MainWindowController.getInstance()
-                                .getGuiModificationHandler().getViewModelElement(transition.getParentId());
+                        this.variablesHoldingParent = (AbstractPlanViewModel) guiModificationHandler.getViewModelElement(transition.getParentId());
                         conditionProperty = transition.preConditionProperty();
                         break;
                     default:
@@ -196,7 +201,7 @@ public class ConditionsTab extends Tab {
                 break;
 
             case Types.RUNTIMECONDITION:
-                switch (parentElement.getType()){
+                switch (parentElement.getType()) {
                     case Types.PLAN:
                     case Types.MASTERPLAN:
                         PlanViewModel plan = (PlanViewModel) parentElement;
@@ -217,13 +222,12 @@ public class ConditionsTab extends Tab {
                 break;
 
             case Types.POSTCONDITION:
-                switch (parentElement.getType()){
+                switch (parentElement.getType()) {
 
                     case Types.SUCCESSSTATE:
                     case Types.FAILURESTATE:
                         StateViewModel state = (StateViewModel) viewModelElement;
-                        this.variablesHoldingParent = (AbstractPlanViewModel) MainWindowController.getInstance()
-                                .getGuiModificationHandler().getViewModelElement(state.getParentId());
+                        this.variablesHoldingParent = (AbstractPlanViewModel) guiModificationHandler.getViewModelElement(state.getParentId());
                         conditionProperty = state.postConditionProperty();
                         break;
                     case Types.BEHAVIOUR:
@@ -248,14 +252,14 @@ public class ConditionsTab extends Tab {
 
 
         createGui();
-        if(conditionProperty != null) {
+        if (conditionProperty != null) {
             setConditionAndListener(conditionProperty);
         }
 
         // Setup gui and listeners
-        if(condition == null){
+        if (condition == null) {
             pluginSelection.getSelectionModel().select(NONE);
-        }else {
+        } else {
             pluginSelection.getSelectionModel().select(condition.getPluginName());
             updateGuiOnChange(condition.getPluginName());
         }
@@ -268,9 +272,9 @@ public class ConditionsTab extends Tab {
         });
     }
 
-    private void updateGuiOnChange(String newPlugin){
+    private void updateGuiOnChange(String newPlugin) {
         pluginUI.getChildren().clear();
-        if(newPlugin != null && !newPlugin.equals(NONE)){
+        if (newPlugin != null && !newPlugin.equals(NONE)) {
             try {
                 pluginUI.getChildren().add(pluginHandler.getPluginUI(newPlugin));
             } catch (IOException e) {
@@ -279,31 +283,21 @@ public class ConditionsTab extends Tab {
         }
     }
 
-    private void updateModelOnChange(String newPlugin){
-        IGuiModificationHandler controller = MainWindowController.getInstance().getGuiModificationHandler();
-
-
-        if(newPlugin != null && !newPlugin.equals(NONE)){
-
-            GuiModificationEvent addNewCondition
-                    = new GuiModificationEvent(GuiEventType.ADD_ELEMENT, type, "");
-            addNewCondition.setParentId(parentElement.getId());
-            addNewCondition.setName(newPlugin);
-
-            controller.handle(addNewCondition);
+    private void updateModelOnChange(String newPlugin) {
+        GuiModificationEvent conditionEvent;
+        if (newPlugin != null && !newPlugin.equals(NONE)) {
+            conditionEvent = new GuiModificationEvent(GuiEventType.ADD_ELEMENT, type, newPlugin);
+        } else if (condition != null) {
+            conditionEvent = new GuiModificationEvent(GuiEventType.REMOVE_ELEMENT, type, condition.getName());
+            conditionEvent.setElementId(condition.getId());
+        } else {
+            throw new RuntimeException("ConditionsTab: No reason for calling updateModelOnChange() happened!");
         }
-        else if(condition != null) {
-
-            GuiModificationEvent removeOldCondition
-                    = new GuiModificationEvent(GuiEventType.REMOVE_ELEMENT, type, condition.getName());
-            removeOldCondition.setParentId(parentElement.getId());
-            removeOldCondition.setElementId(condition.getId());
-
-            controller.handle(removeOldCondition);
-        }
+        conditionEvent.setParentId(parentElement.getId());
+        guiModificationHandler.handle(conditionEvent);
     }
 
-    private void setConditionAndListener(ObjectProperty<ConditionViewModel> property){
+    private void setConditionAndListener(ObjectProperty<ConditionViewModel> property) {
         // Set the current value
         setCondition(property.get());
 
@@ -311,13 +305,10 @@ public class ConditionsTab extends Tab {
         property.addListener((observable, oldValue, newValue) -> setCondition(newValue));
     }
 
-    private void setCondition(ConditionViewModel condition){
-
-
-        if(condition != null) {
+    private void setCondition(ConditionViewModel condition) {
+        if (condition != null) {
             condition.getQuantifiers().removeListener(quantifierListener);
         }
-
 
         Predicate<PropertyDescriptor> relevantProperties
                 = desc -> Arrays.asList("id", "name", "comment", "enabled", "conditionString").contains(desc.getName());
@@ -325,26 +316,26 @@ public class ConditionsTab extends Tab {
 
         this.properties.getItems().clear();
         this.variables.clear();
-        if(!(this.parentElement instanceof BehaviourViewModel)){
+        if (!(this.parentElement instanceof BehaviourViewModel)) {
             this.quantifiers.clear();
         }
-        if(condition != null) {
+        if (condition != null) {
             this.properties.getItems().addAll(BeanPropertyUtils.getProperties(this.condition, relevantProperties));
-            for(VariableViewModel variable : variablesHoldingParent.getVariables()){
+            for (VariableViewModel variable : variablesHoldingParent.getVariables()) {
                 variables.addItem(variable);
             }
             variablesHoldingParent.getVariables().addListener(allVariablesListener);
-            for(QuantifierViewModel quantifier : condition.getQuantifiers()){
+            for (QuantifierViewModel quantifier : condition.getQuantifiers()) {
                 quantifiers.addItem(quantifier);
             }
             condition.getQuantifiers().addListener(quantifierListener);
             setPluginSelection(condition.getPluginName());
-        }else {
+        } else {
             setPluginSelection(NONE);
         }
     }
 
-    private void setPluginSelection(String pluginName){
+    private void setPluginSelection(String pluginName) {
         EventHandler<ActionEvent> handler = this.pluginSelection.getOnAction();
         this.pluginSelection.setOnAction(null);
         this.pluginSelection.getSelectionModel().select(pluginName);
@@ -352,12 +343,12 @@ public class ConditionsTab extends Tab {
         this.pluginSelection.setOnAction(handler);
     }
 
-    private VariablesTable<VariableViewModel> createVariableTable(){
+    private VariablesTable<VariableViewModel> createVariableTable() {
         VariablesTable<VariableViewModel> variablesTable = new VariablesTable<VariableViewModel>() {
             @Override
             protected void onAddElement() {
                 VariableViewModel sel = variables.getSelectedItem();
-                if(sel != null && !condition.getVariables().contains(sel)){
+                if (sel != null && !condition.getVariables().contains(sel)) {
                     GuiModificationEvent event = new GuiModificationEvent(GuiEventType.ADD_ELEMENT, Types.VARIABLE, sel.getName());
                     event.setElementId(sel.getId());
                     event.setParentId(condition.getId());
@@ -368,7 +359,7 @@ public class ConditionsTab extends Tab {
             @Override
             protected void onRemoveElement() {
                 VariableViewModel sel = variables.getSelectedItem();
-                if(sel != null && condition.getVariables().contains(sel)){
+                if (sel != null && condition.getVariables().contains(sel)) {
                     GuiModificationEvent event = new GuiModificationEvent(GuiEventType.REMOVE_ELEMENT, Types.VARIABLE, sel.getName());
                     event.setElementId(sel.getId());
                     event.setParentId(condition.getId());
@@ -377,10 +368,10 @@ public class ConditionsTab extends Tab {
             }
         };
 
-        variablesTable.table.setRowFactory(param -> new TableRow<VariableViewModel>(){
+        variablesTable.table.setRowFactory(param -> new TableRow<VariableViewModel>() {
             @Override
-            public void updateItem(VariableViewModel item, boolean empty){
-                if(condition != null) {
+            public void updateItem(VariableViewModel item, boolean empty) {
+                if (condition != null) {
                     if (condition.getVariables().contains(item)) {
                         setStyle("-fx-font-weight: bold;");
                     } else {
@@ -411,7 +402,7 @@ public class ConditionsTab extends Tab {
                 @Override
                 protected void updateItem(Long item, boolean empty) {
                     super.updateItem(item, empty);
-                    if(item == null || item == 0) {
+                    if (item == null || item == 0) {
                         return;
                     }
                     IGuiModificationHandler handler = MainWindowController.getInstance().getGuiModificationHandler();
@@ -469,7 +460,7 @@ public class ConditionsTab extends Tab {
         public void updateItem(Long item, boolean empty) {
             super.updateItem(item, empty);
 
-            if(item == null || item == 0) {
+            if (item == null || item == 0) {
                 return;
             }
             IGuiModificationHandler handler = MainWindowController.getInstance().getGuiModificationHandler();
@@ -493,7 +484,7 @@ public class ConditionsTab extends Tab {
     }
 
 
-    private VariablesTable<QuantifierViewModel> createQuantifierTable(){
+    private VariablesTable<QuantifierViewModel> createQuantifierTable() {
         VariablesTable<QuantifierViewModel> quantifiersTable = new VariablesTable<QuantifierViewModel>() {
             @Override
             protected void onAddElement() {
@@ -505,7 +496,7 @@ public class ConditionsTab extends Tab {
             @Override
             protected void onRemoveElement() {
                 QuantifierViewModel selected = quantifiers.getSelectedItem();
-                if(selected == null){
+                if (selected == null) {
                     return;
                 }
 
@@ -541,7 +532,6 @@ public class ConditionsTab extends Tab {
         quantifiersTable.table.getColumns().add(scopeColumn);
 
 
-
         quantifiersTable.addColumn(i18NRepo.getString("label.column.sorts"), "sorts"
                 , new DefaultStringConverter(), true);
         quantifiersTable.addColumn(i18NRepo.getString("label.column.comment"), "comment"
@@ -552,7 +542,7 @@ public class ConditionsTab extends Tab {
 
     private ObservableList<Long> getPossibleScopesObservableList() {
         ObservableList<Long> possibleScopes = FXCollections.observableArrayList();
-        if(parentElement == null || variablesHoldingParent == null) {
+        if (parentElement == null || variablesHoldingParent == null) {
             return possibleScopes;
         }
 
@@ -569,34 +559,34 @@ public class ConditionsTab extends Tab {
                 possibleScopes.add(plan.getId());
 
                 // Adding the plans current States and Tasks to the possibleScopes
-                for(StateViewModel state : plan.getStates()) {
+                for (StateViewModel state : plan.getStates()) {
                     possibleScopes.add(state.getId());
                 }
-                for(EntryPointViewModel entryPoint : plan.getEntryPoints()) {
-                    if(!possibleScopes.contains(entryPoint.getId())) {
+                for (EntryPointViewModel entryPoint : plan.getEntryPoints()) {
+                    if (!possibleScopes.contains(entryPoint.getId())) {
                         possibleScopes.add(entryPoint.getId());
                     }
                 }
 
                 // Adding Listeners to keep the possibleScopes updated
                 plan.getStates().addListener((ListChangeListener<? super StateViewModel>) c -> {
-                    while(c.next()) {
-                        for(StateViewModel state : c.getAddedSubList()) {
+                    while (c.next()) {
+                        for (StateViewModel state : c.getAddedSubList()) {
                             possibleScopes.add(state.getId());
                         }
-                        for(StateViewModel state : c.getRemoved()) {
+                        for (StateViewModel state : c.getRemoved()) {
                             possibleScopes.remove(state.getId());
                         }
                     }
                 });
                 plan.getEntryPoints().addListener((ListChangeListener<? super EntryPointViewModel>) c -> {
-                    while(c.next()) {
-                        for(EntryPointViewModel entryPoint : c.getAddedSubList()) {
-                            if(!possibleScopes.contains(entryPoint.getId())) {
+                    while (c.next()) {
+                        for (EntryPointViewModel entryPoint : c.getAddedSubList()) {
+                            if (!possibleScopes.contains(entryPoint.getId())) {
                                 possibleScopes.add(entryPoint.getId());
                             }
                         }
-                        for(EntryPointViewModel entryPoint : c.getRemoved()) {
+                        for (EntryPointViewModel entryPoint : c.getRemoved()) {
                             possibleScopes.remove(entryPoint.getId());
                         }
                     }

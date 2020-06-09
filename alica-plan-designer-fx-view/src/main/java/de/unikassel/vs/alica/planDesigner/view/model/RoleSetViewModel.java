@@ -1,6 +1,7 @@
 package de.unikassel.vs.alica.planDesigner.view.model;
 
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
+import de.unikassel.vs.alica.planDesigner.view.Types;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -15,13 +16,13 @@ import java.util.List;
 
 public class RoleSetViewModel extends SerializableViewModel {
 
-    private TaskRepositoryViewModel taskRepository;
+//    private TaskRepositoryViewModel taskRepository;
     private FloatProperty defaultPriority;
     private BooleanProperty defaultRoleSet;
     private ObservableList<RoleViewModel> roleViewModels;
 
-    public RoleSetViewModel(long id, String name, String type, float defaultPriority, boolean defaultRoleSet) {
-        super(id, name, type);
+    public RoleSetViewModel(long id, String name, float defaultPriority, boolean defaultRoleSet) {
+        super(id, name, Types.ROLESET);
         this.defaultPriority = new SimpleFloatProperty(null, "defaultPriority", 0.0f);
         this.defaultPriority.setValue(defaultPriority);
         this.defaultRoleSet = new SimpleBooleanProperty(null, "defaultRoleSet", true);
@@ -89,11 +90,11 @@ public class RoleSetViewModel extends SerializableViewModel {
         return roleViewModels;
     }
 
-    public TaskRepositoryViewModel getTaskRepository() {
-        return taskRepository;
-    }
-
-    public void setTaskRepository(TaskRepositoryViewModel taskRepository) {
-        this.taskRepository = taskRepository;
-    }
+//    public TaskRepositoryViewModel getTaskRepository() {
+//        return taskRepository;
+//    }
+//
+//    public void setTaskRepository(TaskRepositoryViewModel taskRepository) {
+//        this.taskRepository = taskRepository;
+//    }
 }

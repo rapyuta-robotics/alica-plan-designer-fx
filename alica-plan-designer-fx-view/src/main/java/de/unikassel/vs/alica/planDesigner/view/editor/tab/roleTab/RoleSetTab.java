@@ -148,8 +148,9 @@ public class RoleSetTab extends EditorTab {
             guiModificationHandler.handle(event);
         });
 
-        if (roleSetViewModel.getTaskRepository() != null)
-            taskTableView.addTasks(roleSetViewModel.getTaskRepository().getTaskViewModels());
+        TaskRepositoryViewModel taskRepositoryViewModel = (TaskRepositoryViewModel) guiModificationHandler.getViewModelElement(guiModificationHandler.getTaskRepositoryID());
+        if (taskRepositoryViewModel != null)
+            taskTableView.addTasks(taskRepositoryViewModel.getTaskViewModels());
         taskTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         return taskTableView;
     }

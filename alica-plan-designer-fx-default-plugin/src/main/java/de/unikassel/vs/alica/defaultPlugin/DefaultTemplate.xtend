@@ -3,6 +3,7 @@ package de.unikassel.vs.alica.defaultPlugin;
 import de.unikassel.vs.alica.planDesigner.alicamodel.Plan
 import de.unikassel.vs.alica.planDesigner.alicamodel.Behaviour
 import de.unikassel.vs.alica.planDesigner.alicamodel.State
+import de.unikassel.vs.alica.planDesigner.alicamodel.ConfAbstractPlanWrapper
 import de.unikassel.vs.alica.planDesigner.alicamodel.TerminalState
 import de.unikassel.vs.alica.planDesigner.alicamodel.Transition
 import de.unikassel.vs.alica.planDesigner.alicamodel.Variable
@@ -28,9 +29,9 @@ class DefaultTemplate {
                 * Outgoing transition:
                 *   - Name: «transition.preCondition.name», ConditionString: «transition.preCondition.conditionString», Comment: «transition.comment»
                 *
-                * Abstract plans in current state: «var  List<AbstractPlan> plans = state.abstractPlans»
-                «FOR plan : plans»
-                *   - «plan.name» («plan.id»)
+                * Abstract plans in current state: «var  List<ConfAbstractPlanWrapper> wrappers = state.confAbstractPlanWrappers»
+                «FOR wrapper : wrappers»
+                *   - «wrapper.abstractPlan.name» («wrapper.abstractPlan.id»)
                 «ENDFOR»
                 *
                 * Tasks in plan: «var  List<EntryPoint> entryPoints = state.parentPlan.entryPoints»
@@ -53,7 +54,7 @@ class DefaultTemplate {
                     «IF (protectedRegions.containsKey(transition.id + ""))»
                         «protectedRegions.get(transition.id + "")»
                     «ELSE»
-                    std::cout << "The PreCondition «transition.preCondition.id» in Transition «transition.getName» is not implement yet!" << std::endl;
+                    std::cout << "The PreCondition «transition.preCondition.id» in Transition '«transition.getName»' is not implement yet!" << std::endl;
                     return false;
                     «ENDIF»
                     /*PROTECTED REGION END*/
@@ -76,7 +77,7 @@ class DefaultTemplate {
                 «IF (protectedRegions.containsKey(plan.preCondition.id + ""))»
                     «protectedRegions.get(plan.preCondition.id + "")»
                 «ELSE»
-                    std::cout << "The PreCondition «plan.preCondition.id» in Plan «plan.getName» is not implement yet!" << std::endl;
+                    std::cout << "The PreCondition «plan.preCondition.id» in Plan '«plan.getName»' is not implement yet!" << std::endl;
                     return false;
                 «ENDIF»
                 /*PROTECTED REGION END*/
@@ -94,7 +95,7 @@ class DefaultTemplate {
                 «IF (protectedRegions.containsKey(plan.runtimeCondition.id + ""))»
                     «protectedRegions.get(plan.runtimeCondition.id + "")»
                 «ELSE»
-                    std::cout << "The RunTimeCondition «plan.runtimeCondition.id» in Plan «plan.getName» is not implement yet!" << std::endl;
+                    std::cout << "The RunTimeCondition «plan.runtimeCondition.id» in Plan '«plan.getName»' is not implement yet!" << std::endl;
                     return false;
                 «ENDIF»
                 /*PROTECTED REGION END*/
@@ -117,8 +118,8 @@ class DefaultTemplate {
                 «IF (protectedRegions.containsKey(terminalState.postCondition.id + ""))»
                     «protectedRegions.get(terminalState.postCondition.id + "")»
                 «ELSE»
-                    std::cout << "The PostCondition «terminalState.postCondition.id» in TerminalState «terminalState.getName» is not implement yet!" << std::endl;
-                    std::cout << "However, PostConditions are a feature that makes sense in the context of planning, which is not supported by ALICA, yet! So don't worry.'" << std::endl;
+                    std::cout << "The PostCondition «terminalState.postCondition.id» in TerminalState '«terminalState.getName»' is not implement yet!" << std::endl;
+                    std::cout << "However, PostConditions are a feature that makes sense in the context of planning, which is not supported by ALICA, yet! So don't worry." << std::endl;
                     return false;
                 «ENDIF»
                 /*PROTECTED REGION END*/
@@ -179,7 +180,7 @@ class DefaultTemplate {
                 «IF (protectedRegions.containsKey(behaviour.postCondition.id + ""))»
                     «protectedRegions.get(behaviour.postCondition.id + "")»
                 «ELSE»
-                    std::cout << "The PostCondition «behaviour.postCondition.id» in Behaviour «behaviour.getName» is not implement yet!" << std::endl;
+                    std::cout << "The PostCondition «behaviour.postCondition.id» in Behaviour '«behaviour.getName»' is not implement, yet!" << std::endl;
                     return false;
                 «ENDIF»
                 /*PROTECTED REGION END*/
@@ -352,9 +353,9 @@ class DefaultTemplate {
                     * - Comment: «transition.preCondition.comment»
                     * - ConditionString: «transition.preCondition.conditionString»
                     *
-                    * «var  List<AbstractPlan> plans = state.abstractPlans»
-                    * Plans in State: «FOR plan : plans»
-                    * - Plan Name: «plan.name», PlanID: «plan.id» «ENDFOR»
+                    * «var  List<ConfAbstractPlanWrapper> wrappers = state.confAbstractPlanWrappers»
+                    * AbstractPlans in State: «FOR wrapper : wrappers»
+                    * - AbstractPlan Name: «wrapper.abstractPlan.name», PlanID: «wrapper.abstractPlan.id» «ENDFOR»
                     «var  List<Variable> variables =  transition.preCondition.variables»
                     «IF (variables !== null)»
                          * Static Variables: «FOR variable : variables»«variable.name» «ENDFOR»
