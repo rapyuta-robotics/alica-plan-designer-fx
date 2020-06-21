@@ -19,6 +19,7 @@ public class SynchronizationViewModelFactory extends InternalViewModelFactory<Sy
         synchronisationViewModel.setSyncTimeout(synchronisation.getSyncTimeout());
         synchronisationViewModel.setFailOnSyncTimeout(synchronisation.getFailOnSyncTimeout());
         synchronisationViewModel.setTalkTimeout(synchronisation.getTalkTimeout());
+        synchronisationViewModel.setParentId(synchronisation.getPlan().getId());
         return synchronisationViewModel;
     }
 }
