@@ -235,8 +235,11 @@ public class ModelManager implements Observer {
 
     public void loadModelFromDisk() {
         unloadModel();
+        if (this.tasksPath.isEmpty()) {
+            return;
+        }
         loadModelFromDisk(tasksPath);
-        if (taskRepository == null && !this.tasksPath.isEmpty()) {
+        if (taskRepository == null) {
             for (IModelEventHandler handler : eventHandlerList) {
                 handler.handleNoTaskRepositoryNotification();
             }
