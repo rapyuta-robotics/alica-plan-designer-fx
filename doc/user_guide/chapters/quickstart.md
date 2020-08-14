@@ -17,7 +17,7 @@ When you start the Plan Designer the first time, its main window should look lik
    5. **Roles Folder:** Enter the path to your projects roles-folder.
    6. **Tasks Folder:** Enter the path to your projects tasks-folder.
    7. **Gen-Src Folder:** Enter the path to the folder, where you want the Plan Designer to generate its source code into.
-   8. **Plugins Folder:** Enter the path to folder with the code generation plugins, you want to use. Most likely choose the path that includes the JAR of the Default Plugin module.
+   8. **Plugins Folder:** Enter the path to folder with the code generation plugins, you want to use. Most likely choose the path that includes the JAR of the Default Plugin module. Please note that if there are other JARs in the plugin folder, which are no plugin for the Plan Designer, it is likely that this will cause issues like NullPointerException and similar.
    9. **Default Plugin:** Choose the code generation plugin, that should be configured as default plugin from the drop down menu. If nothing shows up, the configured *Plugins Folder* does not contain a code generation plugin.
 3. Save the configuration and set it active. If something goes wrong at this point, you probably have made a mistake in the last step.
 
