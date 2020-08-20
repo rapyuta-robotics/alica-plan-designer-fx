@@ -8,6 +8,7 @@ public class TaskViewModelFactory extends InternalViewModelFactory<TaskViewModel
 
     TaskViewModel create(Task task) {
         TaskViewModel taskViewModel = new TaskViewModel(task.getId(), task.getName());
+        taskViewModel.setComment(task.getComment());
         taskViewModel.setTaskRepositoryViewModel((TaskRepositoryViewModel) viewModelManager.getViewModelElement(task.getTaskRepository()));
         taskViewModel.getTaskRepositoryViewModel().addTask(taskViewModel);
         taskViewModel.setParentId(task.getTaskRepository().getId());

@@ -10,6 +10,7 @@ public class EntryPointViewModelFactory extends InternalViewModelFactory<EntryPo
     @Override
     EntryPointViewModel create(EntryPoint ep) {
         EntryPointViewModel entryPointViewModel = new EntryPointViewModel(ep.getId(), ep.getName());
+        entryPointViewModel.setComment(ep.getComment());
         // we need to put the ep before creating the state, in order to avoid circles (EntryPoint <-> State)
         viewModelManager.putViewModelForAvoidingLoops(entryPointViewModel);
         if (ep.getState() != null) {

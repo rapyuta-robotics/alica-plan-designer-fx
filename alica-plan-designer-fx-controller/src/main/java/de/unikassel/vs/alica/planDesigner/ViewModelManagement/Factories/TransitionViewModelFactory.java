@@ -11,6 +11,7 @@ public class TransitionViewModelFactory extends InternalViewModelFactory<Transit
     @Override
     TransitionViewModel create(Transition transition) {
         TransitionViewModel transitionViewModel = new TransitionViewModel(transition.getId(), transition.getName());
+        transitionViewModel.setComment(transition.getComment());
         transitionViewModel.setInState((StateViewModel) viewModelManager.getViewModelElement(transition.getInState()));
         transitionViewModel.setOutState((StateViewModel) viewModelManager.getViewModelElement(transition.getOutState()));
         transitionViewModel.setParentId(transition.getInState().getParentPlan().getId());

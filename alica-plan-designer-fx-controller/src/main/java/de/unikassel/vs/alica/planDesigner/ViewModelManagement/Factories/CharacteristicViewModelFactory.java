@@ -9,7 +9,7 @@ public class CharacteristicViewModelFactory extends InternalViewModelFactory<Cha
     @Override
     CharacteristicViewModel create(Characteristic characteristic) {
         CharacteristicViewModel characteristicViewModel = new CharacteristicViewModel(characteristic.getId(), characteristic.getName(), null);
-
+        characteristicViewModel.setComment(characteristic.getComment());
         characteristicViewModel.setParentId(characteristic.getRole().getId());
         characteristicViewModel.setValue(characteristic.getValue());
         characteristicViewModel.setWeight(String.valueOf(characteristic.getWeight()));

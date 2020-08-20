@@ -10,6 +10,7 @@ public class SynchronizationViewModelFactory extends InternalViewModelFactory<Sy
     @Override
     SynchronisationViewModel create(Synchronisation synchronisation) {
         SynchronisationViewModel synchronisationViewModel = new SynchronisationViewModel(synchronisation.getId(), synchronisation.getName());
+        synchronisationViewModel.setComment(synchronisation.getComment());
         for (Transition transition : synchronisation.getSyncedTransitions()) {
             synchronisationViewModel.getTransitions().add((TransitionViewModel) viewModelManager.getViewModelElement(transition));
         }

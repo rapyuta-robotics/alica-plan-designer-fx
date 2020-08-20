@@ -14,6 +14,7 @@ public class RoleViewModelFactory extends InternalViewModelFactory<RoleViewModel
     @Override
     RoleViewModel create(Role role) {
         RoleViewModel roleViewModel = new RoleViewModel(role.getId(), role.getName());
+        roleViewModel.setComment(role.getComment());
         ObservableMap<TaskViewModel, Float> taskPriorities = FXCollections.observableHashMap();
 
         for (Task task: role.getTaskPriorities().keySet()) {
