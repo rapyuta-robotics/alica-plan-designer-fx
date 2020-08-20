@@ -40,7 +40,7 @@ namespace alica
         public:
             BehaviourCreator();
             virtual ~BehaviourCreator();
-            virtual std::shared_ptr<BasicBehaviour> createBehaviour(long behaviourId);
+            virtual std::shared_ptr<BasicBehaviour> createBehaviour(int64_t behaviourId);
     };
 
 } /* namespace alica */
@@ -68,7 +68,7 @@ namespace alica
     {
     }
 
-    std::shared_ptr<BasicBehaviour> BehaviourCreator::createBehaviour(long behaviourId)
+    std::shared_ptr<BasicBehaviour> BehaviourCreator::createBehaviour(int64_t behaviourId)
     {
         switch(behaviourId)
         {
@@ -230,7 +230,7 @@ namespace alica
         public:
         virtual ~UtilityFunctionCreator();
         UtilityFunctionCreator();
-        std::shared_ptr<BasicUtilityFunction> createUtility(long utilityfunctionConfId);
+        std::shared_ptr<BasicUtilityFunction> createUtility(int64_t utilityfunctionConfId);
     };
 
 } /* namespace alica */
@@ -260,7 +260,7 @@ namespace alica
     }
 
 
-    std::shared_ptr<BasicUtilityFunction> UtilityFunctionCreator::createUtility(long utilityfunctionConfId)
+    std::shared_ptr<BasicUtilityFunction> UtilityFunctionCreator::createUtility(int64_t utilityfunctionConfId)
     {
         switch(utilityfunctionConfId)
         {
@@ -296,7 +296,7 @@ namespace alica
         public:
         ConditionCreator();
         virtual ~ConditionCreator();
-        std::shared_ptr<BasicCondition> createConditions(long conditionConfId);
+        std::shared_ptr<BasicCondition> createConditions(int64_t conditionConfId);
     };
 
 } /* namespace alica */
@@ -328,7 +328,7 @@ namespace alica
     {
     }
 
-    std::shared_ptr<BasicCondition> ConditionCreator::createConditions(long conditionConfId)
+    std::shared_ptr<BasicCondition> ConditionCreator::createConditions(int64_t conditionConfId)
     {
         switch (conditionConfId)
         {
@@ -368,7 +368,7 @@ namespace alica
         public:
         ConstraintCreator();
         virtual ~ConstraintCreator();
-        std::shared_ptr<BasicConstraint> createConstraint(long constraintConfId);
+        std::shared_ptr<BasicConstraint> createConstraint(int64_t constraintConfId);
     };
 
 } /* namespace alica */
@@ -406,7 +406,7 @@ namespace alica
     }
 
 
-    std::shared_ptr<BasicConstraint> ConstraintCreator::createConstraint(long constraintConfId)
+    std::shared_ptr<BasicConstraint> ConstraintCreator::createConstraint(int64_t constraintConfId)
     {
         switch(constraintConfId)
         {
