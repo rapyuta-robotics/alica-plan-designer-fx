@@ -120,6 +120,13 @@ public final class FileTreeView extends TreeView<File> {
 
         FileTreeItem folder = findFolder(viewModelElement, topLevelFolder, 0);
         if (folder != null) {
+            for (TreeItem childItem : folder.getChildren()) {
+                FileTreeItem fileTreeItem = (FileTreeItem) childItem;
+                if (fileTreeItem.getViewModelElement() == viewModelElement) {
+                    // don't insert something that is already there
+                    return;
+                }
+            }
             FileTreeItem newItem = new FileTreeItem(createFile(viewModelElement), new ImageView(new AlicaIcon(viewModelElement.getType(),
                     AlicaIcon.Size.BIG)), viewModelElement);
             folder.getChildren().add(newItem);

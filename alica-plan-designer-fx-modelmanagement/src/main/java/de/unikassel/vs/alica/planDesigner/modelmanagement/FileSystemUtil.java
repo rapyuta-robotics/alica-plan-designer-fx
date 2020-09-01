@@ -23,6 +23,8 @@ public class FileSystemUtil {
                 return Paths.get(mmq.getAbsoluteDirectory(), mmq.getName() + "." + Extensions.ROLESET).toFile();
             case Types.CONFIGURATION:
                 return Paths.get(mmq.getAbsoluteDirectory(), mmq.getName() + "." + Extensions.CONFIGURATION).toFile();
+            case Types.UIEXTENSION:
+                return Paths.get(mmq.getAbsoluteDirectory(), mmq.getName() + "." + Extensions.PLAN_EXTENSION).toFile();
             default:
                 System.err.println("FileSystemUtil: Unknown eventType gets ignored!");
                 return null;

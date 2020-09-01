@@ -8,14 +8,21 @@ import de.unikassel.vs.alica.planDesigner.view.model.*;
 import de.unikassel.vs.alica.planDesigner.view.properties.bindings.VariableBindingTab;
 import de.unikassel.vs.alica.planDesigner.view.properties.conditions.ConditionsTab;
 import de.unikassel.vs.alica.planDesigner.view.properties.variables.VariablesTab;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.util.Callback;
 import org.controlsfx.control.PropertySheet;
 import org.controlsfx.property.BeanPropertyUtils;
+import org.controlsfx.property.editor.DefaultPropertyEditorFactory;
+import org.controlsfx.property.editor.Editors;
+import org.controlsfx.property.editor.PropertyEditor;
 
 /**
  * Root gui object for showing properties, conditions, and variables of selected objects.
@@ -49,15 +56,26 @@ public class ElementInformationPane extends TitledPane {
         propertySheet = new PropertySheet();
         propertySheet.setId("PropertySheet");
         propertySheet.setModeSwitcherVisible(false);
+        SimpleObjectProperty<Callback<PropertySheet.Item, PropertyEditor<?>>> propertyEditorFactory =
+                new SimpleObjectProperty<>(this, "propertyEditor", new DefaultPropertyEditorFactory());
+
+        propertySheet.setOnMouseClicked(mouseEvent -> {
+                    if (mouseEvent.getClickCount() == 2) {
+                        ClipboardContent content = new ClipboardContent();
+                        content.putString(propertySheet.getItems().get(1).getValue().toString());
+                        Clipboard.getSystemClipboard().setContent(content);
+                        System.out.println("ElementInformationPane: Copied ID to clipboard: " + propertySheet.getItems().get(1).getValue().toString());
+                    }
+                });
 
         propertiesTab = new Tab(i18NRepo.getString("label.caption.properties"));
         propertiesTab.setContent(propertySheet);
         variablesTab = new VariablesTab(guiModificationHandler);
 
         variableBindingTab = new VariableBindingTab(guiModificationHandler);
-        preConditionTab     = new ConditionsTab(i18NRepo.getString("label.caption.preCondtions")    , Types.PRECONDITION, guiModificationHandler);
+        preConditionTab = new ConditionsTab(i18NRepo.getString("label.caption.preCondtions"), Types.PRECONDITION, guiModificationHandler);
         runtimeConditionTab = new ConditionsTab(i18NRepo.getString("label.caption.runtimeCondtions"), Types.RUNTIMECONDITION, guiModificationHandler);
-        postConditionTab    = new ConditionsTab(i18NRepo.getString("label.caption.postCondtions")   , Types.POSTCONDITION, guiModificationHandler);
+        postConditionTab = new ConditionsTab(i18NRepo.getString("label.caption.postCondtions"), Types.POSTCONDITION, guiModificationHandler);
         characteristicsTab = new Tab(i18NRepo.getString("label.caption.characteristics"));
 
         this.tabPane = new TabPane();
@@ -142,7 +160,7 @@ public class ElementInformationPane extends TitledPane {
         }
     }
 
-    private void adaptConditions(ViewModelElement element){
+    private void adaptConditions(ViewModelElement element) {
         preConditionTab.setViewModelElement(element);
         runtimeConditionTab.setViewModelElement(element);
         postConditionTab.setViewModelElement(element);
@@ -154,6 +172,7 @@ public class ElementInformationPane extends TitledPane {
         PropertySheet.Item[] retList = new PropertySheet.Item[list.size()];
         for (PropertySheet.Item item : list) {
             int idx = element.getUiPropertyList().indexOf(item.getName());
+            System.out.println("ElementInformationPane: Add property with name " + item.getName());
             if (idx != -1) {
                 retList[idx] = item;
             } else {

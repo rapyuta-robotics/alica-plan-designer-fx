@@ -23,70 +23,11 @@ public class ParsePlanElement extends Command {
 
     @Override
     public void doCommand() {
-        // 1. parse file
-        // 2. delete already existing object and put new one
-        switch (mmq.getElementType()) {
-            case Types.PLAN:
-            case Types.MASTERPLAN:
-                newElement = modelManager.parseFile(FileSystemUtil.getFile(mmq), Plan.class);
-                break;
-            case Types.PLANTYPE:
-                newElement = modelManager.parseFile(FileSystemUtil.getFile(mmq), PlanType.class);
-                break;
-            case Types.BEHAVIOUR:
-                newElement = modelManager.parseFile(FileSystemUtil.getFile(mmq), Behaviour.class);
-                break;
-            case Types.TASKREPOSITORY:
-                newElement = modelManager.parseFile(FileSystemUtil.getFile(mmq), TaskRepository.class);
-                break;
-            case Types.ROLESET:
-                newElement = modelManager.parseFile(FileSystemUtil.getFile(mmq), RoleSet.class);
-                break;
-            case Types.CONFIGURATION:
-                newElement = modelManager.parseFile(FileSystemUtil.getFile(mmq), Configuration.class);
-                break;
-            default:
-                throw new RuntimeException("ParseSerializableElement: Parsing model eventType " + mmq.getElementType() + " not implemented, yet!");
-        }
+        // Searching for an existing element with the same id, because that will be replaced and needs to be stored for undo
+        oldElement = (SerializablePlanElement) modelManager.getSerializablePlanElement(mmq);
 
-        //Add listeners to newElements isDirty-flag
-        newElement.registerDirtyFlag();
-        newElement.dirtyProperty().addListener((observable, oldValue, newValue) -> {
-            ModelEvent event = new ModelEvent(ModelEventType.ELEMENT_ATTRIBUTE_CHANGED, newElement
-                    , mmq.getElementType());
-            event.setChangedAttribute("dirty");
-            event.setNewValue(newValue);
-            modelManager.fireEvent(event);
-        });
-
-        //Searching for an existing element with the same id, because that will be replaced and needs to be stored for undo
-        oldElement = (SerializablePlanElement) modelManager.getPlanElement(newElement.getId());
-
-        if (newElement instanceof Plan ) {
-
-            //If the new element is a Plan, its visualisation has to be loaded as well
-            Plan newPlan = (Plan) newElement;
-            File uiExtensionFile = FileSystemUtil.getFile(mmq.getAbsoluteDirectory()
-                    , mmq.getName(), Extensions.PLAN_EXTENSION);
-            try {
-                UiExtension newUiExtension = modelManager.parseFile(uiExtensionFile, UiExtension.class);
-                if (newUiExtension != null) {
-                    //If a visualisation was loaded, replace the old one and update the view
-//                modelManager.replaceIncompletePlanElementsInPlanModelVisualisationObject(newUiExtension);
-                    modelManager.getUiExtensionMap().put(mmq.getElementId(), newUiExtension);
-                }
-            }catch (RuntimeException e) {
-                System.err.println("ParsePlan: " + e.getMessage());
-            }
-
-            if(newPlan.getMasterPlan()) {
-                modelManager.storePlanElement(Types.MASTERPLAN, newElement, false);
-            } else {
-                modelManager.storePlanElement(Types.PLAN, newElement, false);
-            }
-        } else {
-            modelManager.storePlanElement(mmq.getElementType(), newElement, false);
-        }
+        // Use method which is thought to load model at startup of plan designer
+        newElement = modelManager.loadModelFile(FileSystemUtil.getFile(mmq), true);
     }
 
     @Override

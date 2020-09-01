@@ -111,16 +111,24 @@ public final class RepositoryViewModel {
         switch (viewModelElement.getType()) {
             case Types.MASTERPLAN:
             case Types.PLAN:
-                this.plans.add(viewModelElement);
+                if (!this.plans.contains(viewModelElement)) {
+                    this.plans.add(viewModelElement);
+                }
                 break;
             case Types.BEHAVIOUR:
-                this.behaviours.add(viewModelElement);
+                if (!this.behaviours.contains(viewModelElement)) {
+                    this.behaviours.add(viewModelElement);
+                }
                 break;
             case Types.PLANTYPE:
-                this.planTypes.add(viewModelElement);
+                if (!this.planTypes.contains(viewModelElement)) {
+                    this.planTypes.add(viewModelElement);
+                }
                 break;
             case Types.TASK:
-                this.tasks.add(viewModelElement);
+                if (!this.tasks.contains(viewModelElement)) {
+                    this.tasks.add(viewModelElement);
+                }
                 break;
             case Types.TASKREPOSITORY:
                 this.tasks.clear();
@@ -129,7 +137,9 @@ public final class RepositoryViewModel {
                 }
                 break;
             case Types.CONFIGURATION:
-                this.configurations.add(viewModelElement);
+                if (!this.configurations.contains(viewModelElement)) {
+                    this.configurations.add(viewModelElement);
+                }
                 break;
         }
     }

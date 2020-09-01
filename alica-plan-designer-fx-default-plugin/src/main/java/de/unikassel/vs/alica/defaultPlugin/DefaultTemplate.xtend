@@ -43,7 +43,7 @@ class DefaultTemplate {
                 *   - «stateOfInPlan.name» («stateOfInPlan.id»)
                 «ENDFOR»
                 *
-                * Variables of preconditon:«var  List<Variable> variables = transition.preCondition.variables»
+                * Variables of precondition:«var  List<Variable> variables = transition.preCondition.variables»
                 «FOR variable : variables»
                 *	- «variable.name» («variable.id»)
                 «ENDFOR»

@@ -142,6 +142,24 @@ public class ModelManager implements Observer {
         }
     }
 
+    public SerializablePlanElement getSerializablePlanElement(ModelModificationQuery mmq) {
+        for (PlanElement planElement : planElementMap.values()) {
+            if (!(planElement instanceof SerializablePlanElement)) {
+                continue;
+            }
+            SerializablePlanElement serializablePlanElement = (SerializablePlanElement) planElement;
+            if (!mmq.absoluteDirectory.contains(serializablePlanElement.getRelativeDirectory())) {
+                continue;
+            }
+
+            if (!serializablePlanElement.getName().equals(mmq.getName())) {
+                continue;
+            }
+            return serializablePlanElement;
+        }
+        return null;
+    }
+
     public PlanElement getPlanElement(String absolutePath) {
         String filename = absolutePath.substring(absolutePath.lastIndexOf(File.separator) + 1);
         String[] split = filename.split("\\.");
@@ -317,18 +335,18 @@ public class ModelManager implements Observer {
      * Please resolves dummy references, only if all referenced elements are parsed already.
      * That is not the case during loading the initial model from disk.
      */
-    private void loadModelFile(File modelFile, boolean resolveReferences) {
+    public SerializablePlanElement loadModelFile(File modelFile, boolean resolveReferences) {
         // 0. check if valid plan ending
         String type = FileSystemUtil.getType(modelFile);
         if ((type == Types.UNSUPPORTED)) {
-            return;
+            return null;
         }
 
         // 1. parse plan element from disk
         Class classType = FileSystemUtil.getClassType(modelFile);
         Object parsedObject = parseFile(modelFile, classType);
         if (parsedObject == null) {
-            return;
+            return null;
         }
 
         // Special Case for UIExtension Files
@@ -337,8 +355,9 @@ public class ModelManager implements Observer {
             uiExtensionMap.put(uiExtension.getPlan().getId(), uiExtension);
             if (resolveReferences) {
                 uiExtension.setPlan(planMap.get(uiExtension.getPlan().getId()));
+                uiExtension.registerDirtyListeners();
             }
-            return;
+            return null;
         }
 
         // 2. add plan element and its children into to maps of the model manager
@@ -353,6 +372,13 @@ public class ModelManager implements Observer {
                 resolveReferences((PlanType) parsedObject);
             } else if (Types.TASKREPOSITORY.equals(type)) {
                 resolveReferences((TaskRepository) parsedObject);
+            } else if (Types.BEHAVIOUR.equals(type)) {
+                resolveReferences((Behaviour) parsedObject);
+            } else if (Types.ROLESET.equals(type)) {
+                if (roleSet != null) {
+                    roleSet.getRoles().forEach(role -> resolveReferences(role));
+                    roleSet.setDirty(false);
+                }
             }
         }
 
@@ -375,6 +401,7 @@ public class ModelManager implements Observer {
                 fireEvent(new ModelEvent(ModelEventType.ELEMENT_PARSED, planElement, type));
             }
         }
+        return planElement;
     }
 
     public <T> T parseFile(File modelFile, Class<T> type) {
@@ -1105,10 +1132,11 @@ public class ModelManager implements Observer {
                 if (f == null || !f.exists()) {
                     return;
                 }
-                PlanElement element = getPlanElement(f.toString());
-
-                if (element == null || ignoreModifiedEvent(element)) {
-                    return;
+                if (!f.toString().endsWith(Extensions.PLAN_EXTENSION)) {
+                    PlanElement element = getPlanElement(f.toString());
+                    if (element == null || ignoreModifiedEvent(element)) {
+                        return;
+                    }
                 }
                 cmd = new ParsePlanElement(this, mmq);
                 break;
