@@ -2,7 +2,23 @@
 
 In this Quickstart Guide, we will show you how you setup an empty and unconfigured Plan Designer, so that you can start modelling plans right away. So let's start...
 
-When you start the Plan Designer the first time, its main window should look like this:
+## Download and Start the Plan Designer
+
+The [GitHUB repository of the Plan Designer](https://github.com/rapyuta-robotics/alica-plan-designer-fx) includes the different releases of the Plan Designer. Download the two JAR-files from the latest release on the [release page](https://github.com/rapyuta-robotics/alica-plan-designer-fx/releases) and place them in a folder structure like this:
+
+```
+~/alica_plan_designer/PlanDesignerFX-X.Y.Z.jar
+~/alica_plan_designer/plugins/alica-plan-designer-fx-default-plugin-X.Y.Z-SNAPSHOT.jar
+```
+
+For starting the Plan Designer, you must have [Java OpenJDK 11 installed](https://wiki.ubuntuusers.de/Java/Installation/OpenJDK/) and [set as your default Java version](https://computingforgeeks.com/how-to-set-default-java-version-on-ubuntu-debian/). Afterwards you can start the Plan Designer with the following command on your terminal:
+
+```
+cd ~/alica_plan_designer
+java -jar PlanDesignerFX-X.Y.Z.jar
+```
+
+ When you start the Plan Designer the first time, its main window should look like this:
 
 ![Empty Plan Designer](../img/Empty-PlanDesigner.png)
 
