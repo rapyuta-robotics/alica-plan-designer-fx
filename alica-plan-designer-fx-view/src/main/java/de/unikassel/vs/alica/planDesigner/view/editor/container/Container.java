@@ -49,8 +49,10 @@ public abstract class Container extends Pane implements DraggableEditorElement {
         setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
             @Override
             public void handle(ContextMenuEvent e) {
-                if (planElementViewModel instanceof StateViewModel || planElementViewModel instanceof PlanTypeViewModel
+                if (planElementViewModel instanceof StateViewModel
+                        || planElementViewModel instanceof PlanTypeViewModel
                         || planElementViewModel instanceof SynchronisationViewModel) {
+                    // nothing to show for states, plantypes, and synchronisations
                     return;
                 }
 
