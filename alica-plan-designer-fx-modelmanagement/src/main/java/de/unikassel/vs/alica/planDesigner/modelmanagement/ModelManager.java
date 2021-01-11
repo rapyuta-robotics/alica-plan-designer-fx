@@ -1,3 +1,4 @@
+
 package de.unikassel.vs.alica.planDesigner.modelmanagement;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -234,6 +235,10 @@ public class ModelManager implements Observer {
     }
 
     public void addListener(IModelEventHandler eventHandler) {
+        if (eventHandler == null) {
+            System.err.println("[ModelManager] Please don't subscribe NULL as eventHandler to the ModelManager!");
+            return;
+        }
         eventHandlerList.add(eventHandler);
     }
 
@@ -417,7 +422,6 @@ public class ModelManager implements Observer {
             while (modelFile.length() == 0) {
                 Thread.sleep(1000);
             }
-            System.out.println("MM: " + modelFile.getName() + "  " + type);
             planElement = objectMapper.readValue(modelFile, type);
         } catch (com.fasterxml.jackson.databind.exc.MismatchedInputException
                 | com.fasterxml.jackson.databind.deser.UnresolvedForwardReference e) {
