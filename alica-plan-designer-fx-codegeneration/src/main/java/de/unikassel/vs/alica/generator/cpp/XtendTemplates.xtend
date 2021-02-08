@@ -23,6 +23,29 @@ class XtendTemplates {
         protectedRegions = regions;
     }
 
+        def String planCreatorHeader()'''
+    #pragma once
+    #include <engine/IPlanCreator.h>
+
+    #include <memory>
+    #include <iostream>
+
+    namespace alica
+    {
+
+        class BasicPlan;
+
+        class PlanCreator : public IPlanCreator
+        {
+            public:
+                PlanCreator();
+                virtual ~PlanCreator();
+                virtual std::shared_ptr<BasicPlan> createPlan(int64_t planId);
+        };
+
+    } /* namespace alica */
+    '''
+
     def String behaviourCreatorHeader()'''
 #pragma once
 #include <engine/IBehaviourCreator.h>
@@ -44,6 +67,46 @@ namespace alica
     };
 
 } /* namespace alica */
+'''
+
+def String planCreatorSource(List<Plan> plans)'''
+#include "PlanCreator.h"
+#include "engine/BasicPlan.h"
+«FOR plan : plans»
+«IF (plan.relativeDirectory.isEmpty)»
+#include "«plan.name».h"
+«ELSE»
+#include  "«plan.relativeDirectory»/«plan.name».h"
+«ENDIF»
+«ENDFOR»
+
+namespace alica
+{
+
+    PlanCreator::PlanCreator()
+    {
+    }
+
+    PlanCreator::~PlanCreator()
+    {
+    }
+
+    std::shared_ptr<BasicBPlan> PlanCreator::createPlan(int64_t planId)
+    {
+        switch(planId)
+        {
+            «FOR plan : plans»
+                case «plan.id»:
+                return std::make_shared<«plan.name»>();
+                break;
+            «ENDFOR»
+            default:
+            std::cerr << "PlanCreator: Unknown plan requested: " << planId << std::endl;
+            throw new std::exception();
+            break;
+        }
+    }
+}
 '''
 
     def String behaviourCreatorSource(List<Behaviour> behaviours)'''
@@ -631,6 +694,38 @@ namespace alica
 }
 '''
 
+def String domainPlanHeader() '''
+#pragma once
+
+#include <engine/BasicPlan.h>
+#include <string>
+/*PROTECTED REGION ID(domainPlanHeaderHead) ENABLED START*/
+        «IF (protectedRegions.containsKey("domainPlanHeaderHead"))»
+«protectedRegions.get("domainPlanHeaderHead")»
+        «ELSE»
+            //Add additional options here
+        «ENDIF»
+/*PROTECTED REGION END*/
+
+namespace alica
+{
+    class DomainPlan : public BasicPlan
+    {
+        public:
+        DomainPlan(std::string name);
+        virtual ~DomainBPlan();
+
+        /*PROTECTED REGION ID(domainPlanClassDecl) ENABLED START*/
+«IF (protectedRegions.containsKey("domainPlanClassDecl"))»
+«protectedRegions.get("domainPlanClassDecl")»
+«ELSE»
+        //Add additional options here
+«ENDIF»
+        /*PROTECTED REGION END*/
+    };
+} /* namespace alica */
+'''
+
     def String domainBehaviourHeader() '''
 #pragma once
 
@@ -660,6 +755,50 @@ namespace alica
 «ENDIF»
         /*PROTECTED REGION END*/
     };
+} /* namespace alica */
+'''
+
+def String domainPlanSource() '''
+#include "DomainPlan.h"
+/*PROTECTED REGION ID(domainPlanSrcHeaders) ENABLED START*/
+«IF (protectedRegions.containsKey("domainPlanSrcHeaders"))»
+«protectedRegions.get("domainPlanSrcHeaders")»
+«ELSE»
+//Add additional options here
+«ENDIF»
+/*PROTECTED REGION END*/
+
+namespace alica
+{
+    DomainPlan::DomainPlan(std::string name) : BasicPlan(name)
+    {
+        /*PROTECTED REGION ID(domainPlanConstructor) ENABLED START*/
+«IF (protectedRegions.containsKey("domainPlanConstructor"))»
+«protectedRegions.get("domainPlanConstructor")»
+«ELSE»
+        //Add additional options here
+«ENDIF»
+        /*PROTECTED REGION END*/
+    }
+
+    DomainPlan::~DomainPlan()
+    {
+        /*PROTECTED REGION ID(domainPlanDestructor) ENABLED START*/
+«IF (protectedRegions.containsKey("domainPlanDestructor"))»
+«protectedRegions.get("domainPlanDestructor")»
+«ELSE»
+        //Add additional options here
+«ENDIF»
+        /*PROTECTED REGION END*/
+    }
+
+    /*PROTECTED REGION ID(domainPlanMethods) ENABLED START*/
+«IF (protectedRegions.containsKey("domainPlanMethods"))»
+«protectedRegions.get("domainPlanMethods")»
+«ELSE»
+    //Add additional options here
+«ENDIF»
+    /*PROTECTED REGION END*/
 } /* namespace alica */
 '''
 
@@ -826,6 +965,36 @@ namespace alica
         //Add additional options here
     «ENDIF»
     /*PROTECTED REGION END*/
+    class «plan.name» : public DomainPlan
+        {
+            public:
+                «plan.name»();
+                virtual ~«plan.name»();
+                /*PROTECTED REGION ID(pub«plan.id») ENABLED START*/
+                «IF (protectedRegions.containsKey("pub" + plan.id))»
+    «protectedRegions.get("pub" + plan.id)»
+                «ELSE»
+                //Add additional protected methods here
+                «ENDIF»
+                /*PROTECTED REGION END*/
+            protected:
+                /*PROTECTED REGION ID(pro«plan.id») ENABLED START*/
+                «IF (protectedRegions.containsKey("pro" + plan.id))»
+    «protectedRegions.get("pro" + plan.id)»
+                «ELSE»
+                //Add additional protected methods here
+                «ENDIF»
+                /*PROTECTED REGION END*/
+            private:
+            /*PROTECTED REGION ID(prv«plan.id») ENABLED START*/
+                «IF (protectedRegions.containsKey("prv" + plan.id))»
+    «protectedRegions.get("prv" + plan.id)»
+                «ELSE»
+                //Add additional private methods here
+                «ENDIF»
+            /*PROTECTED REGION END*/
+        };
+
     class UtilityFunction«plan.id» : public BasicUtilityFunction
     {
         std::shared_ptr<UtilityFunction> getUtilityFunction(Plan* plan);
