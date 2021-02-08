@@ -68,6 +68,24 @@ public class CPPGeneratorImpl implements IGenerator {
     }
 
     @Override
+    public void createPlanCreator(List<Plan> plans) {
+        String headerPath = Paths.get(generatedSourcesManager.getIncludeDir(), "PlanCreator.h").toString();
+        String fileContentHeader = xtendTemplates.planCreatorHeader();
+        writeSourceFile(headerPath, fileContentHeader);
+
+        formatFile(headerPath);
+
+        String srcPath = Paths.get(generatedSourcesManager.getSrcDir(), "PlanCreator.cpp").toString();
+        String fileContentSource = xtendTemplates.planCreatorSource(plans);
+        writeSourceFile(srcPath, fileContentSource);
+
+        System.out.println(headerPath);
+        System.out.println(srcPath);
+
+        formatFile(srcPath);
+    }
+
+    @Override
     public void createBehaviour(Behaviour behaviour) {
         String destinationPath = cutDestinationPathToDirectory(behaviour);
 
@@ -364,6 +382,21 @@ public class CPPGeneratorImpl implements IGenerator {
 
         String srcPath = Paths.get(generatedSourcesManager.getSrcDir(), "DomainBehaviour.cpp").toString();
         String fileContentSource = xtendTemplates.domainBehaviourSource();
+        writeSourceFile(srcPath, fileContentSource);
+
+        formatFile(srcPath);
+    }
+
+    @Override
+    public void createDomainPlan() {
+        String headerPath = Paths.get(generatedSourcesManager.getIncludeDir(), "DomainPlan.h").toString();
+        String fileContentHeader = xtendTemplates.domainPlanHeader();
+        writeSourceFile(headerPath, fileContentHeader);
+
+        formatFile(headerPath);
+
+        String srcPath = Paths.get(generatedSourcesManager.getSrcDir(), "DomainPlan.cpp").toString();
+        String fileContentSource = xtendTemplates.domainPlanSource();
         writeSourceFile(srcPath, fileContentSource);
 
         formatFile(srcPath);
