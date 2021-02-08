@@ -31,4 +31,8 @@ public interface IGenerator {
 
     void setFormatter(String formatter);
     IConstraintCodeGenerator getActiveConstraintCodeGenerator();
+
+    void createPlanCreator(List<Plan> plans);
+
+    void createDomainPlan();
 }
