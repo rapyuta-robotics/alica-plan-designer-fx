@@ -97,7 +97,7 @@ namespace alica
         {
             «FOR plan : plans»
                 case «plan.id»:
-                return std::make_shared<«plan.name»>();
+                return std::make_shared<«plan.name»«plan.id»>();
                 break;
             «ENDFOR»
             default:
@@ -966,11 +966,11 @@ namespace alica
         //Add additional options here
     «ENDIF»
     /*PROTECTED REGION END*/
-    class «plan.name» : public DomainPlan
+    class «plan.name»«plan.id» : public DomainPlan
         {
             public:
-                «plan.name»();
-                virtual ~«plan.name»();
+                «plan.name»«plan.id»();
+                virtual ~«plan.name»«plan.id»();
                 /*PROTECTED REGION ID(pub«plan.id») ENABLED START*/
                 «IF (protectedRegions.containsKey("pub" + plan.id))»
     «protectedRegions.get("pub" + plan.id)»
@@ -1052,8 +1052,8 @@ namespace alica
 
 namespace alica
 {
-    //Plan:«plan.name»
-    «plan.name»::«plan.name»() : DomainPlan("«plan.name»")
+    //Plan:«plan.name»«plan.id»
+    «plan.name»«plan.id»::«plan.name»«plan.id»() : DomainPlan("«plan.name»«plan.id»")
     {
     /*PROTECTED REGION ID(con«plan.id») ENABLED START*/
     «IF (protectedRegions.containsKey("con" + plan.id))»
@@ -1063,7 +1063,7 @@ namespace alica
     «ENDIF»
     /*PROTECTED REGION END*/
     }
-    «plan.name»::~«plan.name»()
+    «plan.name»«plan.id»::~«plan.name»«plan.id»()
     {
         /*PROTECTED REGION ID(dcon«plan.id») ENABLED START*/
         «IF (protectedRegions.containsKey("dcon" + plan.id))»
