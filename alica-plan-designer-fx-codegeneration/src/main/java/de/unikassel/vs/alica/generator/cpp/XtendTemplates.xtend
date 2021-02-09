@@ -74,9 +74,9 @@ def String planCreatorSource(List<Plan> plans)'''
 #include "engine/BasicPlan.h"
 «FOR plan : plans»
 «IF (plan.relativeDirectory.isEmpty)»
-#include "«plan.name».h"
+#include "«plan.name»«plan.id».h"
 «ELSE»
-#include  "«plan.relativeDirectory»/«plan.name».h"
+#include  "«plan.relativeDirectory»/«plan.name»«plan.id».h"
 «ENDIF»
 «ENDFOR»
 
@@ -91,7 +91,7 @@ namespace alica
     {
     }
 
-    std::shared_ptr<BasicBPlan> PlanCreator::createPlan(int64_t planId)
+    std::shared_ptr<BasicPlan> PlanCreator::createPlan(int64_t planId)
     {
         switch(planId)
         {
@@ -713,7 +713,7 @@ namespace alica
     {
         public:
         DomainPlan(std::string name);
-        virtual ~DomainBPlan();
+        virtual ~DomainPlan();
 
         /*PROTECTED REGION ID(domainPlanClassDecl) ENABLED START*/
 «IF (protectedRegions.containsKey("domainPlanClassDecl"))»
@@ -944,6 +944,7 @@ namespace alica
     def String planHeader(Plan plan) '''
 #pragma once
 
+#include "DomainPlan.h"
 #include "DomainCondition.h"
 #include <engine/BasicUtilityFunction.h>
 #include <engine/UtilityFunction.h>
