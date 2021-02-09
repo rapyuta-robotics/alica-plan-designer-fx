@@ -1053,6 +1053,27 @@ namespace alica
 namespace alica
 {
     //Plan:«plan.name»
+    «plan.name»::«plan.name»() : DomainPlan("«plan.name»")
+    {
+    /*PROTECTED REGION ID(con«plan.id») ENABLED START*/
+    «IF (protectedRegions.containsKey("con" + plan.id))»
+«protectedRegions.get("con" + plan.id)»
+    «ELSE»
+        //Add additional options here
+    «ENDIF»
+    /*PROTECTED REGION END*/
+    }
+    «plan.name»::~«plan.name»()
+    {
+        /*PROTECTED REGION ID(dcon«plan.id») ENABLED START*/
+        «IF (protectedRegions.containsKey("dcon" + plan.id))»
+«protectedRegions.get("dcon" + plan.id)»
+        «ELSE»
+            //Add additional options here
+        «ENDIF»
+        /*PROTECTED REGION END*/
+
+    }
     «constraintCodeGenerator.expressionsPlanCheckingMethods(plan)»
 /** «var List<EntryPoint> entryPoints = plan.entryPoints»
         «FOR entryPoint : entryPoints»
