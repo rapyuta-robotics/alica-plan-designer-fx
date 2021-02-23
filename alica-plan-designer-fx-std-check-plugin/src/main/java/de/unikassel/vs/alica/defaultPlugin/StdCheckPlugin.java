@@ -32,6 +32,7 @@ public class StdCheckPlugin implements IPlugin<Void> {
 
     public Parent getPluginUI() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getClassLoader().getResource("ui.fxml"));
+        fxmlLoader.setController(new StdCheckPluginController());
 //        try {
             return fxmlLoader.load();
 //        } catch (IOException e) {
