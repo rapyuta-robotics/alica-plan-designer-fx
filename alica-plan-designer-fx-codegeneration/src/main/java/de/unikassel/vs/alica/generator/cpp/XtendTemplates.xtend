@@ -975,7 +975,7 @@ namespace alica
                 «IF (protectedRegions.containsKey("pub" + plan.id))»
     «protectedRegions.get("pub" + plan.id)»
                 «ELSE»
-                //Add additional protected methods here
+                //Add additional public methods here
                 «ENDIF»
                 /*PROTECTED REGION END*/
             protected:
@@ -1095,6 +1095,14 @@ std::shared_ptr<UtilityFunction> UtilityFunction«plan.id»::getUtilityFunction(
 «FOR state : states»
     «constraintCodeGenerator.expressionsStateCheckingMethods(state)»
 «ENDFOR»
+
+/*PROTECTED REGION ID(methods«plan.id») ENABLED START*/
+        «IF (protectedRegions.containsKey("methods" + plan.id))»
+«protectedRegions.get("methods" + plan.id)»
+        «ELSE»
+            //Add additional options here
+        «ENDIF»
+    /*PROTECTED REGION END*/
 }
 '''
 }
