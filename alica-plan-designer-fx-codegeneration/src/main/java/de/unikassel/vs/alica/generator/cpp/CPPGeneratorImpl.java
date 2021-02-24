@@ -79,9 +79,6 @@ public class CPPGeneratorImpl implements IGenerator {
         String fileContentSource = xtendTemplates.planCreatorSource(plans);
         writeSourceFile(srcPath, fileContentSource);
 
-        System.out.println(headerPath);
-        System.out.println(srcPath);
-
         formatFile(srcPath);
     }
 
