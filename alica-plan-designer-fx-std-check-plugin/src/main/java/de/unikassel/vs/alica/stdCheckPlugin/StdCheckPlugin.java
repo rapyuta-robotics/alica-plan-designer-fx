@@ -1,4 +1,4 @@
-package de.unikassel.vs.alica.defaultPlugin;
+package de.unikassel.vs.alica.stdCheckPlugin;
 
 import de.unikassel.vs.alica.generator.IConstraintCodeGenerator;
 import de.unikassel.vs.alica.generator.plugin.IPlugin;
@@ -13,21 +13,21 @@ import java.util.Map;
 /**
  * This plugin is the default implementation of {@link IPlugin}.
  * It contains an empty UI and
- * the {@link DefaultConstraintCodeGenerator} which generates NOOP Code (for own implementation)
+ * the {@link StdCheckConstraintCodeGenerator} which generates NOOP Code (for own implementation)
  */
 public class StdCheckPlugin implements IPlugin<Void> {
 
     private static final String name = "StdCheckPlugin";
 
     private File pluginJar;
-    private DefaultConstraintCodeGenerator defaultConstraintCodeGenerator;
+    private StdCheckConstraintCodeGenerator stdCheckConstraintCodeGenerator;
 
     public StdCheckPlugin() {
-        defaultConstraintCodeGenerator = new DefaultConstraintCodeGenerator();
+        stdCheckConstraintCodeGenerator = new StdCheckConstraintCodeGenerator();
     }
 
     public IConstraintCodeGenerator getConstraintCodeGenerator() {
-        return defaultConstraintCodeGenerator;
+        return stdCheckConstraintCodeGenerator;
     }
 
     public Parent getPluginUI() throws IOException {
@@ -63,6 +63,6 @@ public class StdCheckPlugin implements IPlugin<Void> {
     }
 
     public void setProtectedRegions(Map<String, String> protectedRegions) {
-        defaultConstraintCodeGenerator.setProtectedRegions(protectedRegions);
+        stdCheckConstraintCodeGenerator.setProtectedRegions(protectedRegions);
     }
 }

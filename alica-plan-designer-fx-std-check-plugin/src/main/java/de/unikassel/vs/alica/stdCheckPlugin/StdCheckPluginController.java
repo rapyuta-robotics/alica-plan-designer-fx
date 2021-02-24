@@ -1,4 +1,4 @@
-package de.unikassel.vs.alica.defaultPlugin;
+package de.unikassel.vs.alica.stdCheckPlugin;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

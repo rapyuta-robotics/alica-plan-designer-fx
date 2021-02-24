@@ -13,7 +13,7 @@ import java.util.List
 import de.unikassel.vs.alica.planDesigner.alicamodel.EntryPoint
 import de.unikassel.vs.alica.planDesigner.alicamodel.AbstractPlan
 
-class DefaultTemplate {
+class StdCheckTemplate {
     private Map<String, String> protectedRegions;
 
     public def void setProtectedRegions (Map<String, String> regions) {
