@@ -18,7 +18,7 @@ The new plan designer has only a few dependencies which will be installed when y
 
 ### Operating System
 
-The Plan Designer is developed under [Ubuntu 18.04 LTS](http://releases.ubuntu.com/18.04.4/?_ga=2.96359836.1230837367.1596109511-129399482.1596109511), but we know that it is also running also under Mac. Here, from time to time there are issues with setting the task bar icon of the Plan Designer, because Mac OS is rather inconsistent about the API for setting this symbol. A common solution here, is to comment the method, which is trying the icon. Further, we expect new versions of Ubuntu to work as well. Please ping us or write tickets, if you have  any problem. We will try to fix all of them ;-)
+The Plan Designer is developed under [Ubuntu 18.04 LTS](http://releases.ubuntu.com/18.04.4/?_ga=2.96359836.1230837367.1596109511-129399482.1596109511), but we know that it is also running under Mac. Here, from time to time there are issues with setting the task bar icon of the Plan Designer, because Mac OS is rather inconsistent about the API for setting this symbol. A common solution here, is to comment the method, which is trying the icon. Further, we expect new versions of Ubuntu to work as well. Please ping us or write tickets, if you have  any problem. We will try to fix all of them ;-)
 
 ### Java
 
