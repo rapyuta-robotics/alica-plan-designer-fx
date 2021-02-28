@@ -1,5 +1,7 @@
 package de.unikassel.vs.alica.generator;
 
+import de.unikassel.vs.alica.generator.plugin.IPlugin;
+import de.unikassel.vs.alica.generator.plugin.PluginManager;
 import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,15 +19,16 @@ public class StandaloneCodegenerator {
     private static String plansPath;
     private static String rolesPath;
     private static String tasksPath;
-
+    private static String pluginsPath;
+    private static String defaultPluginName = "DefaultPlugin";
 
     private static void printUsage(){
-        System.out.println("Usage: java -jar StandaloneCodegenerator <clangFormat> <sourceGenPath> <plansPath> <rolesPath> <tasksPaths>");
+        System.out.println("Usage: java -jar StandaloneCodegenerator <clangFormat> <sourceGenPath> <plansPath> <rolesPath> <tasksPaths> <pluginsPath> [DefaultPluginName - default is \"DefaultPlugin\"]");
         System.exit(-1);
     }
 
     private static void readCmdLineArgs(String[] args) {
-        if (args.length < 5)
+        if (args.length < 6)
         {
             printUsage();
         }
@@ -35,10 +38,17 @@ public class StandaloneCodegenerator {
         plansPath = args[2];
         rolesPath = args[3];
         tasksPath = args[4];
+        pluginsPath = args[5];
+        if (args.length == 7) {
+            defaultPluginName = args[6];
+        }
     }
 
     public static void main(String[] args) throws IOException {
         readCmdLineArgs(args);
+
+        PluginManager.getInstance().updateAvailablePlugins(pluginsPath);
+        PluginManager.getInstance().setDefaultPlugin(defaultPluginName);
 
         ModelManager modelManager = new ModelManager();
         modelManager.setPlansPath(plansPath);
@@ -54,6 +64,7 @@ public class StandaloneCodegenerator {
                 modelManager.getConditions(),
                 clangFormatPath,
                 generatedSourcesManager);
+
         codegenerator.generate();
     }
 }
