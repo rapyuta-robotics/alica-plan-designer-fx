@@ -16,6 +16,7 @@ public class Types {
     public static final String ANNOTATEDPLAN = "annotatedplan";
     public static final String PRECONDITION = "precondition";
     public static final String QUANTIFIER = "quantifier";
+    public static final String STANDARD_CHECK_PLUGIN = "stdCheckPluginInformation";
     public static final String QUANTIFIER_FORALL = "all";
     public static final String RUNTIMECONDITION = "runtimecondition";
     public static final String POSTCONDITION = "postcondition";

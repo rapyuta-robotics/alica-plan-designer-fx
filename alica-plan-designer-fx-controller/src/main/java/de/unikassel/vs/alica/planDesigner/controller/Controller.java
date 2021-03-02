@@ -192,9 +192,7 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
      */
     public void generateCode(GuiModificationEvent event, Text generatingText) {
         Codegenerator codegenerator = new Codegenerator(
-                modelManager.getPlans(),
-                modelManager.getBehaviours(),
-                modelManager.getConditions(),
+                modelManager,
                 configurationManager.getClangFormatPath(),
                 generatedSourcesManager);
         Platform.runLater(() -> generatingText.textProperty().bind(codegenerator.currentFile));

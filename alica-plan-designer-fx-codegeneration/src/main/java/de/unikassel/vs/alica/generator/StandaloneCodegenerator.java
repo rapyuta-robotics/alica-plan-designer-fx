@@ -49,9 +49,7 @@ public class StandaloneCodegenerator {
         GeneratedSourcesManager generatedSourcesManager = new GeneratedSourcesManager();
         generatedSourcesManager.setCodegenPath(sourceGenPath);
 
-        Codegenerator codegenerator = new Codegenerator(modelManager.getPlans(),
-                modelManager.getBehaviours(),
-                modelManager.getConditions(),
+        Codegenerator codegenerator = new Codegenerator(modelManager,
                 clangFormatPath,
                 generatedSourcesManager);
         codegenerator.generate();

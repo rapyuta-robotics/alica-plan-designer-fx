@@ -9,6 +9,7 @@ import de.unikassel.vs.alica.planDesigner.alicamodel.AbstractPlan;
 import de.unikassel.vs.alica.planDesigner.alicamodel.Behaviour;
 import de.unikassel.vs.alica.planDesigner.alicamodel.Condition;
 import de.unikassel.vs.alica.planDesigner.alicamodel.Plan;
+import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelManager;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.antlr.v4.runtime.CharStreams;
@@ -47,21 +48,23 @@ public class Codegenerator {
     private List<Behaviour> behaviours;
     private List<Condition> conditions;
 
+    private ModelManager modelManager;
+
     /**
      * This constructor initializes a C++ code generator
      */
-    public Codegenerator(List<Plan> plans, List<Behaviour> behaviours, List<Condition> conditions, String formatter, GeneratedSourcesManager generatedSourcesManager) {
+    public Codegenerator(ModelManager modelManager, String formatter, GeneratedSourcesManager generatedSourcesManager) {
         // TODO: Document this! Here can the programming language be changed.
         languageSpecificGenerator = new CPPGeneratorImpl(generatedSourcesManager);
         languageSpecificGenerator.setFormatter(formatter);
         codeGenerationDestination = generatedSourcesManager.getCodegenPath();
         this.generatedSourcesManager = generatedSourcesManager;
 
-        this.plans = plans;
+        this.plans = modelManager.getPlans();
         Collections.sort(plans, new PlanElementComparator());
-        this.behaviours = behaviours;
+        this.behaviours = modelManager.getBehaviours();
         Collections.sort(behaviours, new PlanElementComparator());
-        this.conditions = conditions;
+        this.conditions = modelManager.getConditions();
         Collections.sort(conditions, new PlanElementComparator());
     }
 

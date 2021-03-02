@@ -46,7 +46,7 @@ public class StdCheckPlugin implements IPlugin<Void> {
     }
 
     public Void readPluginValuesFromCondition(Condition condition) {
-        // default doesn't need any implementation here
+        // default doesn't need any i`mplementation here
         return null;
     }
 

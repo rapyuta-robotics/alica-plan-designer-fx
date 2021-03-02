@@ -86,6 +86,12 @@
             <artifactId>org.eclipse.xtend.lib</artifactId>
             <version>2.19.0</version>
         </dependency>
+        <dependency>
+            <groupId>de.unikassel.vs.alica</groupId>
+            <artifactId>view</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

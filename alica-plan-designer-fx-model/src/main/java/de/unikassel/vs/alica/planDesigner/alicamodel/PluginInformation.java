@@ -1,5 +1,5 @@
 package de.unikassel.vs.alica.planDesigner.alicamodel;
 
-public class PluginInformation {
+public class PluginInformation extends PlanElement{
 
 }

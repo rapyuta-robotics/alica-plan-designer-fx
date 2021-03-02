@@ -4,7 +4,7 @@ import de.unikassel.vs.alica.generator.IConstraintCodeGenerator;
 import de.unikassel.vs.alica.planDesigner.alicamodel.Plan;
 import de.unikassel.vs.alica.planDesigner.alicamodel.Behaviour;
 import de.unikassel.vs.alica.planDesigner.alicamodel.State;
-import de.unikassel.vs.alica.stdCheckPlugin.StdCheckTemplate;
+import de.unikassel.vs.alica.defaultPlugin.StdCheckTemplate;
 /**
  * IF the following line is not import de.unikassel.vs.alica.defaultPlugin.DefaultTemplate;
  * you messed it up ... great ... you made the plandesigner great again ... huge ...

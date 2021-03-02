@@ -1,13 +1,18 @@
 package de.unikassel.vs.alica.stdCheckPlugin;
 
+import de.unikassel.vs.alica.planDesigner.alicamodel.ChangeListenerForDirtyFlag;
+import de.unikassel.vs.alica.planDesigner.alicamodel.PlanElement;
 import de.unikassel.vs.alica.planDesigner.alicamodel.PluginInformation;
+import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelManager;
+import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelModificationQuery;
 import javafx.beans.property.SimpleStringProperty;
 
-public class StdCheckPluginInformation extends PluginInformation {
-    protected final SimpleStringProperty functionName = new SimpleStringProperty(null, "functionName", "");
-    protected final SimpleStringProperty parameter1 = new SimpleStringProperty(null, "parameter1", "");
-    protected final SimpleStringProperty parameter2 = new SimpleStringProperty(null, "parameter2", "");
-    protected final SimpleStringProperty parameter3 = new SimpleStringProperty(null, "parameter3", "");
+public class StdCheckPluginInformation extends PlanElement {
+    protected final SimpleStringProperty functionName = new SimpleStringProperty(this, "functionName", "");
+    protected final SimpleStringProperty parameter1 = new SimpleStringProperty(this, "parameter1", "");
+    protected final SimpleStringProperty parameter2 = new SimpleStringProperty(this, "parameter2", "");
+    protected final SimpleStringProperty parameter3 = new SimpleStringProperty(this, "parameter3", "");
+    private ChangeListenerForDirtyFlag changeListenerForDirtyFlag;
 
     public String getFunctionName() {
         return functionName.get();
@@ -48,4 +53,21 @@ public class StdCheckPluginInformation extends PluginInformation {
     public SimpleStringProperty parameter3Property() {
         return parameter3;
     }
+
+    public void registerDirtyFlag(ChangeListenerForDirtyFlag listener) {
+        if (listener == null) {
+            return;
+        }
+        this.changeListenerForDirtyFlag = listener;
+        this.functionName.addListener(listener);
+        this.parameter1.addListener(listener);
+        this.parameter2.addListener(listener);
+        this.parameter3.addListener(listener);
+    }
+
+    StdCheckPluginInformation(ModelManager model){
+        model.storePlanElement("stdCheckPluginInformation", this, false);
+    }
 }
+
+
