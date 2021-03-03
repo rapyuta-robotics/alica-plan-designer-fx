@@ -1,4 +1,4 @@
-package de.unikassel.vs.alica.defaultPlugin;
+package de.unikassel.vs.alica.stdCheckPlugin;
 
 import de.unikassel.vs.alica.planDesigner.alicamodel.Plan
 import de.unikassel.vs.alica.planDesigner.alicamodel.Behaviour
@@ -42,21 +42,41 @@ class StdCheckTemplate {
                 *   - «stateOfInPlan.name» («stateOfInPlan.id»)
                 «ENDFOR»
                 *
-                * Variables of precondition:«var  List<Variable> variables = transition.preCondition.variables»
+                * Variables of precondition:«var  List<Variable> variables =    transition.preCondition.variables»
                 «FOR variable : variables»
                 *	- «variable.name» («variable.id»)
                 «ENDFOR»
                 */
                 bool PreCondition«transition.preCondition.id»::evaluate(std::shared_ptr<RunningPlan> rp)
                  {
-                    /*PROTECTED REGION ID(«transition.id») ENABLED START*/
-                    «IF (protectedRegions.containsKey(transition.id + ""))»
-                        «protectedRegions.get(transition.id + "")»
+                    «IF (transition.preCondition.functionName !== null && transition.preCondition.functionName !== "NONE"))»
+                        «IF (transition.preCondition.functionName == "isAnyChildStatus")»
+                            return rp->«transition.preCondition.functionName»(PlanStatus::«transition.preCondition.parameter1»);
+                        «ELSEIF (transition.preCondition.functionName == "areAllChildrenStatus")»
+                            return rp->«transition.preCondition.functionName»(PlanStatus::«transition.preCondition.parameter1»);
+                        «ELSEIF (transition.preCondition.functionName == "isAnyChildTaskSuccessful")»
+                            return rp->«transition.preCondition.functionName()»;
+                        «ELSEIF (transition.preCondition.functionName == "amISuccessful")»
+                            return rp->«transition.preCondition.functionName()»;
+                        «ELSEIF (transition.preCondition.functionName == "amISuccessfulInAnyChild")»
+                            return rp->«transition.preCondition.functionName()»;
+                        «ELSEIF (transition.preCondition.functionName == "isStateTimedOut")»
+                            return rp->«transition.preCondition.functionName()»(AlicaTime::«transition.preCondition.parameter1», rp);
+                        «ELSEIF (transition.preCondition.functionName == "isTimeOut")»
+                            return rp->«transition.preCondition.functionName()»(AlicaTime::«transition.preCondition.parameter1», AlicaTime::«transition.preCondition.parameter2», rp);
+                        «ELSE»
+                            std::cout << "No Function  is being selected for PreCondition «transition.preCondition.id» in Transition '«transition.getName»' in the UI" << std::endl;
+                        «ENDIF»
                     «ELSE»
-                    std::cout << "The PreCondition «transition.preCondition.id» in Transition '«transition.getName»' is not implement yet!" << std::endl;
-                    return false;
+                        /*PROTECTED REGION ID(«transition.id») ENABLED START*/
+                        «IF (protectedRegions.containsKey(transition.id + ""))»
+                            «protectedRegions.get(transition.id + "")»
+                        «ELSE»
+                        std::cout << "The PreCondition «transition.preCondition.id» in Transition '«transition.getName»' is not implement yet!" << std::endl;
+                        return false;
+                        «ENDIF»
+                        /*PROTECTED REGION END*/
                     «ENDIF»
-                    /*PROTECTED REGION END*/
                 }
             «ENDIF»
         «ENDFOR»
@@ -72,6 +92,25 @@ class StdCheckTemplate {
              */
             bool PreCondition«plan.preCondition.id»::evaluate(std::shared_ptr<RunningPlan> rp)
             {
+             «IF (transition.preCondition.functionName !== null && transition.preCondition.functionName !== "NONE"))»
+                 «IF (transition.preCondition.functionName == "isAnyChildStatus")»
+                     return rp->«transition.preCondition.functionName»(PlanStatus::«transition.preCondition.parameter1»);
+                 «ELSEIF (transition.preCondition.functionName == "areAllChildrenStatus")»
+                     return rp->«transition.preCondition.functionName»(PlanStatus::«transition.preCondition.parameter1»);
+                 «ELSEIF (transition.preCondition.functionName == "isAnyChildTaskSuccessful")»
+                     return rp->«transition.preCondition.functionName()»;
+                 «ELSEIF (transition.preCondition.functionName == "amISuccessful")»
+                     return rp->«transition.preCondition.functionName()»;
+                 «ELSEIF (transition.preCondition.functionName == "amISuccessfulInAnyChild")»
+                     return rp->«transition.preCondition.functionName()»;
+                 «ELSEIF (transition.preCondition.functionName == "isStateTimedOut")»
+                     return rp->«transition.preCondition.functionName()»(AlicaTime::«transition.preCondition.parameter1», rp);
+                 «ELSEIF (transition.preCondition.functionName == "isTimeOut")»
+                     return rp->«transition.preCondition.functionName()»(AlicaTime::«transition.preCondition.parameter1», AlicaTime::«transition.preCondition.parameter2», rp);
+                 «ELSE»
+                     std::cout << "No Function is being selected for PreCondition «plan.preCondition.id» in Plan '«plan.getName»' in the UI" << std::endl;
+                 «ENDIF»
+             «ELSE»
                 /*PROTECTED REGION ID(«plan.preCondition.id») ENABLED START*/
                 «IF (protectedRegions.containsKey(plan.preCondition.id + ""))»
                     «protectedRegions.get(plan.preCondition.id + "")»
@@ -80,6 +119,7 @@ class StdCheckTemplate {
                     return false;
                 «ENDIF»
                 /*PROTECTED REGION END*/
+             «ENDIF»
             }
         «ENDIF»
         «IF (plan.runtimeCondition !== null && plan.runtimeCondition.pluginName == "StdCheckPlugin")»
@@ -90,15 +130,34 @@ class StdCheckTemplate {
              *	- «variable.name» («variable.id»)«ENDFOR»
              */
             bool RunTimeCondition«plan.runtimeCondition.id»::evaluate(std::shared_ptr<RunningPlan> rp) {
-                std::cout << "HELLLOOOOOO" << std::endl;
-                /*PROTECTED REGION ID(«plan.runtimeCondition.id») ENABLED START*/
-                «IF (protectedRegions.containsKey(plan.runtimeCondition.id + ""))»
-                    «protectedRegions.get(plan.runtimeCondition.id + "")»
-                «ELSE»
-                    std::cout << "The RunTimeCondition «plan.runtimeCondition.id» in Plan '«plan.getName»' is not implement yet!" << std::endl;
-                    return false;
-                «ENDIF»
-                /*PROTECTED REGION END*/
+               «IF (transition.runtimeCondition.functionName !== null && transition.runtimeCondition.functionName !== "NONE"))»
+                    «IF (transition.runtimeCondition.functionName == "isAnyChildStatus")»
+                        return rp->«transition.runtimeCondition.functionName»(PlanStatus::«transition.runtimeCondition.parameter1»);
+                    «ELSEIF (transition.runtimeCondition.functionName == "areAllChildrenStatus")»
+                        return rp->«transition.runtimeCondition.functionName»(PlanStatus::«transition.runtimeCondition.parameter1»);
+                    «ELSEIF (transition.runtimeCondition.functionName == "isAnyChildTaskSuccessful")»
+                        return rp->«transition.runtimeCondition.functionName()»;
+                    «ELSEIF (transition.runtimeCondition.functionName == "amISuccessful")»
+                        return rp->«transition.runtimeCondition.functionName()»;
+                    «ELSEIF (transition.runtimeCondition.functionName == "amISuccessfulInAnyChild")»
+                        return rp->«transition.runtimeCondition.functionName()»;
+                    «ELSEIF (transition.runtimeCondition.functionName == "isStateTimedOut")»
+                        return rp->«transition.runtimeCondition.functionName()»(AlicaTime::«transition.runtimeCondition.parameter1», rp);
+                    «ELSEIF (transition.runtimeCondition.functionName == "isTimeOut")»
+                        return rp->«transition.runtimeCondition.functionName()»(AlicaTime::«transition.runtimeCondition.parameter1», AlicaTime::«transition.runtimeCondition.parameter2», rp);
+                    «ELSE»
+                        std::cout << "No Function is being selected for RuntimeCondition «plan.runtimeCondition.id» in Plan '«plan.getName»' in the UI" << std::endl;
+                    «ENDIF»
+               «ELSE»
+                    /*PROTECTED REGION ID(«plan.runtimeCondition.id») ENABLED START*/
+                    «IF (protectedRegions.containsKey(plan.runtimeCondition.id + ""))»
+                        «protectedRegions.get(plan.runtimeCondition.id + "")»
+                    «ELSE»
+                        std::cout << "The RunTimeCondition «plan.runtimeCondition.id» in Plan '«plan.getName»' is not implement yet!" << std::endl;
+                        return false;
+                    «ENDIF»
+                    /*PROTECTED REGION END*/
+               «ENDIF»
             }
         «ENDIF»
         «var  List<State> states =  plan.states»
@@ -114,15 +173,35 @@ class StdCheckTemplate {
              */
             bool PostCondition«terminalState.postCondition.id»::evaluate(std::shared_ptr<RunningPlan> rp)
             {
-                /*PROTECTED REGION ID(«terminalState.postCondition.id») ENABLED START*/
-                «IF (protectedRegions.containsKey(terminalState.postCondition.id + ""))»
-                    «protectedRegions.get(terminalState.postCondition.id + "")»
+                «IF (transition.postCondition.functionName !== null && transition.postCondition.functionName !== "NONE"))»
+                    «IF (transition.postCondition.functionName == "isAnyChildStatus")»
+                        return rp->«transition.postCondition.functionName»(PlanStatus::«transition.postCondition.parameter1»);
+                    «ELSEIF (transition.postCondition.functionName == "areAllChildrenStatus")»
+                        return rp->«transition.postCondition.functionName»(PlanStatus::«transition.postCondition.parameter1»);
+                    «ELSEIF (transition.postCondition.functionName == "isAnyChildTaskSuccessful")»
+                        return rp->«transition.postCondition.functionName()»;
+                    «ELSEIF (transition.postCondition.functionName == "amISuccessful")»
+                        return rp->«transition.postCondition.functionName()»;
+                    «ELSEIF (transition.postCondition.functionName == "amISuccessfulInAnyChild")»
+                        return rp->«transition.postCondition.functionName()»;
+                    «ELSEIF (transition.postCondition.functionName == "isStateTimedOut")»
+                        return rp->«transition.postCondition.functionName()»(AlicaTime::«transition.postCondition.parameter1», rp);
+                    «ELSEIF (transition.postCondition.functionName == "isTimeOut")»
+                        return rp->«transition.postCondition.functionName()»(AlicaTime::«transition.postCondition.parameter1», AlicaTime::«transition.postCondition.parameter2», rp);
+                    «ELSE»
+                        std::cout << "No Function is being selected for PostCondition «terminalState.postCondition.id» in TerminalState '«terminalState.getName»' in the UI" << std::endl;
+                    «ENDIF»
                 «ELSE»
-                    std::cout << "The PostCondition «terminalState.postCondition.id» in TerminalState '«terminalState.getName»' is not implement yet!" << std::endl;
-                    std::cout << "However, PostConditions are a feature that makes sense in the context of planning, which is not supported by ALICA, yet! So don't worry." << std::endl;
-                    return false;
+                    /*PROTECTED REGION ID(«terminalState.postCondition.id») ENABLED START*/
+                    «IF (protectedRegions.containsKey(terminalState.postCondition.id + ""))»
+                        «protectedRegions.get(terminalState.postCondition.id + "")»
+                    «ELSE»
+                        std::cout << "The PostCondition «terminalState.postCondition.id» in TerminalState '«terminalState.getName»' is not implement yet!" << std::endl;
+                        std::cout << "However, PostConditions are a feature that makes sense in the context of planning, which is not supported by ALICA, yet! So don't worry." << std::endl;
+                        return false;
+                    «ENDIF»
+                    /*PROTECTED REGION END*/
                 «ENDIF»
-                /*PROTECTED REGION END*/
             }
         «ENDIF»
         «ENDIF»
@@ -130,7 +209,7 @@ class StdCheckTemplate {
     '''
 
     def String expressionsBehaviourCheckingMethods(Behaviour behaviour) '''
-        «IF (behaviour.runtimeCondition !== null && behaviour.runtimeCondition.pluginName == "DefaultPlugin")»
+        «IF (behaviour.runtimeCondition !== null && behaviour.runtimeCondition.pluginName == "StdCheckPlugin")»
             //Check of RuntimeCondition - (Name): «behaviour.runtimeCondition.name», (ConditionString): «behaviour.runtimeCondition.conditionString», (Comment) : «behaviour.runtimeCondition.comment»
 
             /**
@@ -138,14 +217,35 @@ class StdCheckTemplate {
              *	- «variable.name» («variable.id»)«ENDFOR»
              */
             bool RunTimeCondition«behaviour.runtimeCondition.id»::evaluate(std::shared_ptr<RunningPlan> rp) {
-                /*PROTECTED REGION ID(«behaviour.runtimeCondition.id») ENABLED START*/
-                «IF (protectedRegions.containsKey(behaviour.runtimeCondition.id + ""))»
-                    «protectedRegions.get(behaviour.runtimeCondition.id + "")»
-                «ELSE»
-                    std::cout << "The RuntimeCondition «behaviour.runtimeCondition.id» in Behaviour «behaviour.getName» is not implement yet!" << std::endl;
-                    return false;
+                bool RunTimeCondition«plan.runtimeCondition.id»::evaluate(std::shared_ptr<RunningPlan> rp) {
+                   «IF (transition.runtimeCondition.functionName !== null && transition.runtimeCondition.functionName !== "NONE"))»
+                        «IF (transition.runtimeCondition.functionName == "isAnyChildStatus")»
+                            return rp->«transition.runtimeCondition.functionName»(PlanStatus::«transition.runtimeCondition.parameter1»);
+                        «ELSEIF (transition.runtimeCondition.functionName == "areAllChildrenStatus")»
+                            return rp->«transition.runtimeCondition.functionName»(PlanStatus::«transition.runtimeCondition.parameter1»);
+                        «ELSEIF (transition.runtimeCondition.functionName == "isAnyChildTaskSuccessful")»
+                            return rp->«transition.runtimeCondition.functionName()»;
+                        «ELSEIF (transition.runtimeCondition.functionName == "amISuccessful")»
+                            return rp->«transition.runtimeCondition.functionName()»;
+                        «ELSEIF (transition.runtimeCondition.functionName == "amISuccessfulInAnyChild")»
+                            return rp->«transition.runtimeCondition.functionName()»;
+                        «ELSEIF (transition.runtimeCondition.functionName == "isStateTimedOut")»
+                            return rp->«transition.runtimeCondition.functionName()»(AlicaTime::«transition.runtimeCondition.parameter1», rp);
+                        «ELSEIF (transition.runtimeCondition.functionName == "isTimeOut")»
+                            return rp->«transition.runtimeCondition.functionName()»(AlicaTime::«transition.runtimeCondition.parameter1», AlicaTime::«transition.runtimeCondition.parameter2», rp);
+                        «ELSE»
+                            std::cout << "No Function is being selected for RuntimeCondition «behaviour.runtimeCondition.id» in Behaviour «behaviour.getName» in the UI" << std::endl;
+                        «ENDIF»
+                   «ELSE»
+                        /*PROTECTED REGION ID(«behaviour.runtimeCondition.id») ENABLED START*/
+                        «IF (protectedRegions.containsKey(behaviour.runtimeCondition.id + ""))»
+                            «protectedRegions.get(behaviour.runtimeCondition.id + "")»
+                        «ELSE»
+                            std::cout << "The RuntimeCondition «behaviour.runtimeCondition.id» in Behaviour «behaviour.getName» is not implement yet!" << std::endl;
+                            return false;
+                        «ENDIF»
+                        /*PROTECTED REGION END*/
                 «ENDIF»
-                /*PROTECTED REGION END*/
             }
         «ENDIF»
         «IF (behaviour.preCondition !== null && behaviour.preCondition.pluginName == "StdCheckPlugin")»
@@ -157,6 +257,25 @@ class StdCheckTemplate {
              */
             bool PreCondition«behaviour.preCondition.id»::evaluate(std::shared_ptr<RunningPlan> rp)
             {
+             «IF (transition.preCondition.functionName !== null && transition.preCondition.functionName !== "NONE"))»
+                  «IF (transition.preCondition.functionName == "isAnyChildStatus")»
+                      return rp->«transition.preCondition.functionName»(PlanStatus::«transition.preCondition.parameter1»);
+                  «ELSEIF (transition.preCondition.functionName == "areAllChildrenStatus")»
+                      return rp->«transition.preCondition.functionName»(PlanStatus::«transition.preCondition.parameter1»);
+                  «ELSEIF (transition.preCondition.functionName == "isAnyChildTaskSuccessful")»
+                      return rp->«transition.preCondition.functionName()»;
+                  «ELSEIF (transition.preCondition.functionName == "amISuccessful")»
+                      return rp->«transition.preCondition.functionName()»;
+                  «ELSEIF (transition.preCondition.functionName == "amISuccessfulInAnyChild")»
+                      return rp->«transition.preCondition.functionName()»;
+                  «ELSEIF (transition.preCondition.functionName == "isStateTimedOut")»
+                      return rp->«transition.preCondition.functionName()»(AlicaTime::«transition.preCondition.parameter1», rp);
+                  «ELSEIF (transition.preCondition.functionName == "isTimeOut")»
+                      return rp->«transition.preCondition.functionName()»(AlicaTime::«transition.preCondition.parameter1», AlicaTime::«transition.preCondition.parameter2», rp);
+                  «ELSE»
+                      std::cout << "No Function is being selected for PreCondition «behaviour.preCondition.id» in Behaviour «behaviour.getName» in the UI" << std::endl;
+                  «ENDIF»
+             «ELSE»
                 /*PROTECTED REGION ID(«behaviour.preCondition.id») ENABLED START*/
                 «IF (protectedRegions.containsKey(behaviour.preCondition.id + ""))»
                     «protectedRegions.get(behaviour.preCondition.id + "")»
@@ -165,6 +284,7 @@ class StdCheckTemplate {
                     return false;
                 «ENDIF»
                 /*PROTECTED REGION END*/
+             «ENDIF»
             }
         «ENDIF»
         «IF (behaviour.postCondition !== null && behaviour.postCondition.pluginName == "StdCheckPlugin")»
@@ -176,6 +296,25 @@ class StdCheckTemplate {
              */
             bool PostCondition«behaviour.postCondition.id»::evaluate(std::shared_ptr<RunningPlan> rp)
             {
+             «IF (transition.postCondition.functionName !== null && transition.postCondition.functionName !== "NONE"))»
+                 «IF (transition.postCondition.functionName == "isAnyChildStatus")»
+                     return rp->«transition.postCondition.functionName»(PlanStatus::«transition.postCondition.parameter1»);
+                 «ELSEIF (transition.postCondition.functionName == "areAllChildrenStatus")»
+                     return rp->«transition.postCondition.functionName»(PlanStatus::«transition.postCondition.parameter1»);
+                 «ELSEIF (transition.postCondition.functionName == "isAnyChildTaskSuccessful")»
+                     return rp->«transition.postCondition.functionName()»;
+                 «ELSEIF (transition.postCondition.functionName == "amISuccessful")»
+                     return rp->«transition.postCondition.functionName()»;
+                 «ELSEIF (transition.postCondition.functionName == "amISuccessfulInAnyChild")»
+                     return rp->«transition.postCondition.functionName()»;
+                 «ELSEIF (transition.postCondition.functionName == "isStateTimedOut")»
+                     return rp->«transition.postCondition.functionName()»(AlicaTime::«transition.postCondition.parameter1», rp);
+                 «ELSEIF (transition.postCondition.functionName == "isTimeOut")»
+                     return rp->«transition.postCondition.functionName()»(AlicaTime::«transition.postCondition.parameter1», AlicaTime::«transition.postCondition.parameter2», rp);
+                 «ELSE»
+                     std::cout << "No Function is being selected for PostCondition «behaviour.postCondition.id» in Behaviour '«behaviour.getName»' in the UI" << std::endl;
+                 «ENDIF»
+             «ELSE»
                 /*PROTECTED REGION ID(«behaviour.postCondition.id») ENABLED START*/
                 «IF (protectedRegions.containsKey(behaviour.postCondition.id + ""))»
                     «protectedRegions.get(behaviour.postCondition.id + "")»
@@ -184,6 +323,7 @@ class StdCheckTemplate {
                     return false;
                 «ENDIF»
                 /*PROTECTED REGION END*/
+             «ENDIF»
             }
         «ENDIF»
     '''

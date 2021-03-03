@@ -34,6 +34,7 @@ public class StdCheckPluginController implements Initializable {
     private TextField stdCheckPluginFunctionParameter2;
     @FXML
     private TextField stdCheckPluginFunctionParameter3;
+    private ModelManager modelManager;
 
     public void setStdCheckPluginFunctions() {
 

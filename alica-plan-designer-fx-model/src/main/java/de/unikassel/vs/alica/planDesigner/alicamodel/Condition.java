@@ -16,7 +16,6 @@ public class Condition extends PlanElement {
     protected final SimpleStringProperty pluginName = new SimpleStringProperty(this, "pluginName", null);
     protected final ArrayList<Variable> variables = new ArrayList<>();
     protected final ArrayList<Quantifier> quantifiers = new ArrayList<>();
-    protected final SimpleObjectProperty<PluginInformation> pluginInformation = new SimpleObjectProperty<>();
     private ChangeListenerForDirtyFlag listenerForDirtyFlag;
 
     public boolean getEnabled () {
@@ -82,16 +81,6 @@ public class Condition extends PlanElement {
         }
     }
 
-    public PluginInformation getPluginInformation() {
-        return this.pluginInformation.getValue();
-    }
-    public void setPluginInformation(PluginInformation pluginInformation) {
-        this.pluginInformation.setValue(pluginInformation);
-    }
-    public ObjectProperty<PluginInformation> pluginInformationProperty() {
-        return pluginInformation;
-    }
-
     public void registerDirtyFlag(ChangeListenerForDirtyFlag listener) {
         if (listener == null) {
             return;
@@ -103,7 +92,6 @@ public class Condition extends PlanElement {
         this.enabled.addListener(listener);
         this.conditionString.addListener(listener);
         this.pluginName.addListener(listener);
-        this.pluginInformation.addListener(listener);
 
         for (Quantifier quantifier : quantifiers) {
             quantifier.registerDirtyFlag(listener);
