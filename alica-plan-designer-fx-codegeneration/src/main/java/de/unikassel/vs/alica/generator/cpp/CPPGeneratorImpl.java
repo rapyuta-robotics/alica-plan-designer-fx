@@ -1,6 +1,6 @@
 package de.unikassel.vs.alica.generator.cpp;
 
-import de.unikassel.vs.alica.generator.IConstraintCodeGenerator;
+import de.unikassel.vs.alica.generator.IPluginCodeGenerator;
 import de.unikassel.vs.alica.generator.IGenerator;
 import de.unikassel.vs.alica.generator.plugin.PluginManager;
 import de.unikassel.vs.alica.generator.GeneratedSourcesManager;
@@ -10,14 +10,12 @@ import de.unikassel.vs.alica.planDesigner.alicamodel.*;
  * you messed it up ... great ... you made the plandesigner great again ... huge ...
  * INSERT IT
  */
-import de.unikassel.vs.alica.generator.cpp.XtendTemplates;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -375,14 +373,14 @@ public class CPPGeneratorImpl implements IGenerator {
     }
 
     /**
-     * This returns the {@link IConstraintCodeGenerator} of the active newCondition plugin.
+     * This returns the {@link IPluginCodeGenerator} of the active newCondition plugin.
      * TODO This maybe a candidate for a default method.
      *
      * @return
      */
     @Override
-    public IConstraintCodeGenerator getActiveConstraintCodeGenerator() {
-        return PluginManager.getInstance().getDefaultPlugin().getConstraintCodeGenerator();
+    public IPluginCodeGenerator getActiveConstraintCodeGenerator() {
+        return PluginManager.getInstance().getDefaultPlugin().getPluginCodeGenerator();
     }
 
 

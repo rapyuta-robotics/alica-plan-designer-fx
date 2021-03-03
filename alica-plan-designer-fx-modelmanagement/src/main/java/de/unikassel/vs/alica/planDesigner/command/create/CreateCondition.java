@@ -17,7 +17,7 @@ public class CreateCondition extends ConditionCommand {
         super(modelManager, mmq);
         this.planElement = modelManager.getPlanElement(mmq.getParentId());
 
-        this.newCondition = createNewCondition();
+        this.newCondition = modelManager.getConditionFactory().create(mmq);
         this.oldCondition = getOldCondition(planElement);
     }
 
@@ -38,7 +38,7 @@ public class CreateCondition extends ConditionCommand {
                 default:
                     throw new RuntimeException("CreateCondition: Condition type " + mmq.getElementType() + " does not exist!");
             }
-        }else if (planElement instanceof Plan) {
+        } else if (planElement instanceof Plan) {
             Plan plan = (Plan) planElement;
             switch (mmq.getElementType()) {
                 case Types.PRECONDITION:
@@ -58,25 +58,6 @@ public class CreateCondition extends ConditionCommand {
             throw new RuntimeException("CreateCondition: Element type of element with id " + planElement.getId() + " does not have conditions!");
         }
         return oldCondition;
-    }
-
-    protected Condition createNewCondition() {
-        Condition condition;
-        switch (mmq.getElementType()) {
-            case Types.PRECONDITION:
-                condition = new PreCondition();
-                break;
-            case Types.RUNTIMECONDITION:
-                condition = new RuntimeCondition();
-                break;
-            case Types.POSTCONDITION:
-                condition = new PostCondition();
-                break;
-            default:
-                throw new RuntimeException("CreateCondition: Condition type " + mmq.getElementType() + " does not exist!");
-        }
-        condition.setPluginName(mmq.getName());
-        return condition;
     }
 
     @Override

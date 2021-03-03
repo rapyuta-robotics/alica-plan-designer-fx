@@ -1,9 +1,9 @@
 package de.unikassel.vs.alica.generator.plugin;
 
-import de.unikassel.vs.alica.generator.IConstraintCodeGenerator;
+import de.unikassel.vs.alica.generator.IPluginCodeGenerator;
 import de.unikassel.vs.alica.generator.Codegenerator;
 import de.unikassel.vs.alica.generator.IGenerator;
-import de.unikassel.vs.alica.planDesigner.alicamodel.Condition;
+import de.unikassel.vs.alica.planDesigner.modelmanagement.IConditionCreator;
 import javafx.scene.Parent;
 
 import java.io.File;
@@ -16,11 +16,11 @@ import java.util.Map;
 public interface IPlugin<T> {
 
     /**
-     * @return the custom {@link IConstraintCodeGenerator}.
+     * @return the custom {@link IPluginCodeGenerator}.
      * This is the main functionality of the plugin from the perspective of the {@link Codegenerator}
      * or the {@link IGenerator}
      */
-    IConstraintCodeGenerator getConstraintCodeGenerator();
+    IPluginCodeGenerator getPluginCodeGenerator();
 
     /**
      * Returns the plugin view that will be embedded into the properties view of the newCondition
@@ -29,18 +29,13 @@ public interface IPlugin<T> {
     Parent getPluginUI() throws IOException;
 
     /**
-     * Writes into the attributes of the given newCondition.
-     * Do NOT write data into the hierarchy above the given newCondition.
-     * @param condition
+     * The condition creator object, that will be
+     * registered in the condition factory of the
+     * model manager. The "createCondition" command
+     * will use this.
+     * @return IConditionCreator
      */
-    void writePluginValuesToCondition(Condition condition);
-
-    /**
-     * Reads necessary data for the plugin out of the newCondition.
-     * @param condition
-     * @return
-     */
-    T readPluginValuesFromCondition(Condition condition);
+    IConditionCreator getConditionCreator();
 
     /**
      * The name has to be a non-null string value.
@@ -58,7 +53,7 @@ public interface IPlugin<T> {
 
     /**
      * This method should make a delegate to the
-     * {@link IConstraintCodeGenerator} and make the protected regions known for it.
+     * {@link IPluginCodeGenerator} and make the protected regions known for it.
      * It is mainly a reminder to not forget the implementation
      * @param protectedRegions
      */

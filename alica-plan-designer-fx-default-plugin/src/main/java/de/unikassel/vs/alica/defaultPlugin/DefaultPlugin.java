@@ -1,8 +1,8 @@
 package de.unikassel.vs.alica.defaultPlugin;
 
-import de.unikassel.vs.alica.generator.IConstraintCodeGenerator;
+import de.unikassel.vs.alica.generator.IPluginCodeGenerator;
 import de.unikassel.vs.alica.generator.plugin.IPlugin;
-import de.unikassel.vs.alica.planDesigner.alicamodel.Condition;
+import de.unikassel.vs.alica.planDesigner.modelmanagement.IConditionCreator;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
@@ -13,40 +13,32 @@ import java.util.Map;
 /**
  * This plugin is the default implementation of {@link IPlugin}.
  * It contains an empty UI and
- * the {@link DefaultConstraintCodeGenerator} which generates NOOP Code (for own implementation)
+ * the {@link DefaultPluginCodeGenerator} which generates NOOP Code (for own implementation)
  */
 public class DefaultPlugin implements IPlugin<Void> {
 
     private static final String name = "DefaultPlugin";
 
     private File pluginJar;
-    private DefaultConstraintCodeGenerator defaultConstraintCodeGenerator;
+    private DefaultPluginCodeGenerator defaultConstraintCodeGenerator;
 
     public DefaultPlugin() {
-        defaultConstraintCodeGenerator = new DefaultConstraintCodeGenerator();
+        defaultConstraintCodeGenerator = new DefaultPluginCodeGenerator();
     }
 
-    public IConstraintCodeGenerator getConstraintCodeGenerator() {
+    public IPluginCodeGenerator getPluginCodeGenerator() {
         return defaultConstraintCodeGenerator;
     }
 
     public Parent getPluginUI() throws IOException {
+        // Now interactive UI available, so there is no UI Controller instance set.
         FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getClassLoader().getResource("ui.fxml"));
-//        try {
-            return fxmlLoader.load();
-//        } catch (IOException e) {
-//            ErrorWindowController.createErrorWindow(I18NRepo.getInstance().getString("label.error.plugin.missingui"), e);
-//        }
-//        return null;
+        return fxmlLoader.load();
     }
 
-    public void writePluginValuesToCondition(Condition condition) {
-        // default doesn't need any implementation here
-    }
-
-    public Void readPluginValuesFromCondition(Condition condition) {
-        // default doesn't need any implementation here
-        return null;
+    @Override
+    public IConditionCreator getConditionCreator() {
+        return new DefaultConditionCreator();
     }
 
     public String getName() {

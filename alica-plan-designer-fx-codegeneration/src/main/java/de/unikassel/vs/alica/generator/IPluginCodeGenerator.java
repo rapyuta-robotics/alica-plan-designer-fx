@@ -7,7 +7,7 @@ import de.unikassel.vs.alica.planDesigner.alicamodel.State;
 /**
  * This interface defines the methods that a constraint plugin must implement.
  */
-public interface IConstraintCodeGenerator {
+public interface IPluginCodeGenerator {
     String constraintPlanCheckingMethods(Plan plan);
     String constraintBehaviourCheckingMethods(Behaviour behaviour);
     String expressionsPlanCheckingMethods(Plan plan);

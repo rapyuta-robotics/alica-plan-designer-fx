@@ -1,6 +1,6 @@
 package de.unikassel.vs.alica.generator.cpp
 
-import de.unikassel.vs.alica.generator.IConstraintCodeGenerator
+import de.unikassel.vs.alica.generator.IPluginCodeGenerator
 import de.unikassel.vs.alica.planDesigner.alicamodel.Behaviour
 import de.unikassel.vs.alica.planDesigner.alicamodel.Condition
 import de.unikassel.vs.alica.planDesigner.alicamodel.Plan

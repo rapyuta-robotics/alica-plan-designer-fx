@@ -1,6 +1,6 @@
 package de.unikassel.vs.alica.stdCheckPlugin;
 
-import de.unikassel.vs.alica.generator.IConstraintCodeGenerator;
+import de.unikassel.vs.alica.generator.IPluginCodeGenerator;
 import de.unikassel.vs.alica.planDesigner.alicamodel.Plan;
 import de.unikassel.vs.alica.planDesigner.alicamodel.Behaviour;
 import de.unikassel.vs.alica.planDesigner.alicamodel.State;
@@ -16,10 +16,10 @@ import java.util.Map;
 /**
      * Glue Code for calling {@link StdCheckTemplate}.
  */
-public class StdCheckConstraintCodeGenerator implements IConstraintCodeGenerator {
+public class StdCheckPluginCodeGenerator implements IPluginCodeGenerator {
     private StdCheckTemplate stdCheckTemplate;
 
-    public StdCheckConstraintCodeGenerator() {
+    public StdCheckPluginCodeGenerator() {
         stdCheckTemplate = new StdCheckTemplate();
     }
 

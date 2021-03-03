@@ -1,13 +1,11 @@
 package de.unikassel.vs.alica.stdCheckPlugin;
 
 import de.unikassel.vs.alica.planDesigner.alicamodel.ChangeListenerForDirtyFlag;
-import de.unikassel.vs.alica.planDesigner.alicamodel.PlanElement;
-import de.unikassel.vs.alica.planDesigner.alicamodel.PluginInformation;
-import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelManager;
-import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelModificationQuery;
+import de.unikassel.vs.alica.planDesigner.alicamodel.PreCondition;
 import javafx.beans.property.SimpleStringProperty;
 
-public class StdCheckPluginInformation extends PlanElement {
+public class StdCheckPreCondition extends PreCondition implements IStdCheckCondition{
+
     protected final SimpleStringProperty functionName = new SimpleStringProperty(this, "functionName", "");
     protected final SimpleStringProperty parameter1 = new SimpleStringProperty(this, "parameter1", "");
     protected final SimpleStringProperty parameter2 = new SimpleStringProperty(this, "parameter2", "");
@@ -64,10 +62,4 @@ public class StdCheckPluginInformation extends PlanElement {
         this.parameter2.addListener(listener);
         this.parameter3.addListener(listener);
     }
-
-    StdCheckPluginInformation(ModelManager model){
-        model.storePlanElement("stdCheckPluginInformation", this, false);
-    }
 }
-
-

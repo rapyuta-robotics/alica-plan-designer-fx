@@ -59,6 +59,8 @@ public class ModelManager implements Observer {
     private List<IModelEventHandler> eventHandlerList = new ArrayList<>();
     private CommandStack commandStack = new CommandStack();
 
+    private ConditionFactory conditionFactory = new ConditionFactory();
+
     /**
      * This list remembers elements that should be saved, in order
      * to ignore filesystem-modification-events created by the
@@ -1685,5 +1687,9 @@ public class ModelManager implements Observer {
 
     public RoleSet getRoleSet() {
         return roleSet;
+    }
+
+    public ConditionFactory getConditionFactory() {
+        return conditionFactory;
     }
 }

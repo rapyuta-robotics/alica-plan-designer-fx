@@ -1,10 +1,9 @@
 package de.unikassel.vs.alica.defaultPlugin;
 
-import de.unikassel.vs.alica.generator.IConstraintCodeGenerator;
+import de.unikassel.vs.alica.generator.IPluginCodeGenerator;
 import de.unikassel.vs.alica.planDesigner.alicamodel.Plan;
 import de.unikassel.vs.alica.planDesigner.alicamodel.Behaviour;
 import de.unikassel.vs.alica.planDesigner.alicamodel.State;
-import de.unikassel.vs.alica.defaultPlugin.DefaultTemplate;
 /**
  * IF the following line is not import de.unikassel.vs.alica.defaultPlugin.DefaultTemplate;
  * you messed it up ... great ... you made the plandesigner great again ... huge ...
@@ -16,10 +15,10 @@ import java.util.Map;
 /**
  * Glue Code for calling {@link DefaultTemplate}.
  */
-public class DefaultConstraintCodeGenerator implements IConstraintCodeGenerator {
+public class DefaultPluginCodeGenerator implements IPluginCodeGenerator {
     private DefaultTemplate defaultTemplate;
 
-    public DefaultConstraintCodeGenerator() {
+    public DefaultPluginCodeGenerator() {
         defaultTemplate = new DefaultTemplate();
     }
 

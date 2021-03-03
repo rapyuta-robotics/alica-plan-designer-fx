@@ -1,8 +1,8 @@
 package de.unikassel.vs.alica.stdCheckPlugin;
 
-import de.unikassel.vs.alica.generator.IConstraintCodeGenerator;
+import de.unikassel.vs.alica.generator.IPluginCodeGenerator;
 import de.unikassel.vs.alica.generator.plugin.IPlugin;
-import de.unikassel.vs.alica.planDesigner.alicamodel.Condition;
+import de.unikassel.vs.alica.planDesigner.modelmanagement.IConditionCreator;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
@@ -11,43 +11,36 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * This plugin is the default implementation of {@link IPlugin}.
- * It contains an empty UI and
- * the {@link StdCheckConstraintCodeGenerator} which generates NOOP Code (for own implementation)
+ * This plugin is the Standard Checks implementation of {@link IPlugin}.
+ * It contains a UI for choosing the corresponding standard check and
+ * the {@link StdCheckPluginCodeGenerator} which generates the corresponding
+ * checks in C++.
  */
 public class StdCheckPlugin implements IPlugin<Void> {
 
     private static final String name = "StdCheckPlugin";
 
     private File pluginJar;
-    private StdCheckConstraintCodeGenerator stdCheckConstraintCodeGenerator;
+    private StdCheckPluginCodeGenerator stdCheckConstraintCodeGenerator;
+    private StdCheckConditionCreator stdCheckConditionCreator;
 
     public StdCheckPlugin() {
-        stdCheckConstraintCodeGenerator = new StdCheckConstraintCodeGenerator();
+        stdCheckConstraintCodeGenerator = new StdCheckPluginCodeGenerator();
+        stdCheckConditionCreator = new StdCheckConditionCreator();
     }
 
-    public IConstraintCodeGenerator getConstraintCodeGenerator() {
+    public IPluginCodeGenerator getPluginCodeGenerator() {
         return stdCheckConstraintCodeGenerator;
+    }
+
+    public IConditionCreator getConditionCreator() {
+        return stdCheckConditionCreator;
     }
 
     public Parent getPluginUI() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getClassLoader().getResource("ui.fxml"));
         fxmlLoader.setController(new StdCheckPluginController());
-//        try {
-            return fxmlLoader.load();
-//        } catch (IOException e) {
-//            ErrorWindowController.createErrorWindow(I18NRepo.getInstance().getString("label.error.plugin.missingui"), e);
-//        }
-//        return null;
-    }
-
-    public void writePluginValuesToCondition(Condition condition) {
-        // default doesn't need any implementation here
-    }
-
-    public Void readPluginValuesFromCondition(Condition condition) {
-        // default doesn't need any i`mplementation here
-        return null;
+        return fxmlLoader.load();
     }
 
     public String getName() {

@@ -30,5 +30,5 @@ public interface IGenerator {
     void createDomainBehaviour();
 
     void setFormatter(String formatter);
-    IConstraintCodeGenerator getActiveConstraintCodeGenerator();
+    IPluginCodeGenerator getActiveConstraintCodeGenerator();
 }
