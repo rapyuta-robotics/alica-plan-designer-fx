@@ -15,19 +15,18 @@ environment:
 # fetch repository as zip archive
 shallow_clone: true
 
-# install dependencies
-install:
+# build alica-plan-designer-fx
+build_script:
+  - mvn clean install -B -q -DskipTests
+
+# clone and build alica-codegen
+after_build:
   - cmd: |
       cd ..
       git clone --depth 1 https://github.com/dasys-lab/alica-codegen
       cd alica-codegen
       mvn clean install -B -q -DskipTests
-      cd ..
-      cd alica-plan-designer-fx
-
-# install without run tests
-build_script:
-  - mvn clean install -B -q -DskipTests
+      cd ..\alica-plan-designer-fx
 
 # run tests
 test_script:
@@ -66,7 +65,7 @@ notifications:
     auth_token:
       secure: sQ5XjjBlOx8DYbuBh7sjsVTqY69K9XnypJucajuCAQHjXNSJJLr2k/s4zC4qX7HvadmbnqlSvTr83o8dRjnR6AHQ7L7ZUw0ZOPjRCwknEyU=
     channel: '#alica-plan-designer-fx'
-    on_build_success: true  # TODO: set to false later
+    on_build_success: true
 
 # RDP for debugging
 # init:

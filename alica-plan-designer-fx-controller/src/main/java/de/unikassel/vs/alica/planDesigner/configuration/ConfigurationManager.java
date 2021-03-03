@@ -46,7 +46,6 @@ public final class ConfigurationManager {
     //-- PROPERTIES --
     private static final String ACTIVE_DOMAIN_CONF = "activeDomainConfig";
     private static final String DOMAIN_CONFIGS = "domainConfigs";
-    private static final String CLANG_FORMAT_PATH = "clangFormatPath";
     private static final String EDITOR_EXEC_PATH = "editorExecutablePath";
 
     //---- WINDOWCONFIG ----
@@ -107,7 +106,6 @@ public final class ConfigurationManager {
             LOG.info(mainConfigFile.toString() + " does not exist!");
 
             // loadFromDisk default values for mainConfig.properties
-            mainConfigProperties.setProperty(CLANG_FORMAT_PATH, "clang-format");
             mainConfigProperties.setProperty(EDITOR_EXEC_PATH, "gedit");
             mainConfigProperties.setProperty(DOMAIN_CONFIGS, "");
             mainConfigProperties.setProperty(ACTIVE_DOMAIN_CONF, "");
@@ -261,8 +259,9 @@ public final class ConfigurationManager {
             for (Configuration conf : configurations) {
                 if (conf.getName().equals(confName)) {
                     activeConfiguration = conf;
-                    PluginManager.getInstance().updateAvailablePlugins(conf.getPluginsPath());
-                    PluginManager.getInstance().setDefaultPlugin(conf.getDefaultPluginName());
+                    PluginManager pluginManager = PluginManager.getInstance();
+                    pluginManager.updateAvailablePlugins(conf.getPluginsPath());
+                    pluginManager.setDefaultPlugin(conf.getDefaultPluginName());
                     if (controller != null) {
                         controller.handleConfigurationChanged();
                     }
@@ -287,8 +286,10 @@ public final class ConfigurationManager {
             for (Configuration conf : configurations) {
                 if (conf.getName().equals(confName)) {
                     activeConfiguration = conf;
-                    PluginManager.getInstance().updateAvailablePlugins(conf.getPluginsPath());
-                    PluginManager.getInstance().setDefaultPlugin(conf.getDefaultPluginName());
+                    PluginManager pluginManager = PluginManager.getInstance();
+                    String pluginsPath = conf.getPluginsPath();
+                    pluginManager.updateAvailablePlugins(pluginsPath);
+                    pluginManager.setDefaultPlugin(conf.getDefaultPluginName());
                     if (controller != null) {
                         controller.handleConfigurationChanged();
                     }
@@ -303,18 +304,6 @@ public final class ConfigurationManager {
     }
 
     // EXTERNAL TOOLS SECTION
-
-    public String getClangFormatPath() {
-        return mainConfigProperties.getProperty(CLANG_FORMAT_PATH);
-    }
-
-    public void setClangFormatPath(String clangFormatPath) {
-        if (clangFormatPath == null) {
-            mainConfigProperties.setProperty(CLANG_FORMAT_PATH, "");
-        } else {
-            mainConfigProperties.setProperty(CLANG_FORMAT_PATH, clangFormatPath);
-        }
-    }
 
     public String getEditorExecutablePath() {
         return mainConfigProperties.getProperty(EDITOR_EXEC_PATH);
