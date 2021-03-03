@@ -1,9 +1,8 @@
 package de.unikassel.vs.alica.planDesigner.alicamodel;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import javafx.beans.property.*;
+import javafx.beans.property.SimpleStringProperty;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,

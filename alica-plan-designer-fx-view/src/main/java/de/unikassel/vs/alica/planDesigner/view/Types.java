@@ -17,11 +17,12 @@ public class Types {
     public static final String ANNOTATEDPLAN = "annotatedplan";
     public static final String PRECONDITION = "preCondition";
     public static final String QUANTIFIER = "quantifier";
-    public static final String RUNTIMECONDITION = "runtimeCondition";
-    public static final String POSTCONDITION = "postCondition";
+    public static final String QUANTIFIER_FORALL = "all";
+    public static final String RUNTIMECONDITION = "runtimecondition";
+    public static final String POSTCONDITION = "postcondition";
     public static final String STATE = "state";
-    public static final String INSTATE = "inState";
-    public static final String OUTSTATE = "outState";
+    public static final String INSTATE = "instate";
+    public static final String OUTSTATE = "outstate";
     public static final String SUCCESSSTATE = "successstate";
     public static final String FAILURESTATE = "failurestate";
     public static final String INITSTATECONNECTION = "initstateconnection";
@@ -34,4 +35,5 @@ public class Types {
     public static final String UIEXTENSION = "uiextension";
     public static final String NOTYPE = "";
     public static final String VARIABLEBINDING = "variablebinding";
+    public static final String CONF_ABSTRACTPLAN_WRAPPER = "configurationAbstractPlanWrapper";
 }

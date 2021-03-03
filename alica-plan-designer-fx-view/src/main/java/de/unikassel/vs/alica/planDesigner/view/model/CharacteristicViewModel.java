@@ -4,6 +4,7 @@ import de.unikassel.vs.alica.planDesigner.events.GuiChangeAttributeEvent;
 import de.unikassel.vs.alica.planDesigner.events.GuiEventType;
 import de.unikassel.vs.alica.planDesigner.events.GuiModificationEvent;
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
+import de.unikassel.vs.alica.planDesigner.view.Types;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.roleTab.characteristics.CharacteristicViewModelCreatable;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.roleTab.roles.RoleTableView;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,8 +18,8 @@ public class CharacteristicViewModel extends PlanElementViewModel {
     protected SimpleStringProperty value = new SimpleStringProperty(null, "value", "");
     protected SimpleStringProperty weight = new SimpleStringProperty(null, "weight", "");
 
-    public CharacteristicViewModel (long id, String name, String type, RoleTableView roleTableView) {
-        super(id, name, type);
+    public CharacteristicViewModel (long id, String name, RoleTableView roleTableView) {
+        super(id, name, Types.ROLE_CHARCTERISTIC);
         this.roleTableView = roleTableView;
         this.uiPropertyList.clear();
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "comment", "value", "weight"));

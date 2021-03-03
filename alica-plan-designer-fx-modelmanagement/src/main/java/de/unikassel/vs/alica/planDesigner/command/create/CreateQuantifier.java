@@ -19,24 +19,24 @@ public class CreateQuantifier extends Command {
         this.quantifier = createQuantifier();
     }
 
+    private Quantifier createQuantifier() {
+        Quantifier quantifier = new Quantifier();
+        quantifier.setName(mmq.getName());
+        quantifier.setComment(mmq.getComment());
+        return quantifier;
+    }
+
     @Override
     public void doCommand() {
         parentElement.addQuantifier(quantifier);
         this.modelManager.storePlanElement(Types.QUANTIFIER, quantifier, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.quantifier);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.quantifier);
     }
 
     @Override
     public void undoCommand() {
         parentElement.removeQuantifier(quantifier);
         this.modelManager.dropPlanElement(Types.QUANTIFIER, this.quantifier, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.quantifier);
-    }
-
-    private Quantifier createQuantifier() {
-        Quantifier quantifier = new Quantifier();
-        quantifier.setName(mmq.getName());
-        quantifier.setComment(mmq.getComment());
-        return quantifier;
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.quantifier);
     }
 }

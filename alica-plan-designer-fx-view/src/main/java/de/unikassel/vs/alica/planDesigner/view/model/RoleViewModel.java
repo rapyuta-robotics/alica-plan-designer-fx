@@ -1,5 +1,6 @@
 package de.unikassel.vs.alica.planDesigner.view.model;
 
+import de.unikassel.vs.alica.planDesigner.view.Types;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -15,8 +16,8 @@ public class RoleViewModel extends PlanElementViewModel {
     private ObservableMap<TaskViewModel, Float> taskPrioritieViewModels = FXCollections.observableHashMap();
     private ObservableList<CharacteristicViewModel> characteristicViewModels = FXCollections.observableArrayList();
 
-    public RoleViewModel (long id, String name, String type) {
-        super(id, name, type);
+    public RoleViewModel (long id, String name) {
+        super(id, name, Types.ROLE);
         this.uiPropertyList.clear();
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "comment"));
         this.characteristicViewModels.addListener(new ListChangeListener<CharacteristicViewModel>() {
@@ -46,17 +47,17 @@ public class RoleViewModel extends PlanElementViewModel {
         this.taskPrioritieViewModels = taskPrioritieViewModels;
     }
 
-    public void setTaskPriority(HashMap<Long, Float> taskPriorities) {
-        this.taskPrioritieViewModels.clear();
-        ObservableList<TaskViewModel> taskViewModels = this.getRoleSetViewModel().getTaskRepository().getTaskViewModels();
-
-        taskPriorities.forEach((t, p) -> {
-            taskViewModels.forEach(tvm -> {
-                if (tvm.getId() == t)
-                    this.taskPrioritieViewModels.put(tvm, p);
-            });
-        });
-    }
+//    public void setTaskPriority(HashMap<Long, Float> taskPriorities) {
+//        this.taskPrioritieViewModels.clear();
+//        ObservableList<TaskViewModel> taskViewModels = this.getRoleSetViewModel().getTaskRepository().getTaskViewModels();
+//
+//        taskPriorities.forEach((t, p) -> {
+//            taskViewModels.forEach(tvm -> {
+//                if (tvm.getId() == t)
+//                    this.taskPrioritieViewModels.put(tvm, p);
+//            });
+//        });
+//    }
 
     public Float getTaskPriority(long taskID) {
         Optional<TaskViewModel> task = taskPrioritieViewModels.keySet().stream().filter(t -> t.getId() == taskID).findFirst();

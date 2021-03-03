@@ -94,14 +94,10 @@ public class InitTransitionTool extends AbstractTool {
 
                     // ep and state selected, so send event and reset ep and state for further use of the tool
                     if (entryPoint != null && state != null) {
-                        IGuiModificationHandler guiModificationHandler = MainWindowController.getInstance().getGuiModificationHandler();
-                        GuiModificationEvent guiEvent = new GuiModificationEvent(GuiEventType.ADD_ELEMENT, Types.INITSTATECONNECTION, null);
                         HashMap<String, Long> relatedObjects = new HashMap<>();
                         relatedObjects.put(Types.ENTRYPOINT, entryPoint.getPlanElementViewModel().getId());
                         relatedObjects.put(Types.STATE, state.getId());
-                        guiEvent.setRelatedObjects(relatedObjects);
-                        guiEvent.setParentId(InitTransitionTool.this.planTab.getSerializableViewModel().getId());
-                        guiModificationHandler.handle(guiEvent);
+                        planTab.fireModificationEvent(GuiEventType.ADD_ELEMENT, Types.INITSTATECONNECTION, null, relatedObjects);
                         entryPoint = null;
                         state = null;
                     }
@@ -112,7 +108,7 @@ public class InitTransitionTool extends AbstractTool {
 
     private boolean isClickValid(MouseEvent event) {
         if (!(event.getTarget() instanceof  Node)) {
-            System.err.println("InitTransitionTool: Type clicked on does not match tool!");
+            System.err.println("InitTransitionTool: Type clicked on does not match tool! Type was: '" + event.getTarget().getClass().getSimpleName() + "'");
             return false;
         }
 

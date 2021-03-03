@@ -7,11 +7,11 @@
     <parent>
         <groupId>de.unikassel.vs.alica</groupId>
         <artifactId>plan_designer</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>view</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -52,6 +52,16 @@
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
             <version>11.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ini4j</groupId>
+            <artifactId>ini4j</artifactId>
+            <version>0.5.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.25</version>
         </dependency>
     </dependencies>
 </project>

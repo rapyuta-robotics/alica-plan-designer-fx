@@ -1,13 +1,10 @@
 package de.unikassel.vs.alica.planDesigner.view.editor.container;
 
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.planTab.PlanTab;
-import de.unikassel.vs.alica.planDesigner.view.model.PlanElementViewModel;
+import de.unikassel.vs.alica.planDesigner.view.model.ConfAbstractPlanWrapperViewModel;
 import de.unikassel.vs.alica.planDesigner.view.model.StateViewModel;
-import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -21,14 +18,12 @@ public class StateContainer extends Container implements Observable {
     public static final double STATE_RADIUS = 20.0;
     private boolean dragged;
     private List<InvalidationListener> invalidationListeners;
-    private List<AbstractPlanContainer> statePlans;
     private StateViewModel state;
 
     public StateContainer(StateViewModel state, PlanTab planTab) {
-        super(state, null, planTab);
+        super(state, planTab);
         this.setId("StateContainer");
         this.state = state;
-        this.statePlans = new ArrayList<>();
         invalidationListeners = new ArrayList<>();
         makeDraggable(this);
         createNameListener();
@@ -48,12 +43,8 @@ public class StateContainer extends Container implements Observable {
         elementName.setLayoutX(elementName.getLayoutX() - elementName.getLayoutBounds().getWidth() / 2);
         elementName.setLayoutY(elementName.getLayoutY() - STATE_RADIUS * 1.3);
 
-        for (PlanElementViewModel plan : state.getAbstractPlans()) {
-            statePlans.add(new AbstractPlanContainer(this, plan, this.planTab));
-        }
-
-        if (statePlans != null && !statePlans.isEmpty()) {
-            getChildren().addAll(statePlans);
+        for (ConfAbstractPlanWrapperViewModel wrapperViewModel : state.getConfAbstractPlanWrappers()) {
+            getChildren().add(new ConfAbstractPlanWrapperContainer(this, wrapperViewModel, this.planTab));
         }
     }
 
@@ -86,10 +77,6 @@ public class StateContainer extends Container implements Observable {
     @Override
     public void removeListener(InvalidationListener listener) {
         invalidationListeners.remove(listener);
-    }
-
-    public List<AbstractPlanContainer> getStatePlans() {
-        return statePlans;
     }
 
     public StateViewModel getState() {

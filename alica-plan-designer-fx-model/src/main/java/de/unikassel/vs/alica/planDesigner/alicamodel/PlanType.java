@@ -9,13 +9,13 @@ public class PlanType extends AbstractPlan {
     protected final ArrayList<VariableBinding> variableBindings = new ArrayList<>();
     protected final ArrayList<AnnotatedPlan> annotatedPlans = new ArrayList<>();
 
-    public void addParametrisation(VariableBinding variableBinding) {
-        variableBindings.add(variableBinding);
-        variableBinding.registerDirtyFlag(this.changeListenerForDirtyFlag);
+    public void addVariableBinding(VariableBinding binding) {
+        this.variableBindings.add(binding);
+        binding.registerDirtyFlag(this.changeListenerForDirtyFlag);
         this.changeListenerForDirtyFlag.setDirty();
     }
-    public void removeParametrisation(VariableBinding variableBinding) {
-        variableBindings.remove(variableBinding);
+    public void removeVariableBinding(VariableBinding binding) {
+        this.variableBindings.remove(binding);
         this.changeListenerForDirtyFlag.setDirty();
     }
     public List<VariableBinding> getVariableBindings() {

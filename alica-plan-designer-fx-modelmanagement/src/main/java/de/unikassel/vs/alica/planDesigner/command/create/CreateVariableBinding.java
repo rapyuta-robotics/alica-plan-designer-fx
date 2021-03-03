@@ -33,10 +33,10 @@ public class CreateVariableBinding extends Command {
         if (parent instanceof State) {
             ((State) parent).addVariableBinding(this.variableBinding);
         } else if (parent instanceof PlanType) {
-            ((PlanType) parent).addParametrisation(this.variableBinding);
+            ((PlanType) parent).addVariableBinding(this.variableBinding);
         }
         this.modelManager.storePlanElement(Types.VARIABLEBINDING, this.variableBinding, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.variableBinding);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.variableBinding);
     }
 
     @Override
@@ -44,9 +44,9 @@ public class CreateVariableBinding extends Command {
         if (parent instanceof State) {
             ((State) parent).removeVariableBinding(this.variableBinding);
         } else if (parent instanceof PlanType) {
-            ((PlanType) parent).removeParametrisation(this.variableBinding);
+            ((PlanType) parent).removeVariableBinding(this.variableBinding);
         }
         modelManager.dropPlanElement(Types.VARIABLEBINDING, this.variableBinding,false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.variableBinding);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.variableBinding);
     }
 }

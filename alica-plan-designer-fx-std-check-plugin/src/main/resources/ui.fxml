@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextField?>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="254.0" layoutY="192.0" text="stdCheck Plugin" />
+      <HBox prefHeight="36.0" prefWidth="1500.0" styleClass="cfgHbox">
+         <children>
+            <Label fx:id="stdCheckPluginFunctionLabel" prefWidth="50.0" styleClass="cfgLabel" text="Function:" />
+            <ComboBox fx:id="stdCheckPluginFunctionComboBox" disable="false" prefHeight="26.0" prefWidth="327.0" />
+            <Label fx:id="stdCheckPluginFunctionParameterLabel" prefWidth="50.0" styleClass="cfgLabel" text="Parameters:" />
+            <TextField fx:id="stdCheckPluginFunctionParameter1" disable="false" prefWidth="200.0" />
+            <TextField fx:id="stdCheckPluginFunctionParameter2" disable="false" prefWidth="200.0" />
+            <TextField fx:id="stdCheckPluginFunctionParameter3" disable="false" prefWidth="200.0" />
+         </children>
+      </HBox>
+   </children>
+</Pane>

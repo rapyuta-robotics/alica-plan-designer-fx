@@ -2,6 +2,8 @@ package de.unikassel.vs.alica.planDesigner.view.repo;
 
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
 import de.unikassel.vs.alica.planDesigner.view.Types;
+import de.unikassel.vs.alica.planDesigner.view.img.AlicaCursor;
+import de.unikassel.vs.alica.planDesigner.view.img.AlicaIcon;
 import de.unikassel.vs.alica.planDesigner.view.model.ViewModelElement;
 import javafx.application.Platform;
 import javafx.scene.control.ListView;
@@ -15,12 +17,23 @@ public class RepositoryListView extends ListView<RepositoryLabel> {
     protected Comparator<RepositoryLabel> modelElementComparator;
     protected IGuiModificationHandler guiModificationHandler;
 
-    public RepositoryListView () {
+    public RepositoryListView() {
         super();
         setPrefHeight(getItems().size() * 24 + 2);
 
         modelElementComparator = Comparator.comparing(o -> !o.getViewModelType().equals(Types.MASTERPLAN));
         modelElementComparator = modelElementComparator.thenComparing(o -> o.getViewModelName());
+
+        // forward of event to RepositoryLabel which comprises the actual logic
+        setOnMouseClicked(e -> {
+            getSelectionModel().getSelectedItem().getOnMouseClicked().handle(e);
+        });
+        setOnDragDetected(e -> {
+            getSelectionModel().getSelectedItem().getOnDragDetected().handle(e);
+        });
+        setOnMouseReleased(e -> {
+            getSelectionModel().getSelectedItem().getOnMouseReleased().handle(e);
+        });
     }
 
     public void setGuiModificationHandler(IGuiModificationHandler guiModificationHandler) {
@@ -29,7 +42,7 @@ public class RepositoryListView extends ListView<RepositoryLabel> {
 
     public void removeElement(ViewModelElement viewModel) {
         Iterator<RepositoryLabel> iter = getItems().iterator();
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             RepositoryLabel repositoryLabel = iter.next();
             if (repositoryLabel.getViewModelId() == viewModel.getId()) {
                 iter.remove();
@@ -76,9 +89,9 @@ public class RepositoryListView extends ListView<RepositoryLabel> {
     }
 
     public ViewModelElement getSelectedItem() {
-        RepositoryLabel repoHBox = getSelectionModel().getSelectedItem();
-        if (repoHBox != null) {
-            return repoHBox.getViewModelElement();
+        RepositoryLabel repositoryLabel = getSelectionModel().getSelectedItem();
+        if (repositoryLabel != null) {
+            return repositoryLabel.getViewModelElement();
         } else {
             return null;
         }

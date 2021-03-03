@@ -7,11 +7,12 @@
     <parent>
         <groupId>de.unikassel.vs.alica</groupId>
         <artifactId>plan_designer</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>controller</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
+
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -21,6 +22,33 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>
+                    <prefix>git</prefix>
+                    <verbose>false</verbose>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <generateGitPropertiesFilename>${project.basedir}/../target/git.properties</generateGitPropertiesFilename>
+                    <format>json</format>
+                    <gitDescribe>
+                        <skip>false</skip>
+                        <always>false</always>
+                        <dirty>-dirty</dirty>
+                    </gitDescribe>
+                </configuration>
+            </plugin>
             <plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
                 <groupId>org.apache.maven.plugins</groupId>
@@ -36,7 +64,7 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <finalName>PlanDesigner-${project.version}</finalName>
+                    <finalName>PlanDesignerFX-0.1.1.${git.total.commit.count}</finalName>
                 </configuration>
                 <executions>
                     <execution>
@@ -45,6 +73,9 @@
                         <goals>
                             <goal>single</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/../../target</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -66,25 +97,25 @@
             <!-- https://github.com/dasys-lab/alica-codegen -->
             <groupId>de.unikassel.vs.alica</groupId>
             <artifactId>model</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <!-- https://github.com/dasys-lab/alica-plan-designer-fx -->
             <groupId>de.unikassel.vs.alica</groupId>
             <artifactId>modelmanagement</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <!-- https://github.com/dasys-lab/alica-codegen -->
             <groupId>de.unikassel.vs.alica</groupId>
             <artifactId>codegen-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <!-- https://github.com/dasys-lab/alica-plan-designer-fx -->
             <groupId>de.unikassel.vs.alica</groupId>
             <artifactId>view</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->

@@ -1,20 +1,18 @@
 package de.unikassel.vs.alica.planDesigner.alicamodel;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
-import java.util.*;
-
 public class Behaviour extends AbstractPlan {
     protected final SimpleIntegerProperty frequency = new SimpleIntegerProperty(this, "frequency", 0);
     protected final SimpleLongProperty deferring = new SimpleLongProperty(this, "deferring", 0);
+    protected final SimpleBooleanProperty eventDriven = new SimpleBooleanProperty(this, "eventDriven", false);
 
     protected SimpleObjectProperty<PreCondition> preCondition = new SimpleObjectProperty<>();
     protected SimpleObjectProperty<RuntimeCondition> runtimeCondition = new SimpleObjectProperty<>();
     protected SimpleObjectProperty<PostCondition> postCondition = new SimpleObjectProperty<>();
-
-    private final Map<String, String> parameters = new HashMap<>();
 
     public PreCondition getPreCondition() {
         return preCondition.get();
@@ -75,48 +73,14 @@ public class Behaviour extends AbstractPlan {
         return this.deferring;
     }
 
-    public Map<String, String> getParameters() {
-        return Collections.unmodifiableMap(parameters);
+    public boolean isEventDriven() {
+        return eventDriven.get();
     }
-
-    public String putParameter(String key, String value) {
-        setDirty(true);
-        return parameters.put(key, value);
+    public void setEventDriven(boolean eventDriven) {
+        this.eventDriven.set(eventDriven);
     }
-
-    public String removeParameter(String key) {
-        setDirty(true);
-        return parameters.remove(key);
-    }
-
-    /**
-     * Used for any kind of modification of the parameters: Insert, Change, Remove, etc.
-     *
-     * @param newEntry
-     * @param oldEntry
-     */
-    public void modifyParameter(Map.Entry<String, String> newEntry, Map.Entry<String, String> oldEntry) {
-        setDirty(true);
-
-        // Insert new entry (no old entry)
-        if (oldEntry == null) {
-            this.parameters.put(newEntry.getKey(), newEntry.getValue());
-            return;
-        }
-
-        // Remove parameter (no new entry)
-        if (newEntry == null) {
-            this.parameters.remove(oldEntry.getKey());
-            return;
-        }
-
-        // Modify existing parameter (old and new entry given)
-        if (newEntry.getKey() == oldEntry.getKey()) {
-            this.parameters.put(newEntry.getKey(), newEntry.getValue());
-        } else {
-            this.parameters.remove(oldEntry.getKey());
-            this.parameters.put(newEntry.getKey(), newEntry.getValue());
-        }
+    public SimpleBooleanProperty eventDrivenProperty() {
+        return this.eventDriven;
     }
 
     @Override

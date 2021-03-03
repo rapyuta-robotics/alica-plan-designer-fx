@@ -1,5 +1,6 @@
 package de.unikassel.vs.alica.planDesigner.view.model;
 
+import de.unikassel.vs.alica.planDesigner.view.Types;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -8,12 +9,12 @@ import java.util.Arrays;
 public class PlanTypeViewModel extends AbstractPlanViewModel implements HasVariableBinding {
 
     private ObservableList<PlanViewModel> allPlans;
-    private ObservableList<AnnotatedPlanView> plansInPlanType;
+    private ObservableList<AnnotatedPlanViewModel> plansInPlanType;
     private ObservableList<VariableBindingViewModel> variableBindings;
 
 
-    public PlanTypeViewModel(long id, String name, String type) {
-        super(id, name, type);
+    public PlanTypeViewModel(long id, String name) {
+        super(id, name, Types.PLANTYPE);
         allPlans = FXCollections.observableArrayList();
         plansInPlanType = FXCollections.observableArrayList();
         variableBindings = FXCollections.observableArrayList();
@@ -41,7 +42,7 @@ public class PlanTypeViewModel extends AbstractPlanViewModel implements HasVaria
         return allPlans;
     }
 
-    public ObservableList<AnnotatedPlanView> getPlansInPlanType() {
+    public ObservableList<AnnotatedPlanViewModel> getPlansInPlanType() {
         return plansInPlanType;
     }
 
@@ -59,7 +60,7 @@ public class PlanTypeViewModel extends AbstractPlanViewModel implements HasVaria
      * @return
      */
     public boolean containsPlan(long id) {
-        for (AnnotatedPlanView annotatedPlan : plansInPlanType) {
+        for (AnnotatedPlanViewModel annotatedPlan : plansInPlanType) {
             if (annotatedPlan.getPlanId() == id) {
                 return true;
             }

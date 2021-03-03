@@ -2,8 +2,6 @@ package de.unikassel.vs.alica.planDesigner.command.create;
 
 import de.unikassel.vs.alica.planDesigner.alicamodel.Role;
 import de.unikassel.vs.alica.planDesigner.alicamodel.RoleSet;
-import de.unikassel.vs.alica.planDesigner.alicamodel.Task;
-import de.unikassel.vs.alica.planDesigner.alicamodel.TaskRepository;
 import de.unikassel.vs.alica.planDesigner.command.Command;
 import de.unikassel.vs.alica.planDesigner.events.ModelEventType;
 import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelManager;
@@ -17,8 +15,8 @@ public class CreateRole extends Command {
 
     public CreateRole(ModelManager modelManager, ModelModificationQuery mmq) {
         super(modelManager, mmq);
-        this.roleSet = (RoleSet) modelManager.getPlanElement(mmq.getParentId());
-        this.role = createRole(this.roleSet);
+        roleSet = (RoleSet) modelManager.getPlanElement(mmq.getParentId());
+        role = createRole(this.roleSet);
     }
 
     protected Role createRole(RoleSet roleSet) {
@@ -30,15 +28,15 @@ public class CreateRole extends Command {
 
     @Override
     public void doCommand() {
-        this.roleSet.addRole(role);
+        roleSet.addRole(role);
         modelManager.storePlanElement(Types.ROLE, this.role,  false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.role);
+        fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.role);
     }
 
     @Override
     public void undoCommand() {
-        this.roleSet.removeRole(role);
+        roleSet.removeRole(role);
         modelManager.dropPlanElement(Types.ROLE, this.role, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.role);
+        fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.role);
     }
 }

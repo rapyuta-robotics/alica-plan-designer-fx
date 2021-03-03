@@ -29,15 +29,14 @@ public class CreateVariable extends Command {
     public void doCommand() {
         abstractPlan.addVariable(this.variable);
         this.modelManager.storePlanElement(Types.VARIABLE, variable, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.variable);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.variable);
     }
 
     @Override
     public void undoCommand() {
         abstractPlan.removeVariable(this.variable);
-        modelManager.getUsages(this.variable.getId());
         modelManager.dropPlanElement(Types.VARIABLE, variable,false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.variable);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.variable);
     }
 
 }

@@ -7,16 +7,22 @@ import de.unikassel.vs.alica.planDesigner.view.img.AlicaIcon;
 import de.unikassel.vs.alica.planDesigner.view.model.*;
 import de.unikassel.vs.alica.planDesigner.view.properties.bindings.VariableBindingTab;
 import de.unikassel.vs.alica.planDesigner.view.properties.conditions.ConditionsTab;
-import de.unikassel.vs.alica.planDesigner.view.properties.configuration.BehaviourParametersTab;
 import de.unikassel.vs.alica.planDesigner.view.properties.variables.VariablesTab;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.util.Callback;
 import org.controlsfx.control.PropertySheet;
 import org.controlsfx.property.BeanPropertyUtils;
+import org.controlsfx.property.editor.DefaultPropertyEditorFactory;
+import org.controlsfx.property.editor.Editors;
+import org.controlsfx.property.editor.PropertyEditor;
 
 /**
  * Root gui object for showing properties, conditions, and variables of selected objects.
@@ -38,7 +44,6 @@ public class ElementInformationPane extends TitledPane {
     protected ConditionsTab preConditionTab;
     protected ConditionsTab runtimeConditionTab;
     protected ConditionsTab postConditionTab;
-    protected BehaviourParametersTab behaviourParametersTab;
 
     protected IGuiModificationHandler guiModificationHandler;
 
@@ -51,21 +56,31 @@ public class ElementInformationPane extends TitledPane {
         propertySheet = new PropertySheet();
         propertySheet.setId("PropertySheet");
         propertySheet.setModeSwitcherVisible(false);
+        SimpleObjectProperty<Callback<PropertySheet.Item, PropertyEditor<?>>> propertyEditorFactory =
+                new SimpleObjectProperty<>(this, "propertyEditor", new DefaultPropertyEditorFactory());
+
+        propertySheet.setOnMouseClicked(mouseEvent -> {
+                    if (mouseEvent.getClickCount() == 2) {
+                        ClipboardContent content = new ClipboardContent();
+                        content.putString(propertySheet.getItems().get(1).getValue().toString());
+                        Clipboard.getSystemClipboard().setContent(content);
+                        System.out.println("ElementInformationPane: Copied ID to clipboard: " + propertySheet.getItems().get(1).getValue().toString());
+                    }
+                });
 
         propertiesTab = new Tab(i18NRepo.getString("label.caption.properties"));
         propertiesTab.setContent(propertySheet);
         variablesTab = new VariablesTab(guiModificationHandler);
 
         variableBindingTab = new VariableBindingTab(guiModificationHandler);
-        preConditionTab     = new ConditionsTab(i18NRepo.getString("label.caption.preCondtions")    , Types.PRECONDITION);
-        runtimeConditionTab = new ConditionsTab(i18NRepo.getString("label.caption.runtimeCondtions"), Types.RUNTIMECONDITION);
-        postConditionTab    = new ConditionsTab(i18NRepo.getString("label.caption.postCondtions")   , Types.POSTCONDITION);
-        behaviourParametersTab = new BehaviourParametersTab(i18NRepo.getString("label.caption.parameters"));
+        preConditionTab = new ConditionsTab(i18NRepo.getString("label.caption.preCondtions"), Types.PRECONDITION, guiModificationHandler);
+        runtimeConditionTab = new ConditionsTab(i18NRepo.getString("label.caption.runtimeCondtions"), Types.RUNTIMECONDITION, guiModificationHandler);
+        postConditionTab = new ConditionsTab(i18NRepo.getString("label.caption.postCondtions"), Types.POSTCONDITION, guiModificationHandler);
         characteristicsTab = new Tab(i18NRepo.getString("label.caption.characteristics"));
 
         this.tabPane = new TabPane();
         this.tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        this.tabPane.getTabs().addAll(propertiesTab, variablesTab, variableBindingTab, behaviourParametersTab, preConditionTab, runtimeConditionTab, postConditionTab);
+        this.tabPane.getTabs().addAll(propertiesTab, variablesTab, variableBindingTab, preConditionTab, runtimeConditionTab, postConditionTab);
 
         this.setContent(tabPane);
     }
@@ -87,7 +102,7 @@ public class ElementInformationPane extends TitledPane {
     }
 
     private void adaptUI(ViewModelElement elementShown) {
-        tabPane.getTabs().removeAll(preConditionTab, propertiesTab, runtimeConditionTab, variablesTab, postConditionTab, variableBindingTab, characteristicsTab, behaviourParametersTab);
+        tabPane.getTabs().removeAll(preConditionTab, propertiesTab, runtimeConditionTab, variablesTab, postConditionTab, variableBindingTab, characteristicsTab);
         switch (elementShown.getType()) {
             case Types.TASKREPOSITORY:
             case Types.TASK:
@@ -95,6 +110,7 @@ public class ElementInformationPane extends TitledPane {
             case Types.ENTRYPOINT:
             case Types.SYNCHRONISATION:
             case Types.BENDPOINT:
+            case Types.CONFIGURATION:
                 this.setContent(propertySheet);
                 break;
             case Types.ROLE:
@@ -121,10 +137,9 @@ public class ElementInformationPane extends TitledPane {
                 break;
             case Types.BEHAVIOUR:
                 this.variablesTab.setParentViewModel(elementShown);
-                this.behaviourParametersTab.setParentViewModel(elementShown);
                 this.adaptConditions(elementShown);
                 this.setContent(tabPane);
-                this.tabPane.getTabs().addAll(propertiesTab, variablesTab, behaviourParametersTab, preConditionTab, runtimeConditionTab, postConditionTab);
+                this.tabPane.getTabs().addAll(propertiesTab, variablesTab, preConditionTab, runtimeConditionTab, postConditionTab);
                 break;
             case Types.SUCCESSSTATE:
             case Types.FAILURESTATE:
@@ -145,7 +160,7 @@ public class ElementInformationPane extends TitledPane {
         }
     }
 
-    private void adaptConditions(ViewModelElement element){
+    private void adaptConditions(ViewModelElement element) {
         preConditionTab.setViewModelElement(element);
         runtimeConditionTab.setViewModelElement(element);
         postConditionTab.setViewModelElement(element);
@@ -157,10 +172,11 @@ public class ElementInformationPane extends TitledPane {
         PropertySheet.Item[] retList = new PropertySheet.Item[list.size()];
         for (PropertySheet.Item item : list) {
             int idx = element.getUiPropertyList().indexOf(item.getName());
+            System.out.println("ElementInformationPane: Add property with name " + item.getName());
             if (idx != -1) {
                 retList[idx] = item;
             } else {
-                System.err.println("ElementInformationPane: Unkown PropertySheet.Item Type, because it is maybe missing in the uiPropertyList of the ViewModelElement.");
+                System.err.println("ElementInformationPane: Unknown PropertySheet.Item Type, because it is maybe missing in the uiPropertyList of the ViewModelElement.");
             }
         }
         ObservableList<PropertySheet.Item> retObsList = FXCollections.observableArrayList();

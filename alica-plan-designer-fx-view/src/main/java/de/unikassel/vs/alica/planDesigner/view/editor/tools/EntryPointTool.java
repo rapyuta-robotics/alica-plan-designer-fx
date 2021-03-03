@@ -44,9 +44,7 @@ public class EntryPointTool extends AbstractTool {
 
     @Override
     protected void initHandlerMap() {
-
         if(customHandlerMap.isEmpty()){
-
             customHandlerMap.put(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {

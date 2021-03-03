@@ -54,7 +54,7 @@ public class RoleTableView extends PropertiesTable<RoleTableElement> {
     }
 
     public void addPlaceholder() {
-        RoleViewModelCreatable creatable = new RoleViewModelCreatable(0, "", Types.ROLE );
+        RoleViewModelCreatable creatable = new RoleViewModelCreatable(0, "");
         creatable.setRoleSetViewModel(this.roleSetViewModel);
         RoleTableElement element = new RoleTableElement(this, creatable);
         roleTableElements.add(element);

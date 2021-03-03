@@ -36,7 +36,7 @@ public class DeleteSynchronisationFromPlan extends UiPositionCommand {
             transition.setSynchronisation(null);
         }
         this.modelManager.dropPlanElement(Types.SYNCHRONISATION, synchronisation, true);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, synchronisation);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, synchronisation);
     }
 
     @Override
@@ -48,6 +48,6 @@ public class DeleteSynchronisationFromPlan extends UiPositionCommand {
             transition.setSynchronisation(synchronisation);
         }
         modelManager.storePlanElement(Types.SYNCHRONISATION, synchronisation,false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, synchronisation);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, synchronisation);
     }
 }

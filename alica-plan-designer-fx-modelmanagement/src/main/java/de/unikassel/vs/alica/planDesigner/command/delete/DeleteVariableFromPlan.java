@@ -23,13 +23,13 @@ public class DeleteVariableFromPlan extends Command {
     public void doCommand() {
         this.abstractPlan.removeVariable(this.variable);
         this.modelManager.dropPlanElement(Types.VARIABLE, this.variable, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.variable);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.variable);
     }
 
     @Override
     public void undoCommand() {
         this.abstractPlan.addVariable(this.variable);
         this.modelManager.storePlanElement(Types.VARIABLE, this.variable, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.variable);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.variable);
     }
 }

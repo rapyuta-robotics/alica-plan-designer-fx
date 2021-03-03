@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class StateViewModel extends PlanElementViewModel implements HasVariableBinding {
-    protected ObservableList<PlanElementViewModel> abstractPlans;
+    protected ObservableList<ConfAbstractPlanWrapperViewModel> confAbstractPlanWrappers;
     protected ObservableList<TransitionViewModel> inTransitions;
     protected ObservableList<TransitionViewModel> outTransitions;
     protected ObjectProperty<ConditionViewModel> postCondition;
@@ -18,7 +18,7 @@ public class StateViewModel extends PlanElementViewModel implements HasVariableB
 
     public StateViewModel(long id, String name, String type) {
         super(id, name, type);
-        this.abstractPlans =  FXCollections.observableArrayList(new ArrayList<>());
+        this.confAbstractPlanWrappers =  FXCollections.observableArrayList(new ArrayList<>());
         this.inTransitions =  FXCollections.observableArrayList(new ArrayList<>());
         this.outTransitions = FXCollections.observableArrayList(new ArrayList<>());
         this.variableBindings = FXCollections.observableArrayList(new ArrayList<>());
@@ -28,18 +28,18 @@ public class StateViewModel extends PlanElementViewModel implements HasVariableB
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "comment"));
     }
 
-    public ObservableList<PlanElementViewModel> getAbstractPlans() {
-        return abstractPlans;
+    public ObservableList<ConfAbstractPlanWrapperViewModel> getConfAbstractPlanWrappers() {
+        return confAbstractPlanWrappers;
     }
 
-    public void addAbstractPlan(PlanElementViewModel abstractPlan) {
-        if(!this.abstractPlans.contains(abstractPlan)) {
-            this.abstractPlans.add(abstractPlan);
+    public void addConfAbstractPlanWrapper(ConfAbstractPlanWrapperViewModel confAbstractPlanWrapper) {
+        if(!this.confAbstractPlanWrappers.contains(confAbstractPlanWrapper)) {
+            this.confAbstractPlanWrappers.add(confAbstractPlanWrapper);
         }
     }
 
-    public void removeAbstractPlan(PlanElementViewModel abstractPlan) {
-        this.abstractPlans.remove(abstractPlan);
+    public void removeConfAbstractPlanWrapper(ConfAbstractPlanWrapperViewModel confAbstractPlanWrapper) {
+        this.confAbstractPlanWrappers.remove(confAbstractPlanWrapper);
     }
 
     public ObservableList<TransitionViewModel> getInTransitions() {

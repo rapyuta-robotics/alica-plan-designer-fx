@@ -28,11 +28,10 @@ public class DeleteEntryPoint extends UiPositionCommand {
     public void doCommand() {
         parentOfElement.getPlan().removeEntryPoint(entryPoint);
         parentOfElement.remove(entryPoint.getId());
-
         if (associatedState != null) {
             associatedState.setEntryPoint(null);
         }
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, entryPoint);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, entryPoint);
     }
 
     @Override
@@ -42,6 +41,6 @@ public class DeleteEntryPoint extends UiPositionCommand {
         if (associatedState != null) {
             associatedState.setEntryPoint(entryPoint);
         }
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, entryPoint);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, entryPoint);
     }
 }

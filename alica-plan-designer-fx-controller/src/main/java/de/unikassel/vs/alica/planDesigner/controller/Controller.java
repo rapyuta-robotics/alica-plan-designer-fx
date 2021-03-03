@@ -5,6 +5,8 @@ import de.unikassel.vs.alica.codegen.GeneratedSourcesManager;
 import de.unikassel.vs.alica.codegen.plugin.IPlugin;
 import de.unikassel.vs.alica.codegen.plugin.PluginManager;
 import de.unikassel.vs.alica.planDesigner.ViewModelManagement.ViewModelManager;
+import de.unikassel.vs.alica.planDesigner.alicaConfiguration.AlicaConfigurationEventHandler;
+import de.unikassel.vs.alica.planDesigner.alicaConfiguration.AlicaConfigurationManager;
 import de.unikassel.vs.alica.planDesigner.alicamodel.*;
 import de.unikassel.vs.alica.planDesigner.configuration.Configuration;
 import de.unikassel.vs.alica.planDesigner.configuration.ConfigurationEventHandler;
@@ -14,12 +16,13 @@ import de.unikassel.vs.alica.planDesigner.converter.CustomPlanElementConverter;
 import de.unikassel.vs.alica.planDesigner.converter.CustomStringConverter;
 import de.unikassel.vs.alica.planDesigner.events.*;
 import de.unikassel.vs.alica.planDesigner.filebrowser.FileSystemEventHandler;
+import de.unikassel.vs.alica.planDesigner.globalsConfiguration.GlobalsConfEventHandler;
+import de.unikassel.vs.alica.planDesigner.globalsConfiguration.GlobalsConfManager;
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiStatusHandler;
 import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelManager;
 import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelModificationQuery;
 import de.unikassel.vs.alica.planDesigner.plugin.PluginEventHandler;
-import de.unikassel.vs.alica.planDesigner.uiextensionmodel.BendPoint;
 import de.unikassel.vs.alica.planDesigner.view.I18NRepo;
 import de.unikassel.vs.alica.planDesigner.view.Types;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.AbstractPlanTab;
@@ -60,8 +63,12 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
 
     // Common Objects
     private ConfigurationManager configurationManager;
+    private AlicaConfigurationManager alicaConfigurationManager;
+    private GlobalsConfManager globalsConfManager;
     private FileSystemEventHandler fileSystemEventHandler;
     private ConfigurationEventHandler configEventHandler;
+    private AlicaConfigurationEventHandler alicaConfigurationEventHandler;
+    private GlobalsConfEventHandler globalsConfEventHandler;
     private PluginManager pluginManager;
     private PluginEventHandler pluginEventHandler;
 
@@ -72,6 +79,8 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
     private RepositoryViewModel repoViewModel;
     private MainWindowController mainWindowController;
     private ConfigurationWindowController configWindowController;
+    private AlicaConfWindowController alicaConfWindowController;
+    private GlobalsConfWindowController globalsConfWindowController;
     private RepositoryTabPane repoTabPane;
     private EditorTabPane editorTabPane;
     private ViewModelManager viewModelManager;
@@ -83,6 +92,12 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
         configurationManager = ConfigurationManager.getInstance();
         configurationManager.setController(this);
 
+        alicaConfigurationManager = AlicaConfigurationManager.getInstance();
+        alicaConfigurationManager.setController(this);
+
+        globalsConfManager = GlobalsConfManager.getInstance();
+        globalsConfManager.setController(this);
+
         pluginManager = PluginManager.getInstance();
 
         mainWindowController = MainWindowController.getInstance();
@@ -90,6 +105,8 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
         mainWindowController.setGuiModificationHandler(this);
 
         setupConfigGuiStuff();
+        setupAlicaConfGuiStuff();
+        setupGlobalsConfGuiStuff();
 
         fileSystemEventHandler = new FileSystemEventHandler(this);
         new Thread(fileSystemEventHandler).start(); // <- will be stopped by the PlanDesigner.isRunning() flag
@@ -128,7 +145,22 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
             modelManager.setRolesPath(activeConfiguration.getRolesPath());
         }
     }
+    protected void setupGlobalsConfGuiStuff() {
+        globalsConfWindowController = new GlobalsConfWindowController(0 ,"", "", "");
 
+        globalsConfEventHandler = new GlobalsConfEventHandler(globalsConfWindowController, globalsConfManager);
+        globalsConfWindowController.setHandler(globalsConfEventHandler);
+
+        mainWindowController.setGlobalsConfWindowController(globalsConfWindowController);
+    }
+    protected void setupAlicaConfGuiStuff() {
+        alicaConfWindowController = new AlicaConfWindowController();
+
+        alicaConfigurationEventHandler = new AlicaConfigurationEventHandler(alicaConfWindowController,alicaConfigurationManager);
+        alicaConfWindowController.setHandler(alicaConfigurationEventHandler);
+
+        mainWindowController.setAlicaConfWindowController(alicaConfWindowController);
+    }
     protected void setupConfigGuiStuff() {
         configWindowController = new ConfigurationWindowController();
 
@@ -195,20 +227,21 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
      * @param event Object that describes the purpose/context of the fired event.
      */
     public void handleModelEvent(ModelEvent event) {
-        if(event.getEventType().equals(ModelEventType.ELEMENT_FOLDER_DELETED)){
+        if(event.getEventType().equals(ModelEventType.FOLDER_DELETED)) {
             updateFileTreeView(event, null);
             return;
         }
-        PlanElement modelElement = event.getElement();
-        ViewModelElement viewModelElement = viewModelManager.getViewModelElement(modelElement);
+        ViewModelElement viewModelElement = viewModelManager.updateViewModel(event);
 
         switch (event.getElementType()) {
             case Types.MASTERPLAN:
             case Types.PLAN:
             case Types.PLANTYPE:
             case Types.BEHAVIOUR:
+                updateGeneratedCode(event, viewModelElement);
             case Types.ROLESET:
             case Types.TASKREPOSITORY:
+            case Types.CONFIGURATION:
                 updateRepos(event.getEventType(), viewModelElement);
                 updateFileTreeView(event, viewModelElement);
                 break;
@@ -216,12 +249,30 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
                 updateRepos(event.getEventType(), viewModelElement);
                 break;
         }
-        // Generate files for moved code
-        if(event.getEventType() == ModelEventType.ELEMENT_ATTRIBUTE_CHANGED  && "relativeDirectory".equals(event.getChangedAttribute())) {
-            mainWindowController.waitOnProgressLabel(() -> generateCode(new GuiModificationEvent(GuiEventType.GENERATE_ALL_ELEMENTS, event.getElementType(),
-                    modelElement.getName()), mainWindowController.getStatusText()));
+    }
+
+    /**
+     * Generate files for moved code
+     * @param event
+     * @param viewModelElement
+     */
+    private void updateGeneratedCode(ModelEvent event, ViewModelElement viewModelElement) {
+        switch(event.getEventType()) {
+            case ELEMENT_ATTRIBUTE_CHANGED:
+                // when something got moved, regenerate code into right folder
+                if ("relativeDirectory".equals(event.getChangedAttribute())) {
+                    mainWindowController.waitOnProgressLabel(() -> generateCode(new GuiModificationEvent(GuiEventType.GENERATE_ALL_ELEMENTS, event.getElementType(),
+                            viewModelElement.getName()), mainWindowController.getStatusText()));
+                }
+                break;
+            case ELEMENT_DELETED:
+                // when a Behaviour is deleted, regenerate the BehaviourCreator
+                if(viewModelElement instanceof BehaviourViewModel) {
+                    mainWindowController.waitOnProgressLabel(() -> generateCode(new GuiModificationEvent(GuiEventType.GENERATE_ALL_ELEMENTS, event.getElementType(),
+                            event.getElement().getName()), mainWindowController.getStatusText()));
+                }
+                break;
         }
-        updateViewModel(event, viewModelElement, modelElement);
     }
 
     /**
@@ -234,9 +285,11 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
         switch (eventType) {
             case ELEMENT_PARSED:
             case ELEMENT_CREATED:
+            case ELEMENT_CREATED_AND_ADDED:
                 repoViewModel.addElement(viewModelElement);
                 break;
             case ELEMENT_DELETED:
+            case ELEMENT_REMOVED_AND_DELETED:
                 repoViewModel.removeElement(viewModelElement);
                 break;
         }
@@ -265,65 +318,14 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
                     mainWindowController.getFileTreeView().addViewModelElement(viewModelElement);
                 }
                 break;
-            case ELEMENT_FOLDER_DELETED:
+            case FOLDER_DELETED:
+                // This should be unnecessary see: https://github.com/dasys-lab/alica-plan-designer-fx/issues/112
                 mainWindowController.getFileTreeView().removeFolder(event.getChangedAttribute());
                 break;
         }
     }
 
-    /**
-     * Handles the model event for the the view model elements.
-     *
-     * @param event
-     * @param viewModelElement
-     * @param planElement
-     */
-    private void updateViewModel(ModelEvent event, ViewModelElement viewModelElement, PlanElement planElement) {
-        switch (event.getEventType()) {
-            case ELEMENT_DELETED:
-            case ELEMENT_REMOVED:
-                viewModelManager.removeElement(event.getParentId(), viewModelElement, event.getRelatedObjects());
-                break;
-            case ELEMENT_ATTRIBUTE_CHANGED:
-                viewModelManager.changeElementAttribute(viewModelElement, event.getChangedAttribute(), event.getNewValue(), event.getOldValue());
-                if(event.getChangedAttribute().equals("name")) {
-                    viewModelElement.setName(planElement.getName());
-                    updateFileTreeView(event, viewModelElement);
-                }
-                if(event.getChangedAttribute().equals("masterPlan")) {
-                    updateFileTreeView(event, viewModelElement);
-                }
-                break;
-            case ELEMENT_PARSED:
-            case ELEMENT_CREATED:
-            case ELEMENT_ADDED:
-                viewModelManager.addElement(event);
-                break;
-            case ELEMENT_CONNECTED:
-                viewModelManager.connectElement(event);
-                break;
-            case ELEMENT_DISCONNECTED:
-                viewModelManager.disconnectElement(event);
-                break;
-            case ELEMENT_CHANGED_POSITION:
-                viewModelManager.changePosition((PlanElementViewModel) viewModelElement, event);
-                break;
-            default:
-                System.out.println("Controller.updateViewModel(): Event type " + event.getEventType() + " is not handled.");
-                break;
-        }
 
-        if (event.getUiElement() != null && event.getUiElement().getBendPoints().size() != 0) {
-            TransitionViewModel transition = (TransitionViewModel) viewModelElement;
-            transition.getBendpoints().clear();
-            for (BendPoint bendPoint : event.getUiElement().getBendPoints()) {
-                BendPointViewModel bendPointViewModel = (BendPointViewModel) viewModelManager.getViewModelElement(bendPoint);
-                transition.addBendpoint(bendPointViewModel);
-            }
-            ModelEvent modelEvent = new ModelEvent(ModelEventType.ELEMENT_CREATED, planElement, Types.BENDPOINT);
-            updateViewModel(modelEvent, viewModelElement, planElement);
-        }
-    }
 
     /**
      * Called by the 'ShowUsage'-ContextMenu of RepositoryHBoxes
@@ -500,12 +502,6 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
      * @param path
      */
     public void handleFileSystemEvent(WatchEvent event, Path path) {
-        // A change in a sub-directory also creates an event for the parent-directory. This event must be ignored,
-        // because its filename is only the name of the subdirectory
-        /*if (!path.toFile().isFile()) {
-            return;
-        }*/
-
         WatchEvent.Kind kind = event.kind();
         ModelModificationQuery mmq;
         if (kind.equals((StandardWatchEventKinds.ENTRY_MODIFY))) {
@@ -673,7 +669,9 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
     @Override
     public List<File> getGeneratedFilesForAbstractPlan(AbstractPlan abstractPlan) {
         if(abstractPlan instanceof Behaviour) {
-            return generatedSourcesManager.getGeneratedFilesForBehaviour((Behaviour) abstractPlan);
+            List<File> fileList = generatedSourcesManager.getGeneratedFilesForBehaviour((Behaviour) abstractPlan);
+            fileList.addAll(generatedSourcesManager.getGeneratedConstraintFilesForBehaviour((Behaviour) abstractPlan));
+            return fileList;
         } else if (abstractPlan instanceof Plan) {
             List<File> fileList = generatedSourcesManager.getGeneratedConditionFilesForPlan(abstractPlan);
             fileList.addAll(generatedSourcesManager.getGeneratedConstraintFilesForPlan(abstractPlan));
@@ -688,4 +686,15 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
                 abstractPlan.getName()), mainWindowController.getStatusText()));
     }
 
+    @Override
+    public File getAutoGeneratedSourceFile(long modelElementId) {
+        AbstractPlan abstractPlan = (AbstractPlan) this.modelManager.getPlanElement(modelElementId);
+        List<File> generatedFilesList = getGeneratedFilesForAbstractPlan(abstractPlan);
+        return generatedFilesList.get(1);
+    }
+
+    @Override
+    public String getCodeEditorCommand() {
+        return configurationManager.getEditorExecutablePath();
+    }
 }

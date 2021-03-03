@@ -18,7 +18,6 @@ public class DeleteBendpoint extends UiPositionCommand {
     protected UiElement uiElement;
     protected int index;
 
-
     public DeleteBendpoint(ModelManager modelManager, ModelModificationQuery mmq) {
         super(modelManager, mmq);
         this.transition = (Transition) modelManager.getPlanElement(mmq.getElementId());
@@ -38,14 +37,14 @@ public class DeleteBendpoint extends UiPositionCommand {
         HashMap<String, Long> bendPointMap = new HashMap<>();
         bendPointMap.put(Types.BENDPOINT, bendPoint.getId());
         uiElement.removeBendpoint(bendPoint);
-        this.modelManager.dropPlanElement(mmq.getElementType(), bendPoint, false);
-        this.fireEvent(ModelEventType.ELEMENT_REMOVED, this.transition, bendPointMap);
+        modelManager.dropPlanElement(mmq.getElementType(), bendPoint, false);
+        fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.transition, bendPointMap);
     }
 
     @Override
     public void undoCommand() {
         uiElement.getBendPoints().add(index, bendPoint);
-        this.modelManager.storePlanElement(mmq.getElementType(), bendPoint, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.bendPoint.getTransition());
+        modelManager.storePlanElement(mmq.getElementType(), bendPoint, false);
+        fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.bendPoint.getTransition());
     }
 }

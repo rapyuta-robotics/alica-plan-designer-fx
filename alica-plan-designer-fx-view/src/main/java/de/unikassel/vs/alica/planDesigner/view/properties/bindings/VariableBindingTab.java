@@ -7,6 +7,7 @@ import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHand
 import de.unikassel.vs.alica.planDesigner.view.I18NRepo;
 import de.unikassel.vs.alica.planDesigner.view.Types;
 import de.unikassel.vs.alica.planDesigner.view.model.*;
+import javafx.beans.InvalidationListener;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.*;
 
@@ -68,18 +69,32 @@ public class VariableBindingTab extends Tab {
         ArrayList<AbstractPlanViewModel> hasVariablesViewArrayList = new ArrayList<>();
         if (parentViewModel.getType() == Types.STATE) {
             variableBindingTable.setVariablesDropDownContent(((PlanViewModel) guiModificationHandler.getViewModelElement(this.parentViewModel.getParentId())).getVariables());
-            for (PlanElementViewModel abstractPlanViewModel : ((StateViewModel) this.parentViewModel).getAbstractPlans()) {
-                hasVariablesViewArrayList.add((AbstractPlanViewModel) abstractPlanViewModel);
+            for (ConfAbstractPlanWrapperViewModel wrapperViewModel : ((StateViewModel) this.parentViewModel).getConfAbstractPlanWrappers()) {
+                hasVariablesViewArrayList.add((AbstractPlanViewModel) wrapperViewModel.getAbstractPlan());
             }
             variableBindingTable.setSubPlanDropDownContent(hasVariablesViewArrayList);
         } else if (parentViewModel.getType() == Types.PLANTYPE) {
             variableBindingTable.setVariablesDropDownContent(((PlanTypeViewModel) this.parentViewModel).getVariables());
-            for (AnnotatedPlanView annotatedPlanView : ((PlanTypeViewModel) this.parentViewModel).getPlansInPlanType()) {
-                if (annotatedPlanView.isActivated()) {
-                    hasVariablesViewArrayList.add((AbstractPlanViewModel) guiModificationHandler.getViewModelElement(annotatedPlanView.getPlanId()));
+
+            //  Listener: Update Variable in Variable BindingsTab
+            ((PlanTypeViewModel) this.parentViewModel).getVariables().addListener((InvalidationListener) change -> {
+                variableBindingTable.setVariablesDropDownContent(((PlanTypeViewModel) this.parentViewModel).getVariables());
+                // Update Variable BindingsTab if Name change
+                for (VariableViewModel variableViewModel: ((PlanTypeViewModel) this.parentViewModel).getVariables()) {
+                    variableViewModel.nameProperty().addListener(observable -> {
+                        variableBindingTable.setVariablesDropDownContent(((PlanTypeViewModel) this.parentViewModel).getVariables());
+                    });
                 }
-            }
-            variableBindingTable.setSubPlanDropDownContent(hasVariablesViewArrayList);
+            });
+
+            // Listener: Update SubPlan in Variable BindingsTab
+            ((PlanTypeViewModel) this.parentViewModel).getPlansInPlanType().addListener((InvalidationListener) change -> {
+                hasVariablesViewArrayList.clear();
+                for (AnnotatedPlanViewModel annotatedPlanViewModel : ((PlanTypeViewModel) this.parentViewModel).getPlansInPlanType()) {
+                    hasVariablesViewArrayList.add((AbstractPlanViewModel) guiModificationHandler.getViewModelElement(annotatedPlanViewModel.getPlanId()));
+                }
+                variableBindingTable.setSubPlanDropDownContent(hasVariablesViewArrayList);
+            });
         } else {
             return;
         }

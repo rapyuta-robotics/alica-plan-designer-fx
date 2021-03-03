@@ -52,11 +52,13 @@ public class TransitionTool extends AbstractTool {
                 public void handle(MouseEvent event) {
                     Node target = (Node) event.getTarget();
                     Parent parent = target.getParent();
-                    if (parent instanceof StateContainer)  {
+                    if (parent instanceof StateContainer) {
                         //no transition to itself
-                        if(inState == ((StateContainer) parent).getState()){
+                        if (inState == ((StateContainer) parent).getState()) {
                             setCursor(forbiddenCursor);
-                        } else { setCursor(addCursor); }
+                        } else {
+                            setCursor(addCursor);
+                        }
                         //no duplicate transition allowed
                         if (inState != null) {
                             if (((StateContainer) parent).getState().getInTransitions().size() != 0 && inState.getOutTransitions().size() != 0) {
@@ -66,20 +68,22 @@ public class TransitionTool extends AbstractTool {
                                     }
                                 }
                             }
-                        } else { setCursor(addCursor); }
+                        } else {
+                            setCursor(addCursor);
+                        }
                     } else if (target instanceof StackPane) {
                         if (inState != null) {
                             setCursor(bendPointCursor);
                         } else {
                             setCursor(imageCursor);
                         }
-                    }else if (parent instanceof BendpointContainer){
+                    } else if (parent instanceof BendpointContainer) {
                         if (inState == null) {
                             setCursor(bendPointDeleteCursor);
                         } else {
                             setCursor(forbiddenCursor);
                         }
-                    }else if (parent instanceof TransitionContainer){
+                    } else if (parent instanceof TransitionContainer) {
                         if (inState == null) {
                             setCursor(bendPointCursor);
                         } else {
@@ -104,13 +108,17 @@ public class TransitionTool extends AbstractTool {
                     Node parent = target.getParent();
                     IGuiModificationHandler handler = MainWindowController.getInstance().getGuiModificationHandler();
 
+                    if (parent instanceof StackPane) {
+                        return;
+                    }
+
                     if (inState != null && inState != ((StateContainer) parent).getState()) {
                         if (parent instanceof StateContainer) {
                             // SET ENDPOINT
                             StateViewModel outState = ((StateContainer) parent).getState();
                             //no duplicate transition allowed
-                            for (TransitionViewModel transitionViewModel: outState.getInTransitions()) {
-                                if(inState.getOutTransitions().contains(transitionViewModel)){
+                            for (TransitionViewModel transitionViewModel : outState.getInTransitions()) {
+                                if (inState.getOutTransitions().contains(transitionViewModel)) {
                                     return;
                                 }
                             }
@@ -156,17 +164,15 @@ public class TransitionTool extends AbstractTool {
                         if (parent instanceof BendpointContainer) {
                             // REMOVE BENDPOINT
                             BendpointContainer bpC = (BendpointContainer) parent;
-                            TransitionContainer tC = bpC.getTransitionContainer();
-
                             GuiModificationEvent deleteBendPointEvent = new GuiModificationEvent(GuiEventType.DELETE_ELEMENT, Types.BENDPOINT, null);
-                            deleteBendPointEvent.setElementId(tC.getContainedElement().getId());
+                            deleteBendPointEvent.setElementId(bpC.getPlanElementViewModel().getParentId());
                             HashMap<String, Long> bendpoint = new HashMap<String, Long>();
-                            bendpoint.put(bpC.getContainedElement().getType(), bpC.getContainedElement().getId());
+                            bendpoint.put(bpC.getPlanElementViewModel().getType(), bpC.getPlanElementViewModel().getId());
                             deleteBendPointEvent.setRelatedObjects(bendpoint);
                             deleteBendPointEvent.setParentId(TransitionTool.this.planTab.getSerializableViewModel().getId());
                             handler.handle(deleteBendPointEvent);
 
-                        }else if (parent instanceof TransitionContainer){
+                        } else if (parent instanceof TransitionContainer) {
                             // ADD BENDPOINT
                             Point2D point = TransitionTool.this.getLocalCoordinatesFromEvent(event);
                             if (point == null) {
@@ -183,17 +189,17 @@ public class TransitionTool extends AbstractTool {
                             // get the index of the bendpoint
                             long index = 0;
 
-                            if(transition.getBendpoints().size()==0){
+                            if (transition.getBendpoints().size() == 0) {
 
                             } else {
                                 Point2D p1 = new Point2D(transition.getContainedElement().getInState().getXPosition(), transition.getContainedElement().getInState().getYPosition());
                                 Point2D p2 = new Point2D(transition.getBendpoints().get(0).getLayoutX(), transition.getBendpoints().get(0).getLayoutY());
                                 Point2D p3 = new Point2D((float) point.getX(), (float) point.getY());
                                 double distance = distancePointToLineSegment(p1, p3, p2);
-                                if(distance < 10){
+                                if (distance < 10) {
 
                                 } else {
-                                    if(transition.getBendpoints().size() == 1){
+                                    if (transition.getBendpoints().size() == 1) {
                                         index = 1;
                                     } else {
                                         for (int i = 1; i < transition.getBendpoints().size(); i++) {
@@ -247,20 +253,20 @@ public class TransitionTool extends AbstractTool {
         double angle2 = atan2(aby, abx);
 
         double alpha = angle1 - angle2;
-        if(alpha < -PI){
-            alpha += 2.0*PI;
-        } else if(alpha > PI){
-            alpha -= 2.0*PI;
+        if (alpha < -PI) {
+            alpha += 2.0 * PI;
+        } else if (alpha > PI) {
+            alpha -= 2.0 * PI;
         }
 
-        double distanceAtoP = sqrt(apx*apx + apy*apy);
-        if(alpha >PI/2 || alpha < -PI/2){
+        double distanceAtoP = sqrt(apx * apx + apy * apy);
+        if (alpha > PI / 2 || alpha < -PI / 2) {
             return distanceAtoP;
         }
 
-        double dist1 = cos(alpha) *distanceAtoP;
-        if(dist1 > sqrt(abx*abx + aby*aby)){
-            return sqrt(pow(p.getX() - b.getY(), 2)+ pow(p.getY() - b.getY(), 2));
+        double dist1 = cos(alpha) * distanceAtoP;
+        if (dist1 > sqrt(abx * abx + aby * aby)) {
+            return sqrt(pow(p.getX() - b.getY(), 2) + pow(p.getY() - b.getY(), 2));
         } else {
             return abs(sin(alpha)) * distanceAtoP;
         }

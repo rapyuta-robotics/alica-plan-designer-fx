@@ -21,6 +21,10 @@ public class FileSystemUtil {
                 return Paths.get(mmq.getAbsoluteDirectory(), mmq.getName() + "." + Extensions.TASKREPOSITORY).toFile();
             case Types.ROLESET:
                 return Paths.get(mmq.getAbsoluteDirectory(), mmq.getName() + "." + Extensions.ROLESET).toFile();
+            case Types.CONFIGURATION:
+                return Paths.get(mmq.getAbsoluteDirectory(), mmq.getName() + "." + Extensions.CONFIGURATION).toFile();
+            case Types.UIEXTENSION:
+                return Paths.get(mmq.getAbsoluteDirectory(), mmq.getName() + "." + Extensions.PLAN_EXTENSION).toFile();
             default:
                 System.err.println("FileSystemUtil: Unknown eventType gets ignored!");
                 return null;
@@ -68,7 +72,7 @@ public class FileSystemUtil {
      * @param planElement whose file ending is to be determined
      * @return file ending of the plan element
      */
-    public static String getExtension(SerializablePlanElement planElement) {
+    public static String getType(SerializablePlanElement planElement) {
         if (planElement instanceof Plan) {
             return Extensions.PLAN;
         } else if (planElement instanceof Behaviour) {
@@ -77,6 +81,8 @@ public class FileSystemUtil {
             return Extensions.PLANTYPE;
         } else if (planElement instanceof TaskRepository) {
             return Extensions.TASKREPOSITORY;
+        } else if (planElement instanceof Configuration) {
+            return Extensions.CONFIGURATION;
         } else if (planElement instanceof RoleSet) {
             return Extensions.ROLESET;
         } else {
@@ -84,7 +90,7 @@ public class FileSystemUtil {
         }
     }
 
-    public static String getExtension(File file) {
+    public static String getType(File file) {
         switch (getFileExtensionInternal(file)) {
             case Extensions.PLAN:
                 return Types.PLAN;
@@ -98,6 +104,8 @@ public class FileSystemUtil {
                 return Types.ROLESET;
             case Extensions.PLAN_EXTENSION:
                 return Types.UIEXTENSION;
+            case Extensions.CONFIGURATION:
+                return Types.CONFIGURATION;
             default:
                 return Types.UNSUPPORTED;
         }
@@ -115,6 +123,8 @@ public class FileSystemUtil {
                 return TaskRepository.class;
             case Extensions.ROLESET:
                 return RoleSet.class;
+            case Extensions.CONFIGURATION:
+                return Configuration.class;
             case Extensions.PLAN_EXTENSION:
                 return UiExtension.class;
             default:

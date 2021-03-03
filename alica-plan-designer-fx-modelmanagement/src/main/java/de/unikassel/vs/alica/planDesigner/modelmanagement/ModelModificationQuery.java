@@ -57,7 +57,10 @@ public class ModelModificationQuery {
                 elementType = Types.ROLESET;
                 break;
             case Extensions.PLAN_EXTENSION:
-                elementType = Types.PLAN; //TODO: Handle plan-stateUiElement-ending - Files
+                elementType = Types.UIEXTENSION;
+                break;
+            case Extensions.CONFIGURATION:
+                elementType = Types.CONFIGURATION;
                 break;
             default:
                 elementType = Types.UNSUPPORTED;

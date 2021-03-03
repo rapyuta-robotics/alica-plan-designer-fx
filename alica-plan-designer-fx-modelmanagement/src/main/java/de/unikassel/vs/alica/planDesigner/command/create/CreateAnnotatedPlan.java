@@ -37,13 +37,13 @@ public class CreateAnnotatedPlan extends Command {
     public void doCommand() {
         this.planType.addAnnotatedPlan(annotatedPlan);
         this.modelManager.storePlanElement(Types.ANNOTATEDPLAN, annotatedPlan, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, annotatedPlan);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, annotatedPlan);
     }
 
     @Override
     public void undoCommand() {
         planType.removeAnnotatedPlan(annotatedPlan);
         modelManager.dropPlanElement(Types.ANNOTATEDPLAN, annotatedPlan, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, annotatedPlan);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, annotatedPlan);
     }
 }

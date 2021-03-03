@@ -23,13 +23,13 @@ public class DeleteTaskFromRepository extends Command {
     public void doCommand() {
         this.taskRepository.removeTask(this.task);
         this.modelManager.dropPlanElement(Types.TASK, this.task, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.task);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.task);
     }
 
     @Override
     public void undoCommand() {
         this.taskRepository.addTask(this.task);
         this.modelManager.storePlanElement(Types.TASK, this.task, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.task);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.task);
     }
 }

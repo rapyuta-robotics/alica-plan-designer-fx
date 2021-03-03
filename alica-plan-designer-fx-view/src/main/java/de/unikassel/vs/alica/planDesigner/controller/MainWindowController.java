@@ -105,6 +105,8 @@ public class MainWindowController implements Initializable {
 
     // ---- HANDLE & CONTROLLER ----
     private ConfigurationWindowController configWindowController;
+    private AlicaConfWindowController alicaConfWindowController;
+    private GlobalsConfWindowController globalsConfWindowController;
     private IGuiStatusHandler guiStatusHandler;
     private IGuiModificationHandler guiModificationHandler;
 
@@ -148,7 +150,22 @@ public class MainWindowController implements Initializable {
         return configWindowController;
     }
 
+    public AlicaConfWindowController getAlicaConfWindowController() { return alicaConfWindowController; }
+
+    public GlobalsConfWindowController getGlobalsConfWindowController() {
+        return globalsConfWindowController;
+    }
+
     // ---- SETTER ----
+
+    public void setGlobalsConfWindowController(GlobalsConfWindowController globalsConfWindowController) {
+        this.globalsConfWindowController = globalsConfWindowController;
+    }
+
+    public void setAlicaConfWindowController(AlicaConfWindowController alicaConfWindowController){
+        this.alicaConfWindowController = alicaConfWindowController;
+    }
+
     public void setConfigWindowController(ConfigurationWindowController configWindowController) {
         this.configWindowController = configWindowController;
     }
@@ -175,6 +192,13 @@ public class MainWindowController implements Initializable {
 
         if (configWindowController == null) {
             throw new RuntimeException("The member configWindowController need to be set through the public setter, before calling initialize()!");
+        }
+
+        if (alicaConfWindowController == null) {
+            throw new RuntimeException("The member alicaConfWindowController need to be set through the public setter, before calling initialize()!");
+        }
+        if (globalsConfWindowController == null) {
+            throw new RuntimeException("The member globalsConfWindowController need to be set through the public setter, before calling initialize()!");
         }
 
         // clear
@@ -206,7 +230,7 @@ public class MainWindowController implements Initializable {
 
         // ---- FILE MENU ----
         fileMenu = new Menu(i18NRepo.getString("label.menu.file"));
-        fileMenu.getItems().add(((FileTreeViewContextMenu)fileTreeView.getContextMenu()).getNewResourceMenu());
+        fileMenu.getItems().add(((FileTreeViewContextMenu) fileTreeView.getContextMenu()).getNewResourceMenu());
 
         // -- SAVE MENU --
         MenuItem saveItem = new MenuItem(i18NRepo.getString("label.menu.file.save"));
@@ -222,7 +246,7 @@ public class MainWindowController implements Initializable {
         menus.add(fileMenu);
 
         // ---- EDIT MENU ----
-        editMenu = new EditMenu(fileTreeView, editorTabPane, repositoryTabPane, configWindowController);
+        editMenu = new EditMenu(fileTreeView, editorTabPane, repositoryTabPane, configWindowController, alicaConfWindowController, globalsConfWindowController);
         editMenu.setId("editMenu");
         editMenu.setGuiModificationHandler(this.guiModificationHandler);
         menus.add(editMenu);

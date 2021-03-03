@@ -21,6 +21,7 @@ public class CreateEntryPoint extends UiPositionCommand {
 
     protected EntryPoint createEntryPoint() {
         EntryPoint entryPoint = new EntryPoint();
+        entryPoint.setMaxCardinality(Integer.MAX_VALUE);
         entryPoint.setPlan((Plan) this.modelManager.getPlanElement(mmq.getParentId()));
         entryPoint.setTask((Task) this.modelManager.getPlanElement(mmq.getRelatedObjects().get(Types.TASK)));
         return entryPoint;
@@ -31,7 +32,7 @@ public class CreateEntryPoint extends UiPositionCommand {
         this.uiExtension.getPlan().addEntryPoint(entryPoint);
         this.uiExtension.add(entryPoint.getId(), uiElement);
         this.modelManager.storePlanElement(Types.ENTRYPOINT, this.entryPoint, false);
-        this.fireEvent(ModelEventType.ELEMENT_CREATED, this.entryPoint);
+        this.fireEvent(ModelEventType.ELEMENT_CREATED_AND_ADDED, this.entryPoint);
     }
 
     @Override
@@ -39,6 +40,6 @@ public class CreateEntryPoint extends UiPositionCommand {
         this.uiExtension.getPlan().removeEntryPoint(entryPoint);
         this.uiExtension.remove(entryPoint.getId());
         this.modelManager.dropPlanElement(Types.ENTRYPOINT, this.entryPoint, false);
-        this.fireEvent(ModelEventType.ELEMENT_DELETED, this.entryPoint);
+        this.fireEvent(ModelEventType.ELEMENT_REMOVED_AND_DELETED, this.entryPoint);
     }
 }

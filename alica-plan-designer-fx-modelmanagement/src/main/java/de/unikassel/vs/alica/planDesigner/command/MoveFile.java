@@ -16,7 +16,7 @@ public class MoveFile extends ChangeAttributeCommand {
     public MoveFile(ModelManager modelManager, ModelModificationQuery mmq) {
         super(modelManager, mmq);
         this.elementToMove = (SerializablePlanElement) modelManager.getPlanElement(mmq.getElementId());
-        this.ending = FileSystemUtil.getExtension(this.elementToMove);
+        this.ending = FileSystemUtil.getType(this.elementToMove);
         this.newAbsoluteDirectory = mmq.getAbsoluteDirectory();
         this.originalRelativeDirectory = this.elementToMove.getRelativeDirectory();
         this.type = mmq.getElementType();
@@ -30,7 +30,9 @@ public class MoveFile extends ChangeAttributeCommand {
 
     @Override
     public void undoCommand() {
-        this.modelManager.moveFile(elementToMove, type, originalRelativeDirectory, ending);
-        fireEvent(elementToMove, type, "relativeDirectory");
+        throw new RuntimeException("MoveFile: Undo is not completely supported, yet!");
+        // make the originalRelativeDirectory an absolute one, because moveFile(..) expect an absolut path
+//        this.modelManager.moveFile(elementToMove, type, originalRelativeDirectory, ending);
+//        fireEvent(elementToMove, type, "relativeDirectory");
     }
 }

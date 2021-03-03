@@ -1,6 +1,7 @@
 package de.unikassel.vs.alica.planDesigner.view.model;
 
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
+import de.unikassel.vs.alica.planDesigner.view.Types;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -16,8 +17,8 @@ public class SynchronisationViewModel extends PlanElementViewModel {
     protected final SimpleBooleanProperty failOnSyncTimeout = new SimpleBooleanProperty(this, "failOnSyncTimeout", false);
     protected ObservableList<TransitionViewModel> transitions;
 
-    public SynchronisationViewModel(long id, String name, String type) {
-        super(id, name, type);
+    public SynchronisationViewModel(long id, String name) {
+        super(id, name, Types.SYNCHRONISATION);
         this.transitions = FXCollections.observableArrayList(new ArrayList<>());
 
         this.uiPropertyList.clear();

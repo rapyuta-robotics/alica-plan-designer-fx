@@ -1,14 +1,11 @@
 package de.unikassel.vs.alica.planDesigner.view.editor.container;
 
-
-import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IShowGeneratedSourcesEventHandler;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.planTab.PlanEditorGroup;
 import de.unikassel.vs.alica.planDesigner.view.editor.tab.planTab.PlanTab;
 import de.unikassel.vs.alica.planDesigner.view.editor.tools.AbstractTool;
+import de.unikassel.vs.alica.planDesigner.view.img.AlicaIcon;
 import de.unikassel.vs.alica.planDesigner.view.menu.ShowGeneratedSourcesMenuItem;
-import de.unikassel.vs.alica.planDesigner.view.model.EntryPointViewModel;
-import de.unikassel.vs.alica.planDesigner.view.model.PlanElementViewModel;
-import de.unikassel.vs.alica.planDesigner.view.model.StateViewModel;
+import de.unikassel.vs.alica.planDesigner.view.model.*;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.Event;
@@ -18,11 +15,13 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+
 
 /**
  * The {@link Container} is a base class for visual representations, with a alicamodel object to hold changes from the visualisation
@@ -30,12 +29,10 @@ import javafx.scene.paint.Color;
  */
 public abstract class Container extends Pane implements DraggableEditorElement {
 
-
     protected static final Effect standardEffect = new DropShadow(BlurType.THREE_PASS_BOX,
-            new Color(0,0,0,0.8), 10, 0, 0, 0);
+            new Color(0, 0, 0, 0.8), 10, 0, 0, 0);
 
     protected PlanElementViewModel planElementViewModel;
-    protected IShowGeneratedSourcesEventHandler showGeneratedSourcesEventHandler;
     protected Node visualRepresentation;
     protected PlanTab planTab;
 
@@ -43,9 +40,8 @@ public abstract class Container extends Pane implements DraggableEditorElement {
      * @param planElementViewModel
      * @param planTab
      */
-    public Container(PlanElementViewModel planElementViewModel, IShowGeneratedSourcesEventHandler showGeneratedSourcesEventHandler, PlanTab planTab) {
+    public Container(PlanElementViewModel planElementViewModel, PlanTab planTab) {
         this.planElementViewModel = planElementViewModel;
-        this.showGeneratedSourcesEventHandler = showGeneratedSourcesEventHandler;
         this.planTab = planTab;
         setBackground(Background.EMPTY);
         setPickOnBounds(false);
@@ -53,7 +49,19 @@ public abstract class Container extends Pane implements DraggableEditorElement {
         setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
             @Override
             public void handle(ContextMenuEvent e) {
-                ContextMenu contextMenu = new ContextMenu(new ShowGeneratedSourcesMenuItem(Container.this.planElementViewModel.getId(), Container.this.showGeneratedSourcesEventHandler));
+                if (planElementViewModel instanceof StateViewModel
+                        || planElementViewModel instanceof PlanTypeViewModel
+                        || planElementViewModel instanceof SynchronisationViewModel) {
+                    // nothing to show for states, plantypes, and synchronisations
+                    return;
+                }
+
+                ContextMenu contextMenu;
+                if (planElementViewModel instanceof BehaviourViewModel || planElementViewModel instanceof PlanViewModel) {
+                    contextMenu = new ContextMenu(new ShowGeneratedSourcesMenuItem(planElementViewModel.getId()));
+                } else {
+                    contextMenu = new ContextMenu(new ShowGeneratedSourcesMenuItem(planElementViewModel.getParentId()));
+                }
                 contextMenu.show(Container.this, e.getScreenX(), e.getScreenY());
             }
         });
@@ -81,11 +89,11 @@ public abstract class Container extends Pane implements DraggableEditorElement {
             } else {
                 // Find the first Container in the hierarchy above the targeted Node
                 Node targetNode = event.getPickResult().getIntersectedNode();
-                while(targetNode != null && !(targetNode instanceof Container)) {
+                while (targetNode != null && !(targetNode instanceof Container)) {
                     targetNode = targetNode.getParent();
                 }
                 // If the targeted Container is this, select this and consume the event
-                if(targetNode == this) {
+                if (targetNode == this) {
                     handleMouseClickedEvent(event);
                 }
                 // If the targeted Container is not this (meaning it's a child of this) don't consume the event to
@@ -95,7 +103,7 @@ public abstract class Container extends Pane implements DraggableEditorElement {
     }
 
     protected void handleMouseClickedEvent(MouseEvent event) {
-        Container.this.planTab.setSelectedContainer(Container.this);
+        planTab.setSelectedContainer(this);
         event.consume();
     }
 
@@ -163,13 +171,13 @@ public abstract class Container extends Pane implements DraggableEditorElement {
     /**
      * Making the {@link Container} update its position, whenever the {@link PlanElementViewModel}
      * changes its coordinates.
-     *
+     * <p>
      * Method also sets the current position according to the {@link PlanElementViewModel} on call.
      *
-     * @param node  the Node to change the position of
-     * @param planElementViewModel  the element, that containsPlan the coordinates to listen to
+     * @param node                 the Node to change the position of
+     * @param planElementViewModel the element, that containsPlan the coordinates to listen to
      */
-    public void createPositionListeners(Node node, PlanElementViewModel planElementViewModel){
+    public void createPositionListeners(Node node, PlanElementViewModel planElementViewModel) {
         //Set to initial Position
         node.setLayoutX(planElementViewModel.getXPosition());
         node.setLayoutY(planElementViewModel.getYPosition());
@@ -187,18 +195,11 @@ public abstract class Container extends Pane implements DraggableEditorElement {
     }
 
     public void createAbstractPlanToStateListeners(StateViewModel state) {
-        state.getAbstractPlans().addListener(new ListChangeListener<PlanElementViewModel>() {
+        state.getConfAbstractPlanWrappers().addListener(new ListChangeListener<PlanElementViewModel>() {
             @Override
             public void onChanged(Change<? extends PlanElementViewModel> c) {
                 Platform.runLater(Container.this::redrawElement);
             }
-        });
-    }
-
-    public void createTaskToEntryPointListeners(Node node, EntryPointViewModel entryPoint){
-
-        entryPoint.taskProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(this::redrawElement);
         });
     }
 
@@ -226,11 +227,17 @@ public abstract class Container extends Pane implements DraggableEditorElement {
 
     public abstract Color getVisualisationColor();
 
-    @Override
-    public void redrawElement() {}
+    public ImageView getGraphic(String iconName) {
+        return new ImageView(new AlicaIcon(iconName, AlicaIcon.Size.SMALL));
+    }
 
     @Override
-    public void setDragged(boolean dragged) {}
+    public void redrawElement() {
+    }
+
+    @Override
+    public void setDragged(boolean dragged) {
+    }
 
     @Override
     public boolean wasDragged() {

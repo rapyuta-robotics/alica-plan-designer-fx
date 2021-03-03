@@ -1,6 +1,7 @@
 package de.unikassel.vs.alica.planDesigner.view.model;
 
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
+import de.unikassel.vs.alica.planDesigner.view.Types;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -10,8 +11,8 @@ public class VariableViewModel extends PlanElementViewModel {
 
     protected final StringProperty variableType = new SimpleStringProperty(null, "variableType", "");
 
-    public VariableViewModel(long id, String name, String elementType) {
-        super(id, name, elementType);
+    public VariableViewModel(long id, String name) {
+        super(id, name, Types.VARIABLE);
 
         this.uiPropertyList.clear();
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "comment", "relativeDirectory", "variableType"));

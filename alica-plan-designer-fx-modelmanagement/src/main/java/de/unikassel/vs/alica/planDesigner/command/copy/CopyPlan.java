@@ -67,27 +67,12 @@ public class CopyPlan extends Command {
         }
         //Set State
         for (State state: plan.getStates()) {
-            if(state instanceof TerminalState) {
-                TerminalState newTerminalState ;
-                //SuccessState or FailureState
-                if(((TerminalState) state).isSuccess()) {
-                    newTerminalState = new TerminalState(true);
-                } else {
-                    newTerminalState = new TerminalState();
-                }
-                newTerminalState.setName(state.getName());
-                newTerminalState.setComment(state.getComment());
-                newTerminalState.setParentPlan(copyPlan);
-                copyPlan.addState(newTerminalState);
+            State newState;
 
-                for (AbstractPlan abstractPlan : state.getAbstractPlans()) {
-                    newTerminalState.addAbstractPlan(abstractPlan);
-                }
+            if(state instanceof TerminalState) {
+                newState = new TerminalState(((TerminalState) state).isSuccess());
             } else {
-                State newState = new State();
-                newState.setName(state.getName());
-                newState.setComment(state.getComment());
-                newState.setParentPlan(copyPlan);
+                newState = new State();
                 if(state.getEntryPoint() != null) {
                     for (int i = 0; i < plan.getEntryPoints().size(); i++) {
                         if(plan.getEntryPoints().get(i).getId() == state.getEntryPoint().getId()){
@@ -96,12 +81,18 @@ public class CopyPlan extends Command {
                         }
                     }
                 }
-                copyPlan.addState(newState);
-
-                for (AbstractPlan abstractPlan : state.getAbstractPlans()) {
-                    newState.addAbstractPlan(abstractPlan);
+                for (ConfAbstractPlanWrapper confAbstractPlanWrapper : state.getConfAbstractPlanWrappers()) {
+                    ConfAbstractPlanWrapper newConfAbstractPlanWrapper = new ConfAbstractPlanWrapper();
+                    newConfAbstractPlanWrapper.setAbstractPlan(confAbstractPlanWrapper.getAbstractPlan());
+                    newConfAbstractPlanWrapper.setConfiguration(confAbstractPlanWrapper.getConfiguration());
+                    newState.addConfAbstractPlanWrapper(newConfAbstractPlanWrapper);
                 }
             }
+
+            newState.setName(state.getName());
+            newState.setComment(state.getComment());
+            newState.setParentPlan(copyPlan);
+            copyPlan.addState(newState);
         }
         //Set Transition
         for (Transition transition: plan.getTransitions()) {

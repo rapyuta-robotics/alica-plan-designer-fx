@@ -13,7 +13,12 @@ environment:
       _JAVA_OPTIONS: "-Dtestfx.robot=awt"
 
 # fetch repository as zip archive
-shallow_clone: true
+shallow_clone: false
+
+# list of build branches
+branches:
+  only:
+    - master
 
 # build alica-plan-designer-fx
 build_script:
@@ -44,7 +49,7 @@ cache:
 
 # files that will be uploaded
 artifacts:
-  - path: alica-plan-designer-fx-controller\target\PlanDesigner-*.jar
+  - path: target\PlanDesignerFX-*.jar
 
 deploy:
   # github artifact upload to tag/release
@@ -68,5 +73,8 @@ notifications:
     on_build_success: true
 
 # RDP for debugging
-# init:
-#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+# requires encrypted environment variable "APPVEYOR_RDP_PASSWORD"
+# The password must meet the Windows Server requirements
+# more info: https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
+#init:
+#  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
