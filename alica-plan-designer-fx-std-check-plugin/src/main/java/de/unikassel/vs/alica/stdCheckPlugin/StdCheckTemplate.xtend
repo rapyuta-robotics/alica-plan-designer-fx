@@ -1,4 +1,4 @@
-package de.unikassel.vs.alica.defaultPlugin;
+package de.unikassel.vs.alica.stdCheckPlugin;
 
 import de.unikassel.vs.alica.planDesigner.alicamodel.Plan
 import de.unikassel.vs.alica.planDesigner.alicamodel.Behaviour
