@@ -13,8 +13,7 @@ import java.util.Map;
  * can be found at de.unikassel.vs.alica.codegen.cpp.CPPGeneratorImpl
  */
 public interface IGenerator {
-
-    void setProtectedRegions(Map<String, String> protectedRegions);
+    void setGeneratedSourcesManager(GeneratedSourcesManager generatedSourcesManager);
     void createBehaviourCreator(List<Behaviour> behaviours);
     void createBehaviour(Behaviour behaviour);
     void createConditionCreator(List<Plan> plans, List<Behaviour> behaviours, List<Condition> conditions);

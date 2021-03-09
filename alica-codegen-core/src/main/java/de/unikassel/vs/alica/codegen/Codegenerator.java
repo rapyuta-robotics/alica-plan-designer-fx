@@ -66,7 +66,7 @@ public class Codegenerator implements ICodegenerator {
         generatedFiles.addAll(generatedSourcesManager.getGeneratedConstraintFilesForBehaviour(behaviour));
         generator.createBehaviourCreator(behaviours);
         generator.createConstraintsForBehaviour(behaviour);
-        generator.createBehaviours(behaviour);
+        generator.createBehaviour(behaviour);
     }
 
     public void monitorDestinationFiles(List<String> extensions) {

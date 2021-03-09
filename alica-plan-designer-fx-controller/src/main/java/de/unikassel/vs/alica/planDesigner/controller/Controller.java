@@ -5,8 +5,6 @@ import de.unikassel.vs.alica.codegen.GeneratedSourcesManager;
 import de.unikassel.vs.alica.codegen.plugin.IPlugin;
 import de.unikassel.vs.alica.codegen.plugin.PluginManager;
 import de.unikassel.vs.alica.planDesigner.ViewModelManagement.ViewModelManager;
-import de.unikassel.vs.alica.planDesigner.alicaConfiguration.AlicaConfigurationEventHandler;
-import de.unikassel.vs.alica.planDesigner.alicaConfiguration.AlicaConfigurationManager;
 import de.unikassel.vs.alica.planDesigner.alicamodel.*;
 import de.unikassel.vs.alica.planDesigner.configuration.Configuration;
 import de.unikassel.vs.alica.planDesigner.configuration.ConfigurationEventHandler;
@@ -16,8 +14,6 @@ import de.unikassel.vs.alica.planDesigner.converter.CustomPlanElementConverter;
 import de.unikassel.vs.alica.planDesigner.converter.CustomStringConverter;
 import de.unikassel.vs.alica.planDesigner.events.*;
 import de.unikassel.vs.alica.planDesigner.filebrowser.FileSystemEventHandler;
-import de.unikassel.vs.alica.planDesigner.globalsConfiguration.GlobalsConfEventHandler;
-import de.unikassel.vs.alica.planDesigner.globalsConfiguration.GlobalsConfManager;
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiStatusHandler;
 import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelManager;
@@ -63,12 +59,8 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
 
     // Common Objects
     private ConfigurationManager configurationManager;
-    private AlicaConfigurationManager alicaConfigurationManager;
-    private GlobalsConfManager globalsConfManager;
     private FileSystemEventHandler fileSystemEventHandler;
     private ConfigurationEventHandler configEventHandler;
-    private AlicaConfigurationEventHandler alicaConfigurationEventHandler;
-    private GlobalsConfEventHandler globalsConfEventHandler;
     private PluginManager pluginManager;
     private PluginEventHandler pluginEventHandler;
 
@@ -92,12 +84,6 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
         configurationManager = ConfigurationManager.getInstance();
         configurationManager.setController(this);
 
-        alicaConfigurationManager = AlicaConfigurationManager.getInstance();
-        alicaConfigurationManager.setController(this);
-
-        globalsConfManager = GlobalsConfManager.getInstance();
-        globalsConfManager.setController(this);
-
         pluginManager = PluginManager.getInstance();
 
         mainWindowController = MainWindowController.getInstance();
@@ -105,8 +91,6 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
         mainWindowController.setGuiModificationHandler(this);
 
         setupConfigGuiStuff();
-        setupAlicaConfGuiStuff();
-        setupGlobalsConfGuiStuff();
 
         fileSystemEventHandler = new FileSystemEventHandler(this);
         new Thread(fileSystemEventHandler).start(); // <- will be stopped by the PlanDesigner.isRunning() flag
@@ -144,22 +128,6 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
             modelManager.setTasksPath(activeConfiguration.getTasksPath());
             modelManager.setRolesPath(activeConfiguration.getRolesPath());
         }
-    }
-    protected void setupGlobalsConfGuiStuff() {
-        globalsConfWindowController = new GlobalsConfWindowController(0 ,"", "", "");
-
-        globalsConfEventHandler = new GlobalsConfEventHandler(globalsConfWindowController, globalsConfManager);
-        globalsConfWindowController.setHandler(globalsConfEventHandler);
-
-        mainWindowController.setGlobalsConfWindowController(globalsConfWindowController);
-    }
-    protected void setupAlicaConfGuiStuff() {
-        alicaConfWindowController = new AlicaConfWindowController();
-
-        alicaConfigurationEventHandler = new AlicaConfigurationEventHandler(alicaConfWindowController,alicaConfigurationManager);
-        alicaConfWindowController.setHandler(alicaConfigurationEventHandler);
-
-        mainWindowController.setAlicaConfWindowController(alicaConfWindowController);
     }
     protected void setupConfigGuiStuff() {
         configWindowController = new ConfigurationWindowController();

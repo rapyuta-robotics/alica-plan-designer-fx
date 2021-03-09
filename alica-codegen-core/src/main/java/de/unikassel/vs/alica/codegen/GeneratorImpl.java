@@ -17,7 +17,7 @@ public abstract class GeneratorImpl {
         }
     }
 
-    public void createBehaviours(Behaviour behaviour) {
+    public void createBehaviour(Behaviour behaviour) {
         this.createBehaviourImpl(behaviour);
         if (behaviour.getPreCondition() != null) {
             this.preConditionCreator(behaviour);
