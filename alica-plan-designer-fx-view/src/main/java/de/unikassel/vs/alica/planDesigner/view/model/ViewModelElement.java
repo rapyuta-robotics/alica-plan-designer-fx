@@ -23,6 +23,7 @@ public class ViewModelElement {
         this.id.setValue(id);
         this.name.setValue(name);
         this.type.setValue(type);
+        this.relativeDirectory.setValue("");
 
         this.uiPropertyList = new ArrayList<>();
         this.uiPropertyList.addAll(Arrays.asList("name", "id", "relativeDirectory"));

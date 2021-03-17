@@ -50,7 +50,7 @@ namespace alica
 #include "BehaviourCreator.h"
 #include "engine/BasicBehaviour.h"
 «FOR beh : behaviours»
-«IF (beh.relativeDirectory.isEmpty)»
+«IF (beh.relativeDirectory == null || beh.relativeDirectory.isEmpty)»
 #include "«beh.name».h"
 «ELSE»
 #include  "«beh.relativeDirectory»/«beh.name».h"
@@ -135,7 +135,7 @@ namespace alica
 '''
 
     def String behaviourSource(Behaviour behaviour) '''
-«IF (behaviour.relativeDirectory.isEmpty)»
+«IF (behaviour.relativeDirectory == null || behaviour.relativeDirectory.isEmpty)»
 #include "«behaviour.name».h"
 «ELSE»
 #include  "«behaviour.relativeDirectory»/«behaviour.name».h"
@@ -240,7 +240,7 @@ namespace alica
     def String utilityFunctionCreatorSource(List<Plan> plans)'''
 #include "UtilityFunctionCreator.h"
 «FOR p : plans»
-«IF (p.relativeDirectory.isEmpty)»
+«IF (p.relativeDirectory == null || p.relativeDirectory.isEmpty)»
 #include "«p.name»«p.id».h"
 «ELSE»
 #include  "«p.relativeDirectory»/«p.name»«p.id».h"
@@ -304,14 +304,14 @@ namespace alica
     def String conditionCreatorSource(List<Plan> plans, List<Behaviour> behaviours, List<Condition> conditions) '''
 #include "ConditionCreator.h"
 «FOR p : plans»
-«IF (p.relativeDirectory.isEmpty)»
+«IF (p.relativeDirectory == null || p.relativeDirectory.isEmpty)»
 #include "«p.name»«p.id».h"
 «ELSE»
 #include  "«p.relativeDirectory»/«p.name»«p.id».h"
 «ENDIF»
 «ENDFOR»
 «FOR b : behaviours»
-«IF (b.relativeDirectory.isEmpty)»
+«IF (b.relativeDirectory == null || b.relativeDirectory.isEmpty)»
 #include "«b.name»«b.id».h"
 «ELSE»
 #include  "«b.relativeDirectory»/«b.name»«b.id».h"
@@ -378,14 +378,14 @@ namespace alica
 #include "ConstraintCreator.h"
 
 «FOR plan : plans»
-«IF (plan.relativeDirectory.isEmpty)»
+«IF (plan.relativeDirectory == null || plan.relativeDirectory.isEmpty)»
 #include "constraints/«plan.name»«plan.id»Constraints.h"
 «ELSE»
 #include "«plan.relativeDirectory»/constraints/«plan.name»«plan.id»Constraints.h"
 «ENDIF»
 «ENDFOR»
 «FOR behaviour : behaviours»
-«IF (behaviour.relativeDirectory.isEmpty)»
+«IF (behaviour.relativeDirectory == null || behaviour.relativeDirectory.isEmpty)»
 #include "constraints/«behaviour.name»«behaviour.id»Constraints.h"
 «ELSE»
 #include "«behaviour.relativeDirectory»/constraints/«behaviour.name»«behaviour.id»Constraints.h"
@@ -472,7 +472,7 @@ namespace alica
 '''
 
     def String behaviourConditionSource(Behaviour behaviour, IConstraintCodeGenerator constraintCodeGenerator) '''
-«IF (behaviour.relativeDirectory.isEmpty)»
+«IF (behaviour.relativeDirectory == null || behaviour.relativeDirectory.isEmpty)»
 #include "«behaviour.name»«behaviour.id».h"
 «ELSE»
 #include  "«behaviour.relativeDirectory»/«behaviour.name»«behaviour.id».h"
@@ -535,7 +535,7 @@ namespace alica
 '''
 
     def String constraintsSource(Behaviour behaviour, IConstraintCodeGenerator constraintCodeGenerator) '''
-«IF (behaviour.relativeDirectory.isEmpty)»
+«IF (behaviour.relativeDirectory == null || behaviour.relativeDirectory.isEmpty)»
 #include "constraints/«behaviour.name»«behaviour.id»Constraints.h"
 «ELSE»
 #include "«behaviour.relativeDirectory»/constraints/«behaviour.name»«behaviour.id»Constraints.h"
@@ -598,7 +598,7 @@ namespace alica
 '''
 
     def String constraintsSource(Plan plan, IConstraintCodeGenerator constraintCodeGenerator) '''
-«IF (plan.relativeDirectory.isEmpty)»
+«IF (plan.relativeDirectory == null || plan.relativeDirectory.isEmpty)»
 #include "constraints/«plan.name»«plan.id»Constraints.h"
 «ELSE»
 #include "«plan.relativeDirectory»/constraints/«plan.name»«plan.id»Constraints.h"
@@ -867,7 +867,7 @@ namespace alica
 '''
 
     def String planSource(Plan plan, IConstraintCodeGenerator constraintCodeGenerator) '''
-«IF (plan.relativeDirectory.isEmpty)»
+«IF (plan.relativeDirectory == null || plan.relativeDirectory.isEmpty)»
 #include "«plan.name»«plan.id».h"
 «ELSE»
 #include "«plan.relativeDirectory»/«plan.name»«plan.id».h"
