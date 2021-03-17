@@ -15,8 +15,6 @@ import de.unikassel.vs.alica.planDesigner.converter.CustomPlanElementConverter;
 import de.unikassel.vs.alica.planDesigner.converter.CustomStringConverter;
 import de.unikassel.vs.alica.planDesigner.events.*;
 import de.unikassel.vs.alica.planDesigner.filebrowser.FileSystemEventHandler;
-import de.unikassel.vs.alica.planDesigner.globalsConfiguration.GlobalsConfEventHandler;
-import de.unikassel.vs.alica.planDesigner.globalsConfiguration.GlobalsConfManager;
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiStatusHandler;
 import de.unikassel.vs.alica.planDesigner.modelmanagement.ModelManager;
@@ -62,11 +60,9 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
     // Common Objects
     private ConfigurationManager configurationManager;
     private AlicaConfigurationManager alicaConfigurationManager;
-    private GlobalsConfManager globalsConfManager;
     private FileSystemEventHandler fileSystemEventHandler;
     private ConfigurationEventHandler configEventHandler;
     private AlicaConfigurationEventHandler alicaConfigurationEventHandler;
-    private GlobalsConfEventHandler globalsConfEventHandler;
     private PluginManager pluginManager;
     private PluginEventHandler pluginEventHandler;
 
@@ -78,7 +74,6 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
     private MainWindowController mainWindowController;
     private ConfigurationWindowController configWindowController;
     private AlicaConfWindowController alicaConfWindowController;
-    private GlobalsConfWindowController globalsConfWindowController;
     private RepositoryTabPane repoTabPane;
     private EditorTabPane editorTabPane;
     private ViewModelManager viewModelManager;
@@ -89,22 +84,17 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
     public Controller() {
         configurationManager = ConfigurationManager.getInstance();
         configurationManager.setController(this);
-
-        alicaConfigurationManager = AlicaConfigurationManager.getInstance();
-        alicaConfigurationManager.setController(this);
-
-        globalsConfManager = GlobalsConfManager.getInstance();
-        globalsConfManager.setController(this);
-
         pluginManager = PluginManager.getInstance();
+        setupConfigGuiStuff();
 
         mainWindowController = MainWindowController.getInstance();
         mainWindowController.setGuiStatusHandler(this);
         mainWindowController.setGuiModificationHandler(this);
+        mainWindowController.setConfigWindowController(configWindowController);
 
-        setupConfigGuiStuff();
+        alicaConfigurationManager = AlicaConfigurationManager.getInstance();
+        alicaConfigurationManager.setController(this);
         setupAlicaConfGuiStuff();
-        setupGlobalsConfGuiStuff();
 
         fileSystemEventHandler = new FileSystemEventHandler(this);
         new Thread(fileSystemEventHandler).start(); // <- will be stopped by the PlanDesigner.isRunning() flag
@@ -138,14 +128,6 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
             modelManager.setRolesPath(activeConfiguration.getRolesPath());
         }
     }
-    protected void setupGlobalsConfGuiStuff() {
-        globalsConfWindowController = new GlobalsConfWindowController(0 ,"", "", "");
-
-        globalsConfEventHandler = new GlobalsConfEventHandler(globalsConfWindowController, globalsConfManager);
-        globalsConfWindowController.setHandler(globalsConfEventHandler);
-
-        mainWindowController.setGlobalsConfWindowController(globalsConfWindowController);
-    }
     protected void setupAlicaConfGuiStuff() {
         alicaConfWindowController = new AlicaConfWindowController();
 
@@ -162,8 +144,6 @@ public final class Controller implements IModelEventHandler, IGuiStatusHandler, 
 
         pluginEventHandler = new PluginEventHandler(configWindowController, pluginManager);
         configWindowController.setPluginEventHandler(pluginEventHandler);
-
-        mainWindowController.setConfigWindowController(configWindowController);
     }
 
     private void setupBeanConverters() {
