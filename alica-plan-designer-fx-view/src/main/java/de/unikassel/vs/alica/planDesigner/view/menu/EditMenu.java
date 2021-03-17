@@ -3,7 +3,6 @@ package de.unikassel.vs.alica.planDesigner.view.menu;
 import de.unikassel.vs.alica.planDesigner.PlanDesignerApplication;
 import de.unikassel.vs.alica.planDesigner.controller.AlicaConfWindowController;
 import de.unikassel.vs.alica.planDesigner.controller.ConfigurationWindowController;
-import de.unikassel.vs.alica.planDesigner.controller.GlobalsConfWindowController;
 import de.unikassel.vs.alica.planDesigner.events.GuiModificationEvent;
 import de.unikassel.vs.alica.planDesigner.handlerinterfaces.IGuiModificationHandler;
 import de.unikassel.vs.alica.planDesigner.view.I18NRepo;
@@ -28,13 +27,11 @@ public class EditMenu extends Menu {
     private MenuItem undoItem;
     private MenuItem redoItem;
     private MenuItem alicaConfItem;
-    private MenuItem globalsConfItem;
 
     private final MenuItem configItem;
     private I18NRepo i18NRepo;
     private Stage configStage;
     private Stage alicaConfStage;
-    private Stage globalsConfStage;
 
     private FileTreeView fileTreeView;
     private EditorTabPane editorTabPane;
@@ -42,16 +39,14 @@ public class EditMenu extends Menu {
     private ConfigurationWindowController configWindowController;
     private IGuiModificationHandler guiModificationHandler;
     private AlicaConfWindowController alicaConfWindowController;
-    private GlobalsConfWindowController globalsConfWindowController;
     public EditMenu(FileTreeView fileTreeView, EditorTabPane editorTabPane, RepositoryTabPane repositoryTabPane,
-                    ConfigurationWindowController configWindowController, AlicaConfWindowController alicaConfWindowController, GlobalsConfWindowController globalsConfWindowController) {
+                    ConfigurationWindowController configWindowController, AlicaConfWindowController alicaConfWindowController) {
         super(I18NRepo.getInstance().getString("label.menu.edit"));
         this.fileTreeView = fileTreeView;
         this.editorTabPane = editorTabPane;
         this.repositoryTabPane = repositoryTabPane;
         this.configWindowController = configWindowController;
         this.alicaConfWindowController = alicaConfWindowController;
-        this.globalsConfWindowController = globalsConfWindowController;
 
         i18NRepo = I18NRepo.getInstance();
 
@@ -69,14 +64,12 @@ public class EditMenu extends Menu {
         redoItem.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
 
         configItem = new MenuItem(i18NRepo.getString("label.menu.edit.config"));
-        configItem.setOnAction(event -> openConfigMenu());
+        configItem.setOnAction(event -> showConfigWindow());
 
         alicaConfItem = new MenuItem("Alica Configuration");
         alicaConfItem.setOnAction(event -> openAlicaConfMenu());
 
-        globalsConfItem = new MenuItem(("Globals Configuration"));
-        globalsConfItem.setOnAction(actionEvent -> openGlobalsConfMenu());
-        getItems().addAll(undoItem, redoItem, deleteMenuItem, configItem, alicaConfItem, globalsConfItem);
+        getItems().addAll(undoItem, redoItem, deleteMenuItem, configItem, alicaConfItem);
     }
 
     // TODO: call this methods from the controller - reacting to changes in the commandstack
@@ -106,26 +99,6 @@ public class EditMenu extends Menu {
         guiModificationHandler.handleRedo();
     }
 
-    private void openGlobalsConfMenu() {
-        if(globalsConfStage == null) {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("globalsConfWindow.fxml"));
-            fxmlLoader.setController(this.globalsConfWindowController);
-            Parent window;
-            try {
-                window = fxmlLoader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-            globalsConfStage = new Stage();
-            globalsConfStage.setResizable(false);
-            globalsConfStage.setTitle(i18NRepo.getString("label.globalsConf.title"));
-            globalsConfStage.setScene(new Scene(window));
-            globalsConfStage.initOwner(PlanDesignerApplication.getPrimaryStage());
-        }
-        globalsConfStage.show();
-        globalsConfStage.toFront();
-    }
     private void openAlicaConfMenu() {
         if (alicaConfStage == null) {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("alicaConfWindow.fxml"));
@@ -146,7 +119,7 @@ public class EditMenu extends Menu {
         alicaConfStage.show();
         alicaConfStage.toFront();
     }
-    private void openConfigMenu() {
+    private void showConfigWindow() {
         if (configStage == null) {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("configurationWindow.fxml"));
             fxmlLoader.setController(this.configWindowController);
