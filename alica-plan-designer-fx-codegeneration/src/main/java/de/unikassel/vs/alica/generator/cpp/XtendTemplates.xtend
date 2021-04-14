@@ -40,7 +40,7 @@ class XtendTemplates {
             public:
                 PlanCreator();
                 virtual ~PlanCreator();
-                virtual std::shared_ptr<BasicPlan> createPlan(int64_t planId);
+                virtual std::unique_ptr<BasicPlan> createPlan(int64_t planId);
         };
 
     } /* namespace alica */
@@ -91,13 +91,13 @@ namespace alica
     {
     }
 
-    std::shared_ptr<BasicPlan> PlanCreator::createPlan(int64_t planId)
+    std::unique_ptr<BasicPlan> PlanCreator::createPlan(int64_t planId)
     {
         switch(planId)
         {
             «FOR plan : plans»
                 case «plan.id»:
-                return std::make_shared<«plan.name»«plan.id»>();
+                return std::make_unique<«plan.name»«plan.id»>();
                 break;
             «ENDFOR»
             default:
@@ -712,7 +712,7 @@ namespace alica
     class DomainPlan : public BasicPlan
     {
         public:
-        DomainPlan(std::string name);
+        DomainPlan();
         virtual ~DomainPlan();
 
         /*PROTECTED REGION ID(domainPlanClassDecl) ENABLED START*/
@@ -770,7 +770,7 @@ def String domainPlanSource() '''
 
 namespace alica
 {
-    DomainPlan::DomainPlan(std::string name) : BasicPlan(name)
+    DomainPlan::DomainPlan() : BasicPlan()
     {
         /*PROTECTED REGION ID(domainPlanConstructor) ENABLED START*/
 «IF (protectedRegions.containsKey("domainPlanConstructor"))»
@@ -1053,7 +1053,7 @@ namespace alica
 namespace alica
 {
     //Plan:«plan.name»«plan.id»
-    «plan.name»«plan.id»::«plan.name»«plan.id»() : DomainPlan("«plan.name»«plan.id»")
+    «plan.name»«plan.id»::«plan.name»«plan.id»() : DomainPlan()
     {
     /*PROTECTED REGION ID(con«plan.id») ENABLED START*/
     «IF (protectedRegions.containsKey("con" + plan.id))»
