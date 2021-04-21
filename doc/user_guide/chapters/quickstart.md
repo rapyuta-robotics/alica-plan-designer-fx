@@ -27,7 +27,7 @@ java -jar PlanDesignerFX-X.Y.Z.jar
 1. Open the *Edit* menu from the top menu bar and choose *Configure* in order to open the Configuration window:![Configuration Window](../img/Configuration-Window.png)
 2. Fill out the fields one after another.
    1. **Source Code Editor:** The Plan Designer supports to open auto generated code from within the Plan Designer. For this it will open the editor you will enter in this field, parametrised with the path to the respective auto generated file. At the moment, probably only "gedit" will work.
-   2. **Clang Formatter:** Just enter "clang-format". Nothing else is supported at the moment.
+   2. **Clang Formatter:** Just enter "clang-format-6.0" or "clang-format" if you don't care about versions on different machines. Nothing else is supported at the moment.
    3. **Available Configurations:** As no configuration is available, yet, you need to create one by double clicking on the first empty line under *Available Configurations* and enter a name for your configuration, e.g. RR_AMR. Press *Enter* to confirm your entry.
    4. **Plans Folder:** Enter the path to your projects plan-folder.
    5. **Roles Folder:** Enter the path to your projects roles-folder.
