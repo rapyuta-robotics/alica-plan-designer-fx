@@ -97,6 +97,7 @@ public class Codegenerator {
 
         languageSpecificGenerator.createDomainBehaviour();
         languageSpecificGenerator.createDomainCondition();
+        languageSpecificGenerator.createDomainPlan();
 
         languageSpecificGenerator.createUtilityFunctionCreator(plans);
         languageSpecificGenerator.createBehaviourCreator(behaviours);
@@ -105,6 +106,7 @@ public class Codegenerator {
 
         languageSpecificGenerator.createConstraints(plans);
         languageSpecificGenerator.createPlans(plans);
+        languageSpecificGenerator.createPlanCreator(plans);
 
         for (Behaviour behaviour : behaviours) {
             languageSpecificGenerator.createBehaviour(behaviour);
