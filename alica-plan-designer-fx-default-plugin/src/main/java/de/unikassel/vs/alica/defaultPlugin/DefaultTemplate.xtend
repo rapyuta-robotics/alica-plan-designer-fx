@@ -26,26 +26,26 @@ class DefaultTemplate {
         «FOR transition : outTransitions»
             «IF (transition.preCondition !== null && transition.preCondition.pluginName == "DefaultPlugin")»
                 /**
-                * Outgoing transition:
-                *   - Name: «transition.preCondition.name», ConditionString: «transition.preCondition.conditionString», Comment: «transition.comment»
+                * Transition: «transition.name» («transition.id»)
+                *   - Comment: «transition.comment»
+                *   - Source2Dest: «transition.inState.name» --> «transition.outState.name»
                 *
-                * Abstract plans in current state: «var  List<ConfAbstractPlanWrapper> wrappers = state.confAbstractPlanWrappers»
+                * Precondition: «transition.preCondition.name» («transition.preCondition.id»)
+                *   - Enabled: «transition.preCondition.enabled»
+                *   - PluginName: «transition.preCondition.pluginName»
+                *   - ConditionString: «transition.preCondition.conditionString»
+                *   - Variables:«var  List<Variable> variables = transition.preCondition.variables»
+                «FOR variable : variables»
+                *	   - «variable.name» («variable.id»)
+                «ENDFOR»
+                *   - Quantifiers:«var  List<Quantifier> quantifiers = transition.preCondition.quantifiers»
+                «FOR quantifier : quantifiers»
+                *	   - «quantifier.name» («quantifier.id»)
+                «ENDFOR»
+                *
+                * Abstract Plans in «transition.inState.name»: «var  List<ConfAbstractPlanWrapper> wrappers = state.confAbstractPlanWrappers»
                 «FOR wrapper : wrappers»
                 *   - «wrapper.abstractPlan.name» («wrapper.abstractPlan.id»)
-                «ENDFOR»
-                *
-                * Tasks in plan: «var  List<EntryPoint> entryPoints = state.parentPlan.entryPoints»
-                «FOR planEntryPoint : entryPoints»
-                *   - «planEntryPoint.task.name» («planEntryPoint.task.id») (Entrypoint: «planEntryPoint.id»)«ENDFOR»
-                *
-                * States in plan: «var  List<State> states = state.parentPlan.states»
-                «FOR stateOfInPlan : states»
-                *   - «stateOfInPlan.name» («stateOfInPlan.id»)
-                «ENDFOR»
-                *
-                * Variables of precondition:«var  List<Variable> variables = transition.preCondition.variables»
-                «FOR variable : variables»
-                *	- «variable.name» («variable.id»)
                 «ENDFOR»
                 */
                 bool PreCondition«transition.preCondition.id»::evaluate(std::shared_ptr<RunningPlan> rp)

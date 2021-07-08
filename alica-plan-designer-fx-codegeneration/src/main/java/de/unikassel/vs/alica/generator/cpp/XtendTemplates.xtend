@@ -882,13 +882,23 @@ namespace alica
 
 namespace alica
 {
-    //Plan:«plan.name»
-    «constraintCodeGenerator.expressionsPlanCheckingMethods(plan)»
-/** «var List<EntryPoint> entryPoints = plan.entryPoints»
-        «FOR entryPoint : entryPoints»
- * Task: «entryPoint.task.name»  -> EntryPoint-ID: «entryPoint.id»
-        «ENDFOR»
- */
+// Plan:  «plan.name» («plan.id»)
+//
+// Tasks: «var  List<EntryPoint> entryPoints = plan.entryPoints»
+«FOR planEntryPoint : entryPoints»
+//   - «planEntryPoint.task.name» («planEntryPoint.task.id») (Entrypoint: «planEntryPoint.id»)«ENDFOR»
+//
+// States: «var  List<State> states = plan.states»
+«FOR stateOfInPlan : states»
+//   - «stateOfInPlan.name» («stateOfInPlan.id»)
+«ENDFOR»
+
+«constraintCodeGenerator.expressionsPlanCheckingMethods(plan)»
+/**
+«FOR entryPoint : entryPoints»
+* Task: «entryPoint.task.name»  -> EntryPoint-ID: «entryPoint.id»
+«ENDFOR»
+*/
 std::shared_ptr<UtilityFunction> UtilityFunction«plan.id»::getUtilityFunction(Plan* plan)
 {
    /*PROTECTED REGION ID(«plan.id») ENABLED START*/
@@ -900,7 +910,6 @@ std::shared_ptr<UtilityFunction> UtilityFunction«plan.id»::getUtilityFunction(
    «ENDIF»
     /*PROTECTED REGION END*/
 }
-«var List<State> states = plan.states»
 «FOR state : states»
     «constraintCodeGenerator.expressionsStateCheckingMethods(state)»
 «ENDFOR»
